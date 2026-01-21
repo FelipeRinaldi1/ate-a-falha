@@ -1,4 +1,4 @@
-import {prisma} from '../../lib/prisma.js'
+import {prisma} from '../../infra/prisma.js'
 import { UpdateUserDTO, GetMeDTO } from './user.schema.js'
 import { defaultUserSelect } from './user.constants.js'
 import bcrypt from 'bcryptjs'
@@ -25,7 +25,10 @@ class UserService{
             
         })
         if(!user){
-            throw new Error("User not found") 
+            throw new AppError(
+                ERROR_MESSAGES.USER.NOT_FOUND,
+                HTTP_STATUS.NOT_FOUND
+            )
         }
         return user;
     }
@@ -54,6 +57,21 @@ class UserService{
             }
             throw error;
         }
+
+        const updatedUser = await prisma.user.update({
+            where:{id:userId},
+            data:{...data},
+            select: defaultUserSelect
+        })
+
+        if(!updatedUser){
+            throw new AppError(
+                ERROR_MESSAGES.USER.NOT_FOUND,
+                HTTP_STATUS.NOT_FOUND
+            )
+        }
+
+        return updatedUser
     }
     
     /**

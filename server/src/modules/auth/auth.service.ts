@@ -1,4 +1,4 @@
-import {prisma} from "../../lib/prisma.js";
+import {prisma} from "../../infra/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt,{SignOptions} from "jsonwebtoken"
 import { RegisterDTO,LoginDTO } from "./auth.schema.js";

@@ -25,101 +25,90 @@ enum WorkoutDay {
 
 //User Related
 model User {
+  id     String   @id @default(uuid())
+  name   String
+  birth  DateTime @db.Date
+  gender GENDER
+
+  auth Auth?
+
+  Diet               Diet[]
+  WorkoutPlan        WorkoutPlan[]
+  physicalAssessment PhysicalAssessment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Auth {
   id       String @id @default(uuid())
-  name     String
   email    String @unique
   password String
 
-  Diet           Diet[]
-  WorkoutRoutine WorkoutRoutine[]
-  UserMetrics    UserMetrics[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model UserMetrics {
-  id            String   @id @default(uuid())
-  birth         DateTime @db.Date
-  weight        Int
-  height        Int
-  gender        GENDER
+model PhysicalAssessment {
+  id String @id @default(uuid())
+
+  weight Float
+  height Int
+
   activityLevel Int // 1 to 7
 
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String @unique
+  fatPercentage Float?
+  muscleMass    Float?
 
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
 }
 
 //Nutrition Related
 
-model DietGoal {
-  id           String @id @default(uuid())
-  carbohydrate Int
-  protein      Int
-  fat          Int
-  fiber        Int
-  water        Int
-
-  diet   Diet   @relation(fields: [dietId], references: [id])
-  dietId String @unique
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
 model Diet {
-  id        String @id @default(uuid())
-  name      String @db.VarChar(64)
-  dailyKcal Int
+  id   String @id @default(uuid())
+  name String @db.VarChar(64)
+
+  dailyKcalGoal    Int
+  dailyProteinGoal Int
+  dailyCarbGoal    Int
+  dailyFatGoal     Int
+  dailyWaterGoal   Int
 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
 
   Meal Meal[]
 
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-
-  dietGoal DietGoal?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Meal {
-  id   String   @id @default(uuid())
-  name String   @db.VarChar(64)
-  time DateTime
+  id         String @id @default(uuid())
+  name       String @db.VarChar(64)
+  time       String
+  orderIndex Int
 
-  diet   Diet   @relation(fields: [dietId], references: [id])
+  diet   Diet   @relation(fields: [dietId], references: [id], onDelete: Cascade)
   dietId String
 
-  FoodInMeal FoodInMeal[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
-model Food {
-  id           String @id @default(uuid())
-  name         String @db.VarChar(64)
-  carbohydrate Float
-  protein      Float
-  fat          Float
-  fiber        Float
-
-  FoodInMeal FoodInMeal[]
+  foods FoodInMeal[]
 
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 model FoodInMeal {
-  id              String @id @default(uuid())
-  quantityPer100g Float
+  id       String @id @default(uuid())
+  quantity Int
 
   meal   Meal   @relation(fields: [mealId], references: [id])
   mealId String
+
   food   Food   @relation(fields: [foodId], references: [id])
   foodId String
 
@@ -127,69 +116,86 @@ model FoodInMeal {
   updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-//Workout Related
-
-model Exercise {
-  id          String @id @default(uuid())
-  name        String @db.VarChar(64)
-  description String @db.Text
-
-  setInExercise SetInExercise[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
-model Set {
-  id          String @id @default(uuid())
-  load        Int
-  repetitions Int
-  restTime    Int
-
-  SetInExercise SetInExercise[]
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
-model SetInExercise {
-  setInExerciseId String @id @default(uuid())
-
-  Workout   Workout? @relation(fields: [workoutId], references: [id])
-  workoutId String?
-
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  exerciseId String
-
-  set   Set    @relation(fields: [setId], references: [id])
-  setId String
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
-model Workout {
-  id  String     @id @default(uuid())
-  day WorkoutDay
-
-  setInExercise SetInExercise[]
-
-  WorkoutRoutine WorkoutRoutine? @relation(fields: [workoutRoutine], references: [id])
-  workoutRoutine String?
-
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
-}
-
-model WorkoutRoutine {
+model Food {
   id   String @id @default(uuid())
   name String @db.VarChar(64)
+
+  baseUnit   String @default("g") // "g","ml","un",serving
+  baseAmount Int    @default(100)
+
+  calories     Int
+  carbohydrate Int
+  protein      Int
+  fat          Int
+  fiber        Int
+
+  usedInMeals FoodInMeal[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+}
+
+//Workout Related
+
+model WorkoutPlan {
+  id       String  @id @default(uuid())
+  name     String
+  isActive Boolean @default(true)
+
+  workouts Workout[]
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  Workouts Workout[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+model Workout {
+  id   String     @id @default(uuid())
+  name String?
+  day  WorkoutDay
+
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+  workoutPlanId String
+
+  workoutExercises WorkoutExercise[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkoutExercise {
+  id         String @id @default(uuid())
+  orderIndex Int
+
+  workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId String
+
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+
+  sets WorkoutSet[]
+
+  @@index([workoutId])
+}
+
+model WorkoutSet {
+  id              String @id @default(uuid())
+  setNumber       Int
+  repetitions     Int
+  weight          Float?
+  restTimeSeconds Int
+
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+  workoutExerciseId String
+}
+
+model Exercise {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  imageUrl    String?
+
+  usedInWorkouts WorkoutExercise[]
 }

@@ -1,6 +1,5 @@
 import app from "./app.js"
-import prismaObj from "./lib/prisma.js";
-
+import {prisma} from "./infra/prisma.js"
 const PORT = 3000
 async function main() {
 
@@ -14,6 +13,6 @@ main()
         console.error(e.message);
     })
     .finally(async()=>{
-        await prismaObj.$disconnect();
+        await prisma.$disconnect();
     })
 

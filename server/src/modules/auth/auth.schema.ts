@@ -4,7 +4,7 @@ import { VALIDATION_MESSAGES } from "../../@constants/global/messagesConstants.j
 
 export const registerSchema = z.object({
     name: z.string().min(VALIDATION_RULES.NAME.MIN_LENGTH,{message:VALIDATION_MESSAGES.NAME.MIN}),
-    email: z.string().email({message:VALIDATION_MESSAGES.EMAIL.INVALID}),
+    email: z.email({message:VALIDATION_MESSAGES.EMAIL.INVALID}),
     password: z.string().min(VALIDATION_RULES.PASSWORD.MIN_LENGTH,{message:VALIDATION_MESSAGES.PASSWORD.MIN})
     .regex(VALIDATION_RULES.PASSWORD.REGEX.HAS_LOWERCASE,VALIDATION_MESSAGES.PASSWORD.LOWER)
     .regex(VALIDATION_RULES.PASSWORD.REGEX.HAS_UPPERCASE,VALIDATION_MESSAGES.PASSWORD.UPPER)
@@ -16,7 +16,6 @@ export const loginSchema = z.object({
     email: z.email({message: VALIDATION_MESSAGES.EMAIL.INVALID}),
     password: z.string({message:VALIDATION_MESSAGES.PASSWORD.INVALID})
 })
-
 
 export const tokenPayLoadSchema = z.object({
     id: z.string(),
