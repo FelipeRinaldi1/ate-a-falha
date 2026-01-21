@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  //output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,143 +8,188 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum GENDER {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum WorkoutDay {
+  A
+  B
+  C
+  D
+  E
+  F
+}
+
 //User Related
 model User {
-  user_id         String            @id @default(uuid())
-  user_name       String
-  user_email      String            @unique
-  user_password   String
-  Diet            Diet[]
-  GlobalWorkout   GlobalWorkout[]
-  BodyComposition BodyComposition[]
-  created_at      DateTime          @default(now()) @db.Timestamp(6)
-  updated_at      DateTime          @updatedAt @db.Timestamp(6)
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  Diet           Diet[]
+  WorkoutRoutine WorkoutRoutine[]
+  UserMetrics    UserMetrics[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model BodyComposition {
-  body_composition_id             String   @id @default(uuid())
-  body_composition_birth          DateTime @db.Date
-  body_composition_weight         Int
-  body_composition_height         Int
-  body_composition_gender         Boolean //0 for male 1 for female
-  body_composition_activity_level Int // 1 to 7
-  user                            User     @relation(fields: [user_id], references: [user_id])
-  user_id                         String   @unique
-  created_at                      DateTime @default(now()) @db.Timestamp(6)
-  updated_at                      DateTime @updatedAt @db.Timestamp(6)
+model UserMetrics {
+  id            String   @id @default(uuid())
+  birth         DateTime @db.Date
+  weight        Int
+  height        Int
+  gender        GENDER
+  activityLevel Int // 1 to 7
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String @unique
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-//Diet Related
+//Nutrition Related
+
 model DietGoal {
-  diet_goal_id           String   @id @default(uuid())
-  diet_goal_carbohydrate Int
-  diet_goal_protein      Int
-  diet_goal_fat          Int
-  diet_goal_fiber        Int
-  diet_goal_water        Int
-  Diet                   Diet?
-  diet_id                String?  @unique
-  created_at             DateTime @default(now()) @db.Timestamp(6)
-  updated_at             DateTime @updatedAt @db.Timestamp(6)
+  id           String @id @default(uuid())
+  carbohydrate Int
+  protein      Int
+  fat          Int
+  fiber        Int
+  water        Int
+
+  diet   Diet   @relation(fields: [dietId], references: [id])
+  dietId String @unique
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 model Diet {
-  user         User     @relation(fields: [user_id], references: [user_id])
-  user_id      String   @unique
-  dietGoal     DietGoal @relation(fields: [diet_goal_id], references: [diet_goal_id])
-  diet_goal_id String   @unique
-  diet_id      String   @id @default(uuid())
-  diet_name    String   @db.VarChar(64)
-  created_at   DateTime @default(now()) @db.Timestamp(6)
-  updated_at   DateTime @updatedAt @db.Timestamp(6)
-  Meal         Meal[]
+  id        String @id @default(uuid())
+  name      String @db.VarChar(64)
+  dailyKcal Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  Meal Meal[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+
+  dietGoal DietGoal?
 }
 
 model Meal {
-  meal_id   String   @id @default(uuid())
-  meal_name String   @db.VarChar(64)
-  meal_time DateTime
+  id   String   @id @default(uuid())
+  name String   @db.VarChar(64)
+  time DateTime
 
-  diet    Diet   @relation(fields: [diet_id], references: [diet_id])
-  diet_id String
+  diet   Diet   @relation(fields: [dietId], references: [id])
+  dietId String
 
-  MealWithFood MealWithFood[]
+  FoodInMeal FoodInMeal[]
 
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @updatedAt @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 model Food {
-  food_id           String         @id @default(uuid())
-  food_name         String         @db.VarChar(64)
-  food_carbohydrate Float
-  food_protein      Float
-  food_fat          Float
-  food_fiber        Float
-  MealWithFood      MealWithFood[]
-  created_at        DateTime       @default(now()) @db.Timestamp(6)
-  updated_at        DateTime       @updatedAt @db.Timestamp(6)
+  id           String @id @default(uuid())
+  name         String @db.VarChar(64)
+  carbohydrate Float
+  protein      Float
+  fat          Float
+  fiber        Float
+
+  FoodInMeal FoodInMeal[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model MealWithFood {
-  meal              Meal     @relation(fields: [meal_id], references: [meal_id])
-  meal_id           String
-  food              Food     @relation(fields: [food_id], references: [food_id])
-  food_id           String
-  meal_with_food_id String   @id @default(uuid())
-  quantity_per_100g Float
-  created_at        DateTime @default(now()) @db.Timestamp(6)
-  updated_at        DateTime @updatedAt @db.Timestamp(6)
+model FoodInMeal {
+  id              String @id @default(uuid())
+  quantityPer100g Float
+
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  mealId String
+  food   Food   @relation(fields: [foodId], references: [id])
+  foodId String
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 //Workout Related
+
 model Exercise {
-  exercise_id          String             @id @default(uuid())
-  exercise_name        String             @db.VarChar(64)
-  exercise_description String             @db.Text
-  ExerciseWithSets     ExerciseWithSets[]
-  created_at           DateTime           @default(now()) @db.Timestamp(6)
-  updated_at           DateTime           @updatedAt @db.Timestamp(6)
+  id          String @id @default(uuid())
+  name        String @db.VarChar(64)
+  description String @db.Text
+
+  setInExercise SetInExercise[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model Sets {
-  set_id           String             @id @default(uuid())
-  set_load         Int
-  set_repetitions  Int
-  set_rest_time    DateTime           @db.Time()
-  ExerciseWithSets ExerciseWithSets[]
-  created_at       DateTime           @default(now()) @db.Timestamp(6)
-  updated_at       DateTime           @updatedAt @db.Timestamp(6)
+model Set {
+  id          String @id @default(uuid())
+  load        Int
+  repetitions Int
+  restTime    Int
+
+  SetInExercise SetInExercise[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model ExerciseWithSets {
-  exercise                             Exercise          @relation(fields: [exercise_id], references: [exercise_id])
-  exercise_id                          String
-  sets                                 Sets              @relation(fields: [set_id], references: [set_id])
-  set_id                               String
-  exercise_with_set_id                 String            @id @default(uuid())
-  EspecificWorkout                     EspecificWorkout? @relation(fields: [especificWorkoutEspecific_workout_id], references: [especific_workout_id])
-  especificWorkoutEspecific_workout_id String?
-  created_at                           DateTime          @default(now()) @db.Timestamp(6)
-  updated_at                           DateTime          @updatedAt @db.Timestamp(6)
+model SetInExercise {
+  setInExerciseId String @id @default(uuid())
+
+  Workout   Workout? @relation(fields: [workoutId], references: [id])
+  workoutId String?
+
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+
+  set   Set    @relation(fields: [setId], references: [id])
+  setId String
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model EspecificWorkout {
-  especific_workout_id           String             @id @default(uuid())
-  exercise_with_series           ExerciseWithSets[]
-  especific_workout_day          DateTime           @db.Date
-  GlobalWorkout                  GlobalWorkout?     @relation(fields: [globalWorkoutGlobal_workout_id], references: [global_workout_id])
-  globalWorkoutGlobal_workout_id String?
-  created_at                     DateTime           @default(now()) @db.Timestamp(6)
-  updated_at                     DateTime           @updatedAt @db.Timestamp(6)
+model Workout {
+  id  String     @id @default(uuid())
+  day WorkoutDay
+
+  setInExercise SetInExercise[]
+
+  WorkoutRoutine WorkoutRoutine? @relation(fields: [workoutRoutine], references: [id])
+  workoutRoutine String?
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
-model GlobalWorkout {
-  user                User               @relation(fields: [user_id], references: [user_id])
-  user_id             String
-  especificWorkouts   EspecificWorkout[]
-  global_workout_id   String             @id @default(uuid())
-  global_workout_name String             @db.VarChar(64)
-  created_at          DateTime           @default(now()) @db.Timestamp(6)
-  updated_at          DateTime           @updatedAt @db.Timestamp(6)
+model WorkoutRoutine {
+  id   String @id @default(uuid())
+  name String @db.VarChar(64)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  Workouts Workout[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
