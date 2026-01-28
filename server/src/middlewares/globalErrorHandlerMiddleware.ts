@@ -1,19 +1,12 @@
 import { Request,Response,NextFunction } from "express";
-import { AppError } from "../errors/appError.js";
+import { AppError } from "../@utils/appError.js";
 import { sendErrorResponse } from "../@utils/appErrorHelper.js";
 import { HTTP_STATUS } from "../@constants/global/httpCodesConstants.js";
-import { ERROR_MESSAGES } from "../@constants/global/messagesConstants.js";
+import { ERROR_MESSAGES } from "../@constants/messages/errors.messages.js";
+import { LOG_TYPES } from "../@constants/log/log.constants.js";
 import { ZodError } from "zod";
+import { logger } from "../config/logger.js";
 
-/**
- * Interecepts all errors thrown in the application (async or not)
- * It delegates the response formatting to the centralized 'sendErrorResponse' utility
- * @param error - Error object caught by Express (AppError or generic Error)
- * @param req -Express Request
- * @param res -Express Response
- * @param next - Express Next
- * @returns JSON error response
- */
 export const globalErrorHandler = (
     error:Error | AppError,
     req:Request,
@@ -21,12 +14,26 @@ export const globalErrorHandler = (
     next:NextFunction
 ) =>{
     if (error instanceof ZodError){
+        logger.warn({
+            type: LOG_TYPES.VALIDATION_ERROR,
+            issues:error.issues
+        },ERROR_MESSAGES.VALIDATION.DEFAULT)
+
         const validationError = new AppError(
             ERROR_MESSAGES.VALIDATION.DEFAULT,
-            HTTP_STATUS.BAD_REQUEST,
+            HTTP_STATUS.BAD_REQUEST,      
             error.flatten().fieldErrors
         )
         return sendErrorResponse(res,validationError)
     };
+
+    if(error instanceof AppError){
+        logger.warn({
+            type: LOG_TYPES.APP_ERROR,
+            statusCode: error.statusCode
+        },`${LOG_TYPES.APP_ERROR}: ${error.message}`)
+        return sendErrorResponse(res,error)
+    }
+    logger.error(error,LOG_TYPES.CRITICAL)
     return sendErrorResponse(res,error)
 }

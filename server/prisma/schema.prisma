@@ -25,16 +25,16 @@ enum WorkoutDay {
 
 //User Related
 model User {
-  id     String   @id @default(uuid())
-  name   String
-  birth  DateTime @db.Date
-  gender GENDER
+  id        String   @id @default(uuid())
+  name      String
+  birthDate DateTime @db.Date
+  gender    GENDER
 
   auth Auth?
 
-  Diet               Diet[]
-  WorkoutPlan        WorkoutPlan[]
-  physicalAssessment PhysicalAssessment[]
+  Diet        Diet[]
+  WorkoutPlan WorkoutPlan[]
+  bodyMetrics BodyMetric[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -49,7 +49,7 @@ model Auth {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model PhysicalAssessment {
+model BodyMetric {
   id String @id @default(uuid())
 
   weight Float
@@ -57,8 +57,8 @@ model PhysicalAssessment {
 
   activityLevel Int // 1 to 7
 
-  fatPercentage Float?
-  muscleMass    Float?
+  bodyFat    Float?
+  muscleRate Float?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
