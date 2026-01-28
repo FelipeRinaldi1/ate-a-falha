@@ -1,22 +1,11 @@
 import {Request,Response,NextFunction} from "express"
 import jwt from "jsonwebtoken"
-import {tokenPayLoadSchema} from "../modules/auth/auth.schema.js"
-import { AppError } from "../errors/appError.js";
-import { ENV } from "../@constants/env.js";
+import { tokenPayLoadSchema } from "../modules/auth/dtos/auth.schema.js";
+import { AppError } from "../@utils/appError.js";
+import { ENV } from "../config/env.js";
 import { HTTP_STATUS } from "../@constants/global/httpCodesConstants.js";
-import { ERROR_MESSAGES } from "../@constants/global/messagesConstants.js";
+import { ERROR_MESSAGES } from "../@constants/messages/errors.messages.js";
 
-/**
- * Global Authentication Middleware
- * *Intercepts incoming requests to validate the JWT token found in the 'Authorization' header.
- * If the token is valid, it extracts the user ID and attatches it to the 'req' object.
- * (as `req.userId`) for use in downstream controllers
- * @param req -The Express Request object (Mutated to include `userId`)
- * @param res - The Express response object used to return authentication errors.
- * @param next - The function to proceed to the next middleware or controller.
- * @returns - Returns a 401 (Unauthorized) response if the token is missing,invalid or expired. 
- * Otherwise, it calls `next()`to continue the request flow.
- */
 export function ensureAuthenticated(
     req:Request,
     res:Response,
