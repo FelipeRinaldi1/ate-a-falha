@@ -127,7 +127,7 @@ model Food {
   carbohydrate Int
   protein      Int
   fat          Int
-  fiber        Int
+  fiber        Int?
 
   usedInMeals FoodInMeal[]
 
