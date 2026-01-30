@@ -4,6 +4,8 @@ import { FoodSearchResult } from "../dtos/food.responses.js";
 import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "../dtos/food.schema.js";
 import { randomUUID } from "crypto";
 import { logger } from "../../../config/logger.js";
+import { AppError } from "../../../@utils/appError.js";
+import { HTTP_STATUS } from "../../../@constants/global/httpCodesConstants.js";
 
 export class InMemoryFoodRepository implements IFoodRepository {
     public foods: FoodModel[] = []
@@ -40,6 +42,8 @@ export class InMemoryFoodRepository implements IFoodRepository {
                 return item.name.toLowerCase().includes(params.name!.toLowerCase())
             })
         }
+
+        find.sort((a,b)=> a.name.localeCompare(b.name))
 
         const totalItems = find.length
         
@@ -106,19 +110,18 @@ export class InMemoryFoodRepository implements IFoodRepository {
         return updatedFood
     }
 
-    async delete(id: string): Promise<boolean | null> {
+    async delete(id: string): Promise<void> {
         logger.info({ id }, 'InMemoryRepo: Attempting to delete food')
 
         const index = this.foods.findIndex((food) => food.id === id)
         
         if (index === -1) {
             logger.warn({ id }, 'InMemoryRepo: Delete failed - Food not found')
-            return null
+            throw new AppError('Food not found', HTTP_STATUS.NOT_FOUND)
         }
 
         this.foods.splice(index, 1)
         
         logger.info({ id }, 'InMemoryRepo: Food deleted successfully')
-        return true
     }
 }

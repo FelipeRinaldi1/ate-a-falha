@@ -8,5 +8,5 @@ export interface IFoodRepository{
     findById(id:string):Promise<FoodModel|null>;
     findByName(name:string):Promise<FoodModel|null>;
     update(id:string, data:updateFoodDTO):Promise<FoodModel|null>;
-    delete(id:string):Promise<boolean | null>;
+    delete(id:string):Promise<void>;
 }
