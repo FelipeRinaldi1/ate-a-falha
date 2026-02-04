@@ -9,7 +9,9 @@ declare global {
                 email:string;
                 role: 'ADMIN' | 'USER';
             },
-            userId?: string
+            userId?: string,
+
+            foodId?: string,
         }
     }
 }

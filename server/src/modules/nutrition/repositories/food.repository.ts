@@ -22,19 +22,23 @@ export class FoodRepository implements IFoodRepository {
         const skip = (params.page - 1) * params.perPage;
         const take = (params.perPage);
 
-        const whereCondition: Prisma.FoodWhereInput = {
-            OR: [
-                { userId: null },
-                { userId: userId }
-            ]
+        const orConditions: Prisma.FoodWhereInput[] =[
+            {userId:null}
+        ]
+
+        if(!userId){
+            orConditions.push({userId:userId})
         }
 
-        if (params.name) {
-            whereCondition.name = {
-                contains: params.name,
-                mode: 'insensitive'
-            }
-        }
+        const whereCondition: Prisma.FoodWhereInput = {
+                OR: orConditions,
+                ...(params.name && {
+                    name: {
+                        contains: params.name,
+                        mode: 'insensitive'
+                    }
+                })
+            };
 
         const [totalItems, items] = await prisma.$transaction([
             prisma.food.count({ where: whereCondition }),
