@@ -11,6 +11,8 @@ export interface FoodModel{
     fat:number;
     fiber?:number | null;
 
+    userId?: string | null;
+
     createdAt:Date;
     updatedAt:Date;
 }

@@ -7,6 +7,7 @@ export class AuthMapper{
             id:authData.user.id,
             name:authData.user.name,
             email:authData.email,
+            role:authData.user.role,
 
             createdAt: authData.user.createdAt,
             updatedAt: authData.user.updatedAt

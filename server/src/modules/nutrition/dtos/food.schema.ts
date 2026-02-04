@@ -11,7 +11,7 @@ export const createFoodSchema=z.object({
     carbohydrate: z.number(),
     protein: z.number(),
     fat: z.number(),
-    fiber: z.number().optional()
+    fiber: z.number().optional(),
 
 })
 

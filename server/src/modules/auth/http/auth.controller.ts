@@ -46,11 +46,8 @@ export class AuthController{
 
     changePassword = async (req:Request,res:Response)=>{
         const userId = req.user?.id
-        if(!userId){
-            throw new AppError(ERROR_MESSAGES.USER.NOT_FOUND,HTTP_STATUS.NOT_FOUND)
-        }
         const data = changePasswordSchema.parse(req.body)
-        await this.authService.changePassword(userId,data)
+        await this.authService.changePassword(userId!,data)
 
         return sendSuccessResponse(
             res,

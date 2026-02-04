@@ -1,6 +1,6 @@
 import { FoodModel } from "../model/food.model.js";
 import { IFoodRepository } from "../dtos/food.interfaces.js";
-import { FoodSearchResult } from "../dtos/food.responses.js";
+import { FoodSearchResult } from "../dtos/food.interfaces.js";
 import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "../dtos/food.schema.js";
 import { randomUUID } from "crypto";
 import { logger } from "../../../config/logger.js";

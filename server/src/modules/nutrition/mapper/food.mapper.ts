@@ -1,3 +1,4 @@
+import { FoodSearchResult } from "../dtos/food.interfaces.js";
 import { FoodResponse } from "../dtos/food.responses.js";
 import { FoodModel } from "../model/food.model.js";
 
@@ -11,7 +12,10 @@ export class FoodMapper{
             carbohydrate:foodData.carbohydrate,
             protein: foodData.protein,
             fat: foodData.fat,
-            fiber: foodData.fiber ?? 0
+            fiber: foodData.fiber ?? 0,
+
+            userId: foodData.userId ?? null,
+            isSystemFood: !foodData.userId
         }
     }
 }

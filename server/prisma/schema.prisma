@@ -8,13 +8,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ROLE {
+  USER
+  ADMIN
+}
+
 enum GENDER {
   MALE
   FEMALE
   OTHER
 }
 
-enum WorkoutDay {
+enum WORKOUT_DAY {
   A
   B
   C
@@ -26,6 +31,7 @@ enum WorkoutDay {
 //User Related
 model User {
   id        String   @id @default(uuid())
+  role      ROLE     @default(USER)
   name      String
   birthDate DateTime @db.Date
   gender    GENDER
@@ -38,6 +44,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  food      Food[]
 }
 
 model Auth {
@@ -131,6 +138,9 @@ model Food {
 
   usedInMeals FoodInMeal[]
 
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
@@ -152,9 +162,9 @@ model WorkoutPlan {
 }
 
 model Workout {
-  id   String     @id @default(uuid())
+  id   String      @id @default(uuid())
   name String?
-  day  WorkoutDay
+  day  WORKOUT_DAY
 
   workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
   workoutPlanId String
