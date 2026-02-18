@@ -1,10 +1,9 @@
-import { FoodSearchResult } from "../dtos/food.interfaces.js";
-import { FoodResponse } from "../dtos/food.responses.js";
-import { FoodModel } from "../model/food.model.js";
+import { FoodResponse } from "../interfaces/food.interfaces.js";
+import { Food } from "@prisma/client";
 
 export class FoodMapper{
 
-    static toHttp(foodData: FoodModel):FoodResponse{
+    static toHttp(foodData: Food):FoodResponse{
         return{
             id:foodData.id,
             name: foodData.name,

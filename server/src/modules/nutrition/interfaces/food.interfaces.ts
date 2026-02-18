@@ -1,14 +1,12 @@
-import { FoodModel } from "../model/food.model.js";
 import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "./food.schema.js";
 import { Food } from "@prisma/client";
 
 export interface IFoodRepository{
-    create(data:createFoodDTO):Promise < FoodModel>;
+    create(data:createFoodDTO,userId?:string):Promise <Food>;
     findAll(params:foodSearchDTO,userId:string):Promise<FoodSearchResult>;
-    findById(id:string):Promise<FoodModel|null>;
-    findByName(name:string):Promise<FoodModel|null>;
-    update(id:string, data:updateFoodDTO):Promise<FoodModel>;
-    delete(id:string):Promise<void>;
+    findById(id:string,userId?:string):Promise<Food|null>;
+    update(id:string,userId:string, data:updateFoodDTO):Promise<Food>;
+    delete(id:string,userId:string):Promise<void>;
 }
 
 export type FoodResponse = {
@@ -24,7 +22,7 @@ export type FoodResponse = {
 }
 
 export interface FoodSearchResult{
-    items:FoodModel[] | Food;
+    items:Food[] | Food;
     total:Number;
     currentPage:number;
     totalPages:number;

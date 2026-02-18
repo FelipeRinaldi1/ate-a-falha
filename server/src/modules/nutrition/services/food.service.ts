@@ -1,58 +1,48 @@
-import { HTTP_STATUS } from "../../../@constants/global/httpCodesConstants.js";
-import { AppError } from "../../../@utils/appError.js";
-import { FoodSearchResult, IFoodRepository } from "../dtos/food.interfaces.js";
-import { FoodResponse } from "../dtos/food.interfaces.js";
-import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "../dtos/food.schema.js";
+import { FoodSearchResult, IFoodRepository, FoodResponse } from "../interfaces/food.interfaces.js";
+import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "../interfaces/food.schema.js";
 import { FoodMapper } from "../mapper/food.mapper.js";
+import { AccessControl } from "../../../@utils/accessControl.js";
+export class FoodService {
+    constructor(private repository: IFoodRepository) {}
 
-export class FoodService{
-    private repository:IFoodRepository
-    constructor(repository: IFoodRepository){
-        this.repository = repository
-    }
-
-    async create(foodData:createFoodDTO):Promise <FoodResponse>{
-        const food = await this.repository.create(foodData)
-        const foodMapped = FoodMapper.toHttp(food)
-        return foodMapped
-    }
-
-    async findAll(searchDTO:foodSearchDTO,userId:string):Promise <FoodSearchResult>{
-        const searchResult = await this.repository.findAll(searchDTO,userId)
-        return searchResult
-    }
-
-    async findById(id:string):Promise<FoodResponse>{
-        const food = await this.repository.findById(id)
-        if (food===null){
-            throw new AppError('Food not found',HTTP_STATUS.NOT_FOUND)
-        }
+    private async getFoodAndValidateAccess(id: string, userId: string) {
+        const food = await this.repository.findById(id, userId);
         
-        const foodMapped = FoodMapper.toHttp(food)
-
-        return foodMapped
-    }
-
-    async findByName(name:string):Promise<FoodResponse>{
-        const food = await this.repository.findByName(name)
-        if (food===null){
-            throw new AppError('Food not found',HTTP_STATUS.NOT_FOUND)
-        }
+        AccessControl.ensureExists(food); 
         
-        const foodMapped = FoodMapper.toHttp(food)
-
-        return foodMapped
+        return food!;
     }
 
-    async update(id:string,foodData:updateFoodDTO):Promise <FoodResponse>{
-        const updatedFood = await this.repository.update(id,foodData)
-        const mappedFood = FoodMapper.toHttp(updatedFood)
-        return mappedFood
+    async register(foodData: createFoodDTO, userId: string, userRole: string): Promise<FoodResponse> {
+        const ownerId = userRole === 'admin' ? undefined : userId;
+        
+        const food = await this.repository.create(foodData, ownerId as string);
+        return FoodMapper.toHttp(food);
     }
 
-    async delete(id:string):Promise <void>{
-        const deleted = await this.repository.delete(id)
-
+    async search(searchDTO: foodSearchDTO, userId: string): Promise<FoodSearchResult> {
+        return await this.repository.findAll(searchDTO, userId);
     }
-    
+
+    async getById(id: string, userId: string): Promise<FoodResponse> {
+        const food = await this.getFoodAndValidateAccess(id, userId);
+        return FoodMapper.toHttp(food);
+    }
+
+    async update(id: string, foodData: updateFoodDTO, userId: string, userRole: string): Promise<FoodResponse> {
+        const food = await this.getFoodAndValidateAccess(id, userId);
+
+        AccessControl.ensureWriteAccess(food, userId, userRole);
+
+        const updatedFood = await this.repository.update(id, userId, foodData);
+        return FoodMapper.toHttp(updatedFood);
+    }
+
+    async remove(id: string, userId: string, userRole: string): Promise<void> {
+        const food = await this.getFoodAndValidateAccess(id, userId);
+
+        AccessControl.ensureWriteAccess(food, userId, userRole);
+
+        await this.repository.delete(id, userId);
+    }
 }

@@ -86,7 +86,8 @@ export const tokenPayLoadSchema = z.object({
     id: z.string(),
     email: z.email(),
     iat: z.number().optional(), //Issue At
-    exp: z.number().optional() // Expires in
+    exp: z.number().optional(), // Expires in
+    role: z.enum(["ADMIN", "USER"])
 })
 
 export const changePasswordSchema = z.object({

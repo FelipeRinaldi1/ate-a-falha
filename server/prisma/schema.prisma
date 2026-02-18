@@ -3,6 +3,17 @@ generator client {
   //output   = "../generated/prisma"
 }
 
+generator zod {
+  provider           = "zod-prisma-types"
+  output             = "../src/generated/zod"
+  relationModel      = false
+  modelCase          = "camelCase"
+  modelSuffix        = "Schema"
+  useDecimalJs       = true
+  createInputTypes   = true
+  addSelectedQueries = true
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -71,6 +82,7 @@ model BodyMetric {
   userId String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //Nutrition Related
@@ -124,7 +136,7 @@ model FoodInMeal {
 }
 
 model Food {
-  id   String @id @default(uuid())
+  id   String @id @default(uuid()) /// @zod.custom.omit([model, input])
   name String @db.VarChar(64)
 
   baseUnit   String @default("g") // "g","ml","un",serving
@@ -136,13 +148,18 @@ model Food {
   fat          Int
   fiber        Int?
 
-  usedInMeals FoodInMeal[]
-
+  /// @zod.custom.omit([model, input])
   userId String?
-  user   User?   @relation(fields: [userId], references: [id])
 
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  user User? @relation(fields: [userId], references: [id])
+
+  /// @zod.custom.omit([model, input])
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  /// @zod.custom.omit([model, input])
+  updatedAt   DateTime     @updatedAt @db.Timestamp(6)
+  foodInMeals FoodInMeal[]
+
+  @@unique([id, userId])
 }
 
 //Workout Related
@@ -187,6 +204,9 @@ model WorkoutExercise {
 
   sets WorkoutSet[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([workoutId])
 }
 
@@ -199,13 +219,20 @@ model WorkoutSet {
 
   workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   workoutExerciseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Exercise {
   id          String  @id @default(uuid())
   name        String  @unique
+  muscleGroup String
   description String?
   imageUrl    String?
 
   usedInWorkouts WorkoutExercise[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

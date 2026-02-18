@@ -1,87 +1,81 @@
 import { prisma } from '../../../infra/prisma.js'
-import { Prisma } from '@prisma/client'
-import { IFoodRepository, FoodSearchResult } from '../dtos/food.interfaces.js'
-import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../dtos/food.schema.js'
-import { FoodModel } from '../model/food.model.js'
-
+import { Prisma, Food } from '@prisma/client'
+import { IFoodRepository, FoodSearchResult } from '../interfaces/food.interfaces.js'
+import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../interfaces/food.schema.js'
 
 export class FoodRepository implements IFoodRepository {
     
-    async create(data: createFoodDTO, userId?: string): Promise<FoodModel> {
-        const newFood = await prisma.food.create({
+    async create(data: createFoodDTO,userId:string): Promise<Food> {
+        return await prisma.food.create({
             data: {
                 ...data,
-                fiber: data.fiber ?? 0,
                 userId: userId
             }
-        })
-        return newFood;
+        });
     }
 
-    async findAll(params: foodSearchDTO, userId: string): Promise<FoodSearchResult> {
+    async findAll(params: foodSearchDTO, userId?: string): Promise<FoodSearchResult> {
         const skip = (params.page - 1) * params.perPage;
-        const take = (params.perPage);
-
-        const orConditions: Prisma.FoodWhereInput[] =[
-            {userId:null}
-        ]
-
-        if(!userId){
-            orConditions.push({userId:userId})
-        }
 
         const whereCondition: Prisma.FoodWhereInput = {
-                OR: orConditions,
-                ...(params.name && {
-                    name: {
-                        contains: params.name,
-                        mode: 'insensitive'
-                    }
-                })
-            };
+            AND: [
+                {
+                    OR: [
+                        { userId: null },
+                        ...(userId ? [{ userId }] : [])
+                    ]
+                },
+                params.name ? {
+                    name: { contains: params.name, mode: 'insensitive' }
+                } : {}
+            ]
+        };
 
         const [totalItems, items] = await prisma.$transaction([
             prisma.food.count({ where: whereCondition }),
             prisma.food.findMany({
                 where: whereCondition,
-                skip: skip,
-                take: take,
+                skip,
+                take: params.perPage,
                 orderBy: { name: 'asc' }
             })
-        ])
+        ]);
 
         return {
-            items: items,
+            items,
             total: totalItems,
             currentPage: params.page,
             totalPages: Math.ceil(totalItems / params.perPage)
         };
     }
 
-    async findById(id: string): Promise<FoodModel | null> {
-        const food = await prisma.food.findUnique({
-            where: { id: id }
-        })
-        return food
+    async findById(id: string,userId?:string): Promise<Food | null> {
+        return await prisma.food.findFirst({
+            where:{
+                id,
+                OR:[
+                    {userId:null},
+                    {userId:userId || undefined}
+                ]
+            }
+        });
     }
 
-    async findByName(name: string): Promise<FoodModel | null> {
-        const food = await prisma.food.findFirst({
-            where: { name: name }
-        })
-        return food
+    async update(id: string,userId:string, data: updateFoodDTO): Promise<Food> {
+        return await prisma.food.update({
+            where: { 
+                id,
+                userId:userId
+            },
+            data:data
+        });
     }
 
-    async update(id: string, data: updateFoodDTO): Promise<FoodModel> {
-            return await prisma.food.update({
-                where: { id: id },
-                data: { ...data }
-            })
-        }
-
-    async delete(id: string): Promise<void> {
+    async delete(id: string,userId:string): Promise<void> {
         await prisma.food.delete({
-            where: { id: id }
-        })
+            where: { id,
+                userId:userId
+             }
+        });
     }
 }

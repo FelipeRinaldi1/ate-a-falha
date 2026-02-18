@@ -6,6 +6,7 @@ import { ERROR_MESSAGES } from "../@constants/messages/errors.messages.js";
 import { LOG_TYPES } from "../@constants/log/log.constants.js";
 import { ZodError } from "zod";
 import { logger } from "../config/logger.js";
+import { Prisma } from "@prisma/client";
 
 export const globalErrorHandler = (
     error:Error | AppError,
@@ -26,6 +27,36 @@ export const globalErrorHandler = (
         )
         return sendErrorResponse(res,validationError)
     };
+    
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        logger.warn({
+            type: LOG_TYPES.APP_ERROR,
+            code: error.code,
+            meta: error.meta
+        }, `Prisma Error: ${error.code}`);
+
+        if (error.code === 'P2025') {
+            const notFoundError = new AppError(
+                "O registro solicitado não foi encontrado ou você não tem permissão para acessá-lo.",
+                HTTP_STATUS.NOT_FOUND
+            );
+            return sendErrorResponse(res, notFoundError);
+        }
+
+        if (error.code === 'P2002') {
+            const conflictError = new AppError(
+                "Já existe um registro com estes dados. Verifique campos duplicados.",
+                HTTP_STATUS.CONFLICT
+            );
+            return sendErrorResponse(res, conflictError);
+        }
+
+        const dbError = new AppError(
+            "Ocorreu um erro inesperado no banco de dados.",
+            HTTP_STATUS.INTERNAL_SERVER_ERROR
+        );
+        return sendErrorResponse(res, dbError);
+    }
 
     if(error instanceof AppError){
         logger.warn({
