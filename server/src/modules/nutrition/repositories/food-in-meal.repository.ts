@@ -5,11 +5,20 @@ import { FoodInMealExtensionModel } from "../interfaces/food-in-meal.interfaces.
 import { FoodInMeal } from "@prisma/client";
 
 export class FoodInMealRepository implements IFoodInMealRepository {
-    async create(foodInMeal: FoodInMealDTO): Promise<FoodInMeal> {
-        return await prisma.foodInMeal.create({
-            data: foodInMeal,
-        });
-    }
+
+    async create(foodInMeal: FoodInMealDTO, userId: string): Promise<FoodInMeal> {
+            // Blindagem: O connectOrCreate ou um check prévio garante que a refeição pertence ao usuário
+            // Aqui usamos um findFirst para garantir que a Meal pertence à Diet do User antes de criar
+            const meal = await prisma.meal.findFirst({
+                where: { id: foodInMeal.mealId, diet: { userId } }
+            });
+
+            if (!meal) throw new Error("Unauthorized"); // Barreira mínima necessária
+
+            return await prisma.foodInMeal.create({
+                data: foodInMeal
+            });
+        }
 
     async findById(id: string): Promise<FoodInMealExtensionModel | null> {
         return await prisma.foodInMeal.findUnique({
