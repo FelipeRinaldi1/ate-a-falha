@@ -1,22 +1,13 @@
-generator client {
-  provider = "prisma-client-js"
-  //output   = "../generated/prisma"
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator zod {
-  provider           = "zod-prisma-types"
-  output             = "../src/generated/zod"
-  relationModel      = false
-  modelCase          = "camelCase"
-  modelSuffix        = "Schema"
-  useDecimalJs       = true
-  createInputTypes   = true
-  addSelectedQueries = true
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum ROLE {
@@ -136,7 +127,7 @@ model FoodInMeal {
 }
 
 model Food {
-  id   String @id @default(uuid()) /// @zod.custom.omit([model, input])
+  id   String @id @default(uuid())
   name String @db.VarChar(64)
 
   baseUnit   String @default("g") // "g","ml","un",serving
@@ -148,15 +139,13 @@ model Food {
   fat          Int
   fiber        Int?
 
-  /// @zod.custom.omit([model, input])
   userId String?
 
   user User? @relation(fields: [userId], references: [id])
 
-  /// @zod.custom.omit([model, input])
-  createdAt   DateTime     @default(now()) @db.Timestamp(6)
-  /// @zod.custom.omit([model, input])
-  updatedAt   DateTime     @updatedAt @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+
   foodInMeals FoodInMeal[]
 
   @@unique([id, userId])
