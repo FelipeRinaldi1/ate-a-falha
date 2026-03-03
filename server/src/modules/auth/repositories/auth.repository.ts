@@ -1,4 +1,4 @@
-import {prisma} from "../../../infra/prisma.js"
+import {prisma} from "../../../infra/client.js"
 import { Prisma } from "@prisma/client"
 import { IAuthRepository, ExtendedAuth } from "../dtos/auth.interfaces.js"
 import { RegisterDTO } from "../dtos/auth.schema.js"

@@ -1,4 +1,4 @@
-import {prisma} from "../../../infra/prisma.js";
+import {prisma} from "../../../infra/client.js";
 import { IBodyMetricsRepository } from "../interfaces/body-metrics.interfaces.js";
 import { createBodyMetricsDTO, UpdateBodyMetricsDTO } from "../interfaces/body-metrics.schema.js";
 import { BodyMetricsModel } from "../model/body-metrics.model.js";

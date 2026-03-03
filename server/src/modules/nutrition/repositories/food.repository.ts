@@ -1,4 +1,4 @@
-import { prisma } from '../../../infra/prisma.js'
+import { prisma } from '../../../infra/client.js'
 import { Prisma, Food } from '@prisma/client'
 import { IFoodRepository, FoodSearchResult } from '../interfaces/food.interfaces.js'
 import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../interfaces/food.schema.js'

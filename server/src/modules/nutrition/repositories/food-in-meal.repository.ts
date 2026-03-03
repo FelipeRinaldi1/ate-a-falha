@@ -1,4 +1,4 @@
-import { prisma } from "../../../infra/prisma.js";
+import { prisma } from "../../../infra/client.js";
 import { IFoodInMealRepository } from "../interfaces/food-in-meal.interfaces.js";
 import { FoodInMealDTO, UpdateFoodInMealDTO } from "../interfaces/food-in-meal.schema.js";
 import { FoodInMealExtensionModel } from "../interfaces/food-in-meal.interfaces.js";

@@ -1,5 +1,5 @@
 import app from "./app.js"
-import {prisma} from "./infra/prisma.js"
+import {prisma} from "./infra/client.js"
 const PORT = 3000
 async function main() {
 

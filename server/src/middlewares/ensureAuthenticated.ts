@@ -46,7 +46,7 @@ export function ensureAuthenticated(
             role:payload.role
         };
 
-        return next();
+        next(); return;
     }catch(error){
         throw new AppError(
             ERROR_MESSAGES.AUTH.INVALID_TOKEN,

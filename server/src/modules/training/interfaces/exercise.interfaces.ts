@@ -11,7 +11,7 @@ export interface IExerciseRepository{
     delete(id: string): Promise<boolean> 
 }
 
-export type ExerciseResponse = {
+export interface ExerciseResponse {
     id: number;
     name: string;
     description: string;

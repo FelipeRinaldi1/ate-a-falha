@@ -11,7 +11,7 @@ export const sendSuccessResponse = (res: Response, data = {}, message = "Success
 
 export const sendErrorResponse = (res: Response, error: Error | AppError) => {
     let statusCode = 500;
-    let message = error.message;
+    const message = error.message;
     let data = {};
 
     if (error instanceof AppError) {

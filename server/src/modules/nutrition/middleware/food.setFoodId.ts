@@ -4,7 +4,7 @@ export const setFoodId = (req:Request,res:Response,next: NextFunction)=>{
     const {id} = req.params
 
     if(!id){
-        return next();
+        next(); return;
     }
 
     req.foodId = id;

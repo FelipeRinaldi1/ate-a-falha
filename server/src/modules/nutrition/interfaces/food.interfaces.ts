@@ -9,7 +9,7 @@ export interface IFoodRepository{
     delete(id:string,userId:string):Promise<void>;
 }
 
-export type FoodResponse = {
+export interface FoodResponse {
     id: string;
     name: string;
     calories: number;
@@ -23,7 +23,7 @@ export type FoodResponse = {
 
 export interface FoodSearchResult{
     items:Food[] | Food;
-    total:Number;
+    total:number;
     currentPage:number;
     totalPages:number;
 }

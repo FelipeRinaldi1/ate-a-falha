@@ -16,7 +16,7 @@ export class FoodService {
     async register(foodData: createFoodDTO, userId: string, userRole: string): Promise<FoodResponse> {
         const ownerId = userRole === 'admin' ? undefined : userId;
         
-        const food = await this.repository.create(foodData, ownerId as string);
+        const food = await this.repository.create(foodData, ownerId);
         return FoodMapper.toHttp(food);
     }
 

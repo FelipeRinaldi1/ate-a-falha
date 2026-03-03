@@ -1,4 +1,4 @@
-import { prisma } from '../../../infra/prisma.js';
+import { prisma } from '../../../infra/client.js';
 import { Meal } from '@prisma/client';
 import { MealDTO,UpdateMealDTO } from '../interfaces/meal.schema.js';
 import { MealExtendedModel } from '../interfaces/meal.interfaces.js';
