@@ -1,4 +1,4 @@
-export interface Food {
+export interface FoodEntity {
   id: string
   name: string
   baseUnit: string // "g", "ml", "un", "serving"

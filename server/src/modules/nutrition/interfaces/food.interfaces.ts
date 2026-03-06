@@ -1,29 +1,22 @@
-import { createFoodDTO, foodSearchDTO, updateFoodDTO } from "./food.schema.js";
-import { Food } from "@prisma/client";
+import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../DTOs/food.schema.js'
+import { FoodEntity } from '../entities/food.entity.js'
+import { Result } from '@/utils/result.js'
 
-export interface IFoodRepository{
-    create(data:createFoodDTO,userId?:string):Promise <Food>;
-    findAll(params:foodSearchDTO,userId:string):Promise<FoodSearchResult>;
-    findById(id:string,userId?:string):Promise<Food|null>;
-    update(id:string,userId:string, data:updateFoodDTO):Promise<Food>;
-    delete(id:string,userId:string):Promise<void>;
+export interface IFoodRepository {
+	create(data: createFoodDTO, userId?: string): Promise<Result<FoodEntity>>
+
+	findAll(data: foodSearchDTO, userId: string): Promise<Result<FoodEntity[]>>
+
+	findById(id: string, userId?: string): Promise<Result<FoodEntity>>
+
+	update(id: string, data: updateFoodDTO, userId?: string): Promise<Result<FoodEntity>>
+
+	delete(id: string, userId: string): Promise<Result<void>>
 }
 
-export interface FoodResponse {
-    id: string;
-    name: string;
-    calories: number;
-    carbohydrate: number;
-    protein: number;
-    fat: number;
-    fiber: number;
-    userId :string | null,
-    isSystemFood: boolean,
-}
-
-export interface FoodSearchResult{
-    items:Food[] | Food;
-    total:number;
-    currentPage:number;
-    totalPages:number;
+export interface FoodSearchResult {
+	items: FoodEntity[] | FoodEntity
+	total: number
+	currentPage: number
+	totalPages: number
 }

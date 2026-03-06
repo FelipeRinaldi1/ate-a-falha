@@ -1,39 +1,38 @@
 import 'dotenv/config'
 import { z } from 'zod'
-import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../@constants/env/env.constants.js'
-import { ENV_ERRORS } from '../@constants/env/env.errors.js'
+import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../constants/env/env.constants.js'
+import { ENV_ERRORS } from '../constants/env/env.errors.js'
 
-const nodeEnvValues = Object.values(NODE_ENV) as [string, ...string[]];
+const nodeEnvValues = Object.values(NODE_ENV) as [string, ...string[]]
 
 const envSchema = z.object({
-    NODE_ENV: z.enum(nodeEnvValues, {
-        message: ENV_ERRORS.NODE_ENV_INVALID 
-    }).default(NODE_ENV.DEVELOPMENT),
+	NODE_ENV: z
+		.enum(nodeEnvValues, {
+			message: ENV_ERRORS.NODE_ENV_INVALID,
+		})
+		.default(NODE_ENV.DEVELOPMENT),
 
-    PORT: z.coerce.number().default(DEFAULT_PORT),
+	PORT: z.coerce.number().default(DEFAULT_PORT),
 
-    JWT_SECRET: z.string().min(1, { message: ENV_ERRORS.JWT_SECRET_MISSING }),
+	JWT_SECRET: z.string().min(1, { message: ENV_ERRORS.JWT_SECRET_MISSING }),
 
-    JWT_EXPIRES_IN: z.string().default(DEFAULT_JWT_EXPIRES),
+	JWT_EXPIRES_IN: z.string().default(DEFAULT_JWT_EXPIRES),
 
-    CORS_ORIGIN: z.string().default('*'),
+	CORS_ORIGIN: z.string().default('*'),
 
-    SERVER_URL: z.url({ message: 'URL do servidor inválida' }), 
+	SERVER_URL: z.url({ message: 'URL do servidor inválida' }),
 
-    LOG_LEVEL: z.string().default('info')
+	LOG_LEVEL: z.string().default('info'),
 })
 
 const _env = envSchema.safeParse(process.env)
 
 if (!_env.success) {
-    const formattedErrors = z.treeifyError(_env.error);
-    
-    console.error(
-        `${ENV_ERRORS.INVALID_VARIABRLES}:`, 
-        JSON.stringify(formattedErrors, null, 2)
-    );
+	const formattedErrors = z.treeifyError(_env.error)
 
-    throw new Error(ENV_ERRORS.FATAL_ERROR)
+	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, JSON.stringify(formattedErrors, null, 2))
+
+	throw new Error(ENV_ERRORS.FATAL_ERROR)
 }
 
-export const ENV = _env.data;
+export const ENV = _env.data

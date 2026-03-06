@@ -1,20 +1,21 @@
-import { FoodResponse } from "../interfaces/food.interfaces.js";
-import { Food } from "@prisma/client";
+import { Food } from '@/generated/prisma/client.js'
+import { FoodEntity } from '../entities/food.entity.js'
 
-export class FoodMapper{
-
-    static toHttp(foodData: Food):FoodResponse{
-        return{
-            id:foodData.id,
-            name: foodData.name,
-            calories: foodData.calories,
-            carbohydrate:foodData.carbohydrate,
-            protein: foodData.protein,
-            fat: foodData.fat,
-            fiber: foodData.fiber ?? 0,
-
-            userId: foodData.userId ?? null,
-            isSystemFood: !foodData.userId
-        }
-    }
+export class FoodMapper {
+	static toEntity(prismaFood: Food): FoodEntity {
+		return {
+			id: prismaFood.id,
+			name: prismaFood.name,
+			baseUnit: prismaFood.baseUnit,
+			baseAmount: prismaFood.baseAmount,
+			calories: prismaFood.calories,
+			carbohydrate: prismaFood.carbohydrate,
+			protein: prismaFood.protein,
+			fat: prismaFood.fat,
+			fiber: prismaFood.fiber,
+			userId: prismaFood.userId,
+			createdAt: prismaFood.createdAt,
+			updatedAt: prismaFood.updatedAt,
+		}
+	}
 }
