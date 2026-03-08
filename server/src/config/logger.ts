@@ -1,6 +1,6 @@
 import pino from 'pino'
 import { ENV } from './env.js'
-import { NODE_ENV } from '../constants/env/env.constants.js'
+import { NODE_ENV } from '../@constants/env/env.constants.js'
 
 const logLevel = ENV.LOG_LEVEL || (ENV.NODE_ENV === 'test' ? 'silent' : 'info')
 

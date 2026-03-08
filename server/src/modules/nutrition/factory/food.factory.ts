@@ -1,6 +1,6 @@
-import { FoodRepository } from '../repositories/food.repository'
-import { FoodService } from '../services/food.service'
-import { FoodController } from '../controllers/food.controller'
+import { FoodRepository } from '../repositories/food.repository.js'
+import { FoodService } from '../services/food.service.js'
+import { FoodController } from '../controllers/food.controller.js'
 
 export class FoodFactory {
 	static createController() {

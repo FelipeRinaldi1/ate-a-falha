@@ -5,11 +5,11 @@ import { pinoHttp } from 'pino-http'
 import { logger } from './config/logger.js'
 import 'dotenv/config'
 import helmet from 'helmet'
-import { apiRateLimiter } from './middlewares/rateLimiter.js'
+import { apiRateLimiter } from './@middlewares/rateLimiter.js'
 import * as swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './config/swagger.js'
 import { foodRoutes } from './modules/nutrition/routers/food.routes.js'
-import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
+import { globalErrorHandler } from './@middlewares/globalErrorHandler.js'
 
 const app = express()
 

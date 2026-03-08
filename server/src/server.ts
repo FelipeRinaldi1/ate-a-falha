@@ -1,5 +1,5 @@
 import app from './app.js'
-import { prisma } from './infra/prisma.client.js'
+import { prisma } from './@infra/prisma.client.js'
 const PORT = 3000
 async function main() {
 	await prisma.$connect()
