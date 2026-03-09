@@ -1,14 +1,12 @@
-import { Request } from "express";
-import { string } from "zod";
+export {}
 
 declare global {
-    namespace Express{
-        interface Request{
-            user?:{
-                id:string;
-                email:string
-            },
-            userId?: string
-        }
-    }
+	namespace Express {
+		interface Request {
+			user: {
+				id: string,
+				role: 'USER' | 'ADMIN'
+			}
+		}
+	}
 }

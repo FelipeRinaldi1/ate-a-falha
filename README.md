@@ -30,3 +30,5 @@ npm run dev
 ### Como me localizar no projeto?
 
 ### Como executar o projeto?
+
+https://taco-api.netlify.app/about/

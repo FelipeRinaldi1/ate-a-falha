@@ -1,11 +1,18 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-  provider = "prisma-client-js"
-  //output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+enum ROLE {
+  USER
+  ADMIN
 }
 
 enum GENDER {
@@ -14,7 +21,7 @@ enum GENDER {
   OTHER
 }
 
-enum WorkoutDay {
+enum WORKOUT_DAY {
   A
   B
   C
@@ -26,6 +33,7 @@ enum WorkoutDay {
 //User Related
 model User {
   id        String   @id @default(uuid())
+  role      ROLE     @default(USER)
   name      String
   birthDate DateTime @db.Date
   gender    GENDER
@@ -38,6 +46,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  food      Food[]
 }
 
 model Auth {
@@ -64,6 +73,7 @@ model BodyMetric {
   userId String
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //Nutrition Related
@@ -127,12 +137,18 @@ model Food {
   carbohydrate Int
   protein      Int
   fat          Int
-  fiber        Int
+  fiber        Int?
 
-  usedInMeals FoodInMeal[]
+  userId String?
+
+  user User? @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @updatedAt @db.Timestamp(6)
+
+  foodInMeals FoodInMeal[]
+
+  @@unique([id, userId])
 }
 
 //Workout Related
@@ -152,9 +168,9 @@ model WorkoutPlan {
 }
 
 model Workout {
-  id   String     @id @default(uuid())
+  id   String      @id @default(uuid())
   name String?
-  day  WorkoutDay
+  day  WORKOUT_DAY
 
   workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
   workoutPlanId String
@@ -177,6 +193,9 @@ model WorkoutExercise {
 
   sets WorkoutSet[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([workoutId])
 }
 
@@ -189,13 +208,20 @@ model WorkoutSet {
 
   workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
   workoutExerciseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Exercise {
   id          String  @id @default(uuid())
   name        String  @unique
+  muscleGroup String
   description String?
   imageUrl    String?
 
   usedInWorkouts WorkoutExercise[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

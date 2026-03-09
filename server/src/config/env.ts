@@ -1,32 +1,38 @@
 import 'dotenv/config'
-import {z} from 'zod'
-import { NODE_ENV, DEFAULT_JWT_EXPIRES,DEFAULT_PORT} from '../@constants/env/env.constants.js'
+import { z } from 'zod'
+import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../@constants/env/env.constants.js'
 import { ENV_ERRORS } from '../@constants/env/env.errors.js'
 
-const envSchema=z.object({
-    NODE_ENV: z.enum(NODE_ENV,{
-        error: ENV_ERRORS.NODE_ENV_INVALID
-    }).default(NODE_ENV.DEVELOPMENT),
+const nodeEnvValues = Object.values(NODE_ENV) as [string, ...string[]]
 
-    PORT: z.coerce.number({error:ENV_ERRORS.PORT_INVALID}).default(DEFAULT_PORT),
+const envSchema = z.object({
+	NODE_ENV: z
+		.enum(nodeEnvValues, {
+			message: ENV_ERRORS.NODE_ENV_INVALID,
+		})
+		.default(NODE_ENV.DEVELOPMENT),
 
-    JWT_SECRET: z.string().min(1,{error:ENV_ERRORS.JWT_SECRET_MISSING}),
+	PORT: z.coerce.number().default(DEFAULT_PORT),
 
-    JWT_EXPIRES_IN: z.string().default(DEFAULT_JWT_EXPIRES),
+	JWT_SECRET: z.string().min(1, { message: ENV_ERRORS.JWT_SECRET_MISSING }),
 
-    CORS_ORIGIN: z.string().default('*'),
+	JWT_EXPIRES_IN: z.string().default(DEFAULT_JWT_EXPIRES),
 
-    SERVER_URL: z.string(),
+	CORS_ORIGIN: z.string().default('*'),
 
-    LOG_LEVEL :z.string()
+	SERVER_URL: z.url({ message: 'URL do servidor inválida' }),
+
+	LOG_LEVEL: z.string().default('info'),
 })
 
 const _env = envSchema.safeParse(process.env)
 
-if(_env.success === false){
-    console.error(ENV_ERRORS.INVALID_VARIABRLES,_env.error.format)
+if (!_env.success) {
+	const formattedErrors = z.treeifyError(_env.error)
 
-    throw new Error(ENV_ERRORS.FATAL_ERROR)
+	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, JSON.stringify(formattedErrors, null, 2))
+
+	throw new Error(ENV_ERRORS.FATAL_ERROR)
 }
 
-export const ENV = _env.data;
+export const ENV = _env.data
