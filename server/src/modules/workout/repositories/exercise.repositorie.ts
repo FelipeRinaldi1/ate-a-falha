@@ -8,7 +8,7 @@ import { ExerciseEntity } from '../entities/exercise.entity.js'
 import { ExerciseMapper } from '../mappers/exercise.mapper.js'
 
 export class ExerciseRepository implements IExerciseRepository {
-	async create(data: CreateExerciseDTO): Promise<Result<ExerciseEntity | AppError>> {
+	async create(data: CreateExerciseDTO): Promise<Result<ExerciseEntity>> {
 		const result = await safeCall(
 			prisma.exercise.create({
 				data: data,
@@ -18,7 +18,7 @@ export class ExerciseRepository implements IExerciseRepository {
 		if (result.isFailure()) return failure(result.error)
 		return success(ExerciseMapper.toEntity(result.value))
 	}
-	async update(id: string, data: UpdateExerciseDTO): Promise<Result<ExerciseEntity | AppError>> {
+	async update(id: string, data: UpdateExerciseDTO): Promise<Result<ExerciseEntity>> {
 		const result = await safeCall(
 			prisma.exercise.update({
 				where: { id: id },
@@ -63,7 +63,7 @@ export class ExerciseRepository implements IExerciseRepository {
 		const entities = result.value.map((exercise) => ExerciseMapper.toEntity(exercise))
 		return success(entities)
 	}
-	async findById(id: string): Promise<Result<ExerciseEntity | AppError>> {
+	async findById(id: string): Promise<Result<ExerciseEntity>> {
 		const result = await safeCall(
 			prisma.exercise.findUniqueOrThrow({
 				where: { id: id },
