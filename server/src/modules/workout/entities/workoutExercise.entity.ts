@@ -5,6 +5,15 @@ export interface WorkoutExerciseEntity {
 	orderIndex: number
 	workoutId: string
 	exerciseId: string
+	createdAt: Date
+	updatedAt: Date
+}
+
+export interface FullWorkoutExerciseEntity {
+	id: string
+	orderIndex: number
+	workoutId: string
+	exerciseId: string
 	exercise?: ExerciseEntity
 	sets?: SetEntity[]
 	createdAt: Date

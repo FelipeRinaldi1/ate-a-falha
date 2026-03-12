@@ -5,11 +5,10 @@ import { ISetRepository } from '../interfaces/set.interface.js'
 import { failure, Result, success } from '@/@utils/result.js'
 import { CreateSetDTO, UpdateSetDTO } from '../DTOs/set.schema.js'
 import { SetMapper } from '../mappers/set.mapper.js'
-import { AppError } from '@/@utils/appError.js'
 
 export class SetRepository implements ISetRepository {
-	async ensureOwnership(workoutExerciseId: string, userId: string): Promise<Result<boolean>> {
-		const data = await safeCall(
+	async verifyOwnership(workoutExerciseId: string, userId: string): Promise<Result<boolean>> {
+		const result = await safeCall(
 			prisma.set.findFirstOrThrow({
 				where: {
 					workoutExerciseId: workoutExerciseId,
@@ -17,26 +16,12 @@ export class SetRepository implements ISetRepository {
 				},
 			})
 		)
-		if (data.isFailure()) return failure(data.error)
+		if (result.isFailure()) return failure({ type: 'FORBIDDEN', message: 'Not found or not Authorized' })
 
-		if (!data.value) {
-			const appError: AppError = {
-				message: 'Exercise not found or user not allowed',
-				type: 'FORBIDDEN',
-			}
-			return failure(appError)
-		}
 		return success(true)
 	}
 
-	async create(
-		data: CreateSetDTO,
-		workoutExerciseId: string,
-		userId: string
-	): Promise<Result<SetEntity>> {
-		const check = await this.ensureOwnership(workoutExerciseId, userId)
-		if (check.isFailure()) return failure(check.error)
-
+	async create(workoutExerciseId: string, data: CreateSetDTO, userId: string): Promise<Result<SetEntity>> {
 		const result = await safeCall(
 			prisma.set.create({
 				data: {
@@ -50,11 +35,7 @@ export class SetRepository implements ISetRepository {
 		return success(SetMapper.toEntity(result.value))
 	}
 
-	async update(
-		id: string,
-		data: UpdateSetDTO,
-		workoutExerciseId: string
-	): Promise<Result<SetEntity>> {
+	async update(id: string, data: UpdateSetDTO, workoutExerciseId: string): Promise<Result<SetEntity>> {
 		const result = await safeCall(
 			prisma.set.update({
 				where: {
@@ -86,9 +67,7 @@ export class SetRepository implements ISetRepository {
 	}
 
 	async findAll(workoutExerciseId: string): Promise<Result<SetEntity[]>> {
-		const result = await safeCall(
-			prisma.set.findMany({ where: { workoutExerciseId: workoutExerciseId } })
-		)
+		const result = await safeCall(prisma.set.findMany({ where: { workoutExerciseId: workoutExerciseId } }))
 
 		if (result.isFailure()) return failure(result.error)
 

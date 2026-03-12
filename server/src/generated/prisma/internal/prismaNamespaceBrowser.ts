@@ -58,10 +58,10 @@ export const ModelName = {
   Meal: 'Meal',
   FoodInMeal: 'FoodInMeal',
   Food: 'Food',
-  WorkoutPlan: 'WorkoutPlan',
+  Plan: 'Plan',
   Workout: 'Workout',
   WorkoutExercise: 'WorkoutExercise',
-  WorkoutSet: 'WorkoutSet',
+  Set: 'Set',
   Exercise: 'Exercise'
 } as const
 
@@ -178,7 +178,7 @@ export const FoodScalarFieldEnum = {
 export type FoodScalarFieldEnum = (typeof FoodScalarFieldEnum)[keyof typeof FoodScalarFieldEnum]
 
 
-export const WorkoutPlanScalarFieldEnum = {
+export const PlanScalarFieldEnum = {
   id: 'id',
   name: 'name',
   isActive: 'isActive',
@@ -187,14 +187,14 @@ export const WorkoutPlanScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type WorkoutPlanScalarFieldEnum = (typeof WorkoutPlanScalarFieldEnum)[keyof typeof WorkoutPlanScalarFieldEnum]
+export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
 
 
 export const WorkoutScalarFieldEnum = {
   id: 'id',
   name: 'name',
   day: 'day',
-  workoutPlanId: 'workoutPlanId',
+  PlanId: 'PlanId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -214,7 +214,7 @@ export const WorkoutExerciseScalarFieldEnum = {
 export type WorkoutExerciseScalarFieldEnum = (typeof WorkoutExerciseScalarFieldEnum)[keyof typeof WorkoutExerciseScalarFieldEnum]
 
 
-export const WorkoutSetScalarFieldEnum = {
+export const SetScalarFieldEnum = {
   id: 'id',
   setNumber: 'setNumber',
   repetitions: 'repetitions',
@@ -225,7 +225,7 @@ export const WorkoutSetScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type WorkoutSetScalarFieldEnum = (typeof WorkoutSetScalarFieldEnum)[keyof typeof WorkoutSetScalarFieldEnum]
+export type SetScalarFieldEnum = (typeof SetScalarFieldEnum)[keyof typeof SetScalarFieldEnum]
 
 
 export const ExerciseScalarFieldEnum = {

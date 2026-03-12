@@ -2,7 +2,6 @@ import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '../DTOs/exercise.schema.js'
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
-import { AppError } from '@/@utils/appError.js'
 import { failure, Result, success } from '@/@utils/result.js'
 import { ExerciseEntity } from '../entities/exercise.entity.js'
 import { ExerciseMapper } from '../mappers/exercise.mapper.js'
@@ -28,7 +27,7 @@ export class ExerciseRepository implements IExerciseRepository {
 		if (result.isFailure()) return failure(result.error)
 		return success(ExerciseMapper.toEntity(result.value))
 	}
-	async delete(id: string): Promise<Result<void | AppError>> {
+	async delete(id: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.exercise.delete({
 				where: { id: id },
