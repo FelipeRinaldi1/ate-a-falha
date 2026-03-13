@@ -5,14 +5,19 @@ import { ISetRepository } from '../interfaces/set.interface.js'
 import { failure, Result, success } from '@/@utils/result.js'
 import { CreateSetDTO, UpdateSetDTO } from '../DTOs/set.schema.js'
 import { SetMapper } from '../mappers/set.mapper.js'
-
 export class SetRepository implements ISetRepository {
+	private ownershipFilter(userId: string) {
+		return {
+			workoutExercise: { workout: { Plan: { userId: userId } } },
+		}
+	}
+
 	async verifyOwnership(workoutExerciseId: string, userId: string): Promise<Result<boolean>> {
 		const result = await safeCall(
 			prisma.set.findFirstOrThrow({
 				where: {
 					workoutExerciseId: workoutExerciseId,
-					workoutExercise: { workout: { Plan: { userId: userId } } },
+					...this.ownershipFilter(userId),
 				},
 			})
 		)
@@ -21,12 +26,15 @@ export class SetRepository implements ISetRepository {
 		return success(true)
 	}
 
-	async create(workoutExerciseId: string, data: CreateSetDTO, userId: string): Promise<Result<SetEntity>> {
+	async create(workoutExerciseId: string, data: CreateSetDTO): Promise<Result<SetEntity>> {
+		const count = await prisma.set.count({ where: { workoutExerciseId: workoutExerciseId } })
+
 		const result = await safeCall(
 			prisma.set.create({
 				data: {
 					...data,
 					workoutExerciseId: workoutExerciseId,
+					setNumber: count + 1,
 				},
 			})
 		)
@@ -35,12 +43,12 @@ export class SetRepository implements ISetRepository {
 		return success(SetMapper.toEntity(result.value))
 	}
 
-	async update(id: string, data: UpdateSetDTO, workoutExerciseId: string): Promise<Result<SetEntity>> {
+	async update(id: string, data: UpdateSetDTO, userId: string): Promise<Result<SetEntity>> {
 		const result = await safeCall(
 			prisma.set.update({
 				where: {
 					id: id,
-					workoutExerciseId: workoutExerciseId,
+					...this.ownershipFilter(userId),
 				},
 				data: {
 					...data,
@@ -52,11 +60,12 @@ export class SetRepository implements ISetRepository {
 		return success(SetMapper.toEntity(result.value))
 	}
 
-	async delete(id: string): Promise<Result<void>> {
+	async delete(id: string, userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.set.delete({
 				where: {
 					id: id,
+					...this.ownershipFilter(userId),
 				},
 			})
 		)
@@ -66,8 +75,10 @@ export class SetRepository implements ISetRepository {
 		return success(undefined)
 	}
 
-	async findAll(workoutExerciseId: string): Promise<Result<SetEntity[]>> {
-		const result = await safeCall(prisma.set.findMany({ where: { workoutExerciseId: workoutExerciseId } }))
+	async findAll(workoutExerciseId: string, userId: string): Promise<Result<SetEntity[]>> {
+		const result = await safeCall(
+			prisma.set.findMany({ where: { workoutExerciseId: workoutExerciseId, ...this.ownershipFilter(userId) } })
+		)
 
 		if (result.isFailure()) return failure(result.error)
 
@@ -75,14 +86,14 @@ export class SetRepository implements ISetRepository {
 		return success(entities)
 	}
 
-	async findById(id: string): Promise<Result<SetEntity>> {
+	async findById(id: string, userId: string): Promise<Result<SetEntity>> {
 		const result = await safeCall(
 			prisma.set.findUniqueOrThrow({
-				where: { id: id },
+				where: { id: id, ...this.ownershipFilter(userId) },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(result.value)
+		return success(SetMapper.toEntity(result.value))
 	}
 }
