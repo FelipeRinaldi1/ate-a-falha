@@ -3,7 +3,6 @@ import { Result } from '@/@utils/result.js'
 import { CreateSetDTO, UpdateSetDTO } from '../DTOs/set.schema.js'
 
 export interface ISetRepository {
-	verifyOwnership(id: string, userId: string): Promise<Result<boolean>>
 	create(workoutExerciseId: string, data: CreateSetDTO, userId: string): Promise<Result<SetEntity>>
 	update(id: string, data: UpdateSetDTO, userId: string): Promise<Result<SetEntity>>
 	delete(id: string, userId: string): Promise<Result<void>>

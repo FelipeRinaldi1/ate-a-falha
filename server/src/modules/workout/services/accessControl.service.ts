@@ -2,7 +2,7 @@ import { AppError } from '@/@utils/appError.js'
 import { IAccessControl } from '../interfaces/accessControl.interface.js'
 import { Result, failure, success } from '@/@utils/result.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
-export class AcessControllService {
+export class AccessControlService {
 	constructor(private accessControlRepo: IAccessControl) {}
 
 	private readonly ForbiddenError: AppError = {

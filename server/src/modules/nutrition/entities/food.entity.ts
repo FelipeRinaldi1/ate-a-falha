@@ -1,7 +1,7 @@
 export interface FoodEntity {
 	id: string
 	name: string
-	baseUnit: string // "g", "ml", "un", "serving"
+	baseUnit: string
 	baseAmount: number
 	calories: number
 	carbohydrate: number

@@ -8,21 +8,6 @@ import { IWorkoutInterface } from '@/modules/workout/interfaces/workout.interfac
 import { WorkoutMapper } from '@/modules/workout/mappers/workout.mapper.js'
 
 export class WorkoutRepository implements IWorkoutInterface {
-	async verifyOwnership(id: string, userId: string): Promise<Result<boolean>> {
-		const result = await safeCall(
-			prisma.workout.findFirstOrThrow({
-				where: {
-					id: id,
-					Plan: { userId: userId },
-				},
-				select: { id: true },
-			})
-		)
-		if (result.isFailure()) return failure({ type: 'FORBIDDEN', message: 'Not found or not Authorized' })
-
-		return success(true)
-	}
-
 	async create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutEntity>> {
 		const result = await safeCall(
 			prisma.workout.create({

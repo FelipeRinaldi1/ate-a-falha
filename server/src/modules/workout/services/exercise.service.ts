@@ -1,38 +1,31 @@
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
+import { AccessControlService } from './accessControl.service.js'
 import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '../DTOs/exercise.schema.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { ExerciseEntity } from '../entities/exercise.entity.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class ExerciseService {
-	constructor(private exerciseRepo: IExerciseRepository) {}
+	constructor(
+		private exerciseRepo: IExerciseRepository,
+		private accessControlService: AccessControlService
+	) {}
 
-	async create(
-		data: CreateExerciseDTO,
-		authUser: authenticatedUser
-	): Promise<Result<ExerciseEntity>> {
-		if (authUser.role !== 'ADMIN') {
-			return failure({
-				type: 'FORBIDDEN',
-				message: 'Acesso negado: Apenas administradores podem editar exercícios.',
-			})
-		}
+	async create(data: CreateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseEntity>> {
+		const access = await this.accessControlService.canManageGlobalExercises(authUser)
+		if (access.isFailure()) return failure(access.error)
+
 		const result = await this.exerciseRepo.create(data)
+
 		if (result.isFailure()) return failure(result.error)
+
 		return success(result.value)
 	}
 
-	async update(
-		id: string,
-		data: UpdateExerciseDTO,
-		authUser: authenticatedUser
-	): Promise<Result<ExerciseEntity>> {
-		if (authUser.role !== 'ADMIN') {
-			return failure({
-				type: 'FORBIDDEN',
-				message: 'Acesso negado: Apenas administradores podem editar exercícios.',
-			})
-		}
+	async update(id: string, data: UpdateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseEntity>> {
+		const access = await this.accessControlService.canManageGlobalExercises(authUser)
+		if (access.isFailure()) return failure(access.error)
+
 		const result = await this.exerciseRepo.update(id, data)
 
 		if (result.isFailure()) return failure(result.error)
@@ -40,12 +33,8 @@ export class ExerciseService {
 	}
 
 	async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
-		if (authUser.role !== 'ADMIN') {
-			return failure({
-				type: 'FORBIDDEN',
-				message: 'Acesso negado: Apenas administradores podem editar exercícios.',
-			})
-		}
+		const access = await this.accessControlService.canManageGlobalExercises(authUser)
+		if (access.isFailure()) return failure(access.error)
 
 		const result = await this.exerciseRepo.delete(id)
 		if (result.isFailure()) return failure(result.error)

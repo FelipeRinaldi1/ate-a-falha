@@ -1,4 +1,3 @@
-import { MealEntity } from './meal.enitity.js'
 export interface DietEntity {
 	id: string
 	name: string
@@ -8,7 +7,6 @@ export interface DietEntity {
 	dailyFatGoal: number
 	dailyWaterGoal: number
 	userId: string
-	meals?: MealEntity[]
 	createdAt: Date
 	updatedAt: Date
 }

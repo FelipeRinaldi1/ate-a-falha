@@ -12,20 +12,6 @@ export class SetRepository implements ISetRepository {
 		}
 	}
 
-	async verifyOwnership(workoutExerciseId: string, userId: string): Promise<Result<boolean>> {
-		const result = await safeCall(
-			prisma.set.findFirstOrThrow({
-				where: {
-					workoutExerciseId: workoutExerciseId,
-					...this.ownershipFilter(userId),
-				},
-			})
-		)
-		if (result.isFailure()) return failure({ type: 'FORBIDDEN', message: 'Not found or not Authorized' })
-
-		return success(true)
-	}
-
 	async create(workoutExerciseId: string, data: CreateSetDTO): Promise<Result<SetEntity>> {
 		const count = await prisma.set.count({ where: { workoutExerciseId: workoutExerciseId } })
 

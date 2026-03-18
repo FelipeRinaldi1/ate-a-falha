@@ -1,45 +1,52 @@
 import { ISetRepository } from '../interfaces/set.interface.js'
-import { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
-import { Result } from '@/@utils/result.js'
+import { AccessControlService } from './accessControl.service.js'
+import { failure, Result } from '@/@utils/result.js'
 import { CreateSetDTO, UpdateSetDTO } from '../DTOs/set.schema.js'
 import { SetEntity } from '../entities/set.entitiy.js'
 
 export class SetService {
 	constructor(
 		private setRepository: ISetRepository,
-		private workoutExerciseRepository: IWorkoutExerciseRepository
+		private acessControlService: AccessControlService
 	) {}
 
-	async createSet(
-		data: CreateSetDTO,
-		workoutExerciseId: string,
-		userId: string
-	): Promise<Result<SetEntity>> {
-		const isOwner = await this.workoutExerciseRepository.checkOwnership(
-			workoutExerciseId,
-			userId
-		)
+	async createSet(data: CreateSetDTO, workoutExerciseId: string, userId: string): Promise<Result<SetEntity>> {
+		const access = await this.acessControlService.canAccessWorkoutExercise(workoutExerciseId, userId)
 
-		if (isOwner.isFailure()) {
-			return isOwner
-		}
+		if (access.isFailure()) return failure(access.error)
 
-		return await this.setRepository.create(data, workoutExerciseId)
+		return await this.setRepository.create(workoutExerciseId, data, userId)
 	}
 
 	async updateSet(id: string, data: UpdateSetDTO, userId: string): Promise<Result<SetEntity>> {
+		const access = await this.acessControlService.canAccessSet(id, userId)
+
+		if (access.isFailure()) return failure(access.error)
+
 		return await this.setRepository.update(id, data, userId)
 	}
 
 	async deleteSet(id: string, userId: string): Promise<Result<void>> {
+		const access = await this.acessControlService.canAccessSet(id, userId)
+
+		if (access.isFailure()) return failure(access.error)
+
 		return await this.setRepository.delete(id, userId)
 	}
 
 	async getAllSets(workoutExerciseId: string, userId: string): Promise<Result<SetEntity[]>> {
+		const access = await this.acessControlService.canAccessWorkoutExercise(workoutExerciseId, userId)
+
+		if (access.isFailure()) return failure(access.error)
+
 		return await this.setRepository.findAll(workoutExerciseId, userId)
 	}
 
 	async getSetById(id: string, userId: string): Promise<Result<SetEntity>> {
+		const access = await this.acessControlService.canAccessSet(id, userId)
+
+		if (access.isFailure()) return failure(access.error)
+
 		return await this.setRepository.findById(id, userId)
 	}
 }
