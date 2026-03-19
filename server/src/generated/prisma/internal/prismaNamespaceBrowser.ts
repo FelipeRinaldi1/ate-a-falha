@@ -127,6 +127,7 @@ export const DietScalarFieldEnum = {
   dailyCarbGoal: 'dailyCarbGoal',
   dailyFatGoal: 'dailyFatGoal',
   dailyWaterGoal: 'dailyWaterGoal',
+  dailyWater: 'dailyWater',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

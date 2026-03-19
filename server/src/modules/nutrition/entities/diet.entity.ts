@@ -6,6 +6,7 @@ export interface DietEntity {
 	dailyCarbGoal: number
 	dailyFatGoal: number
 	dailyWaterGoal: number
+	dailyWater: number
 	userId: string
 	createdAt: Date
 	updatedAt: Date

@@ -11,6 +11,7 @@ export class DietMapper {
 			dailyCarbGoal: diet.dailyCarbGoal,
 			dailyFatGoal: diet.dailyFatGoal,
 			dailyWaterGoal: diet.dailyWaterGoal,
+			dailyWater: diet.dailyWater,
 			userId: diet.userId,
 			createdAt: diet.createdAt,
 			updatedAt: diet.updatedAt,

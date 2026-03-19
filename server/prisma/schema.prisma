@@ -106,7 +106,7 @@ model Diet {
 model Meal {
   id         String @id @default(uuid())
   name       String @db.VarChar(64)
-  time       DateTime?
+  time       String
   orderIndex Int
 
   diet   Diet   @relation(fields: [dietId], references: [id], onDelete: Cascade)

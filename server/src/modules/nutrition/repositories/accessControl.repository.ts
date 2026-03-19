@@ -34,7 +34,7 @@ export class NutritionAccessControlRepository implements INutritionAccessControl
 		return success(true)
 	}
 
-	async canACcessFoodInMeal(foodInMealId: string, userId: string): Promise<Result<boolean>> {
+	async canAccessFoodInMeal(foodInMealId: string, userId: string): Promise<Result<boolean>> {
 		const result = await safeCall(
 			prisma.foodInMeal.findFirstOrThrow({
 				where: {
@@ -42,6 +42,19 @@ export class NutritionAccessControlRepository implements INutritionAccessControl
 					meal: { diet: { userId: userId } },
 				},
 				select: { id: true },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+
+		return success(true)
+	}
+	async canAccessFood(foodId: string, userId: string): Promise<Result<boolean>> {
+		const result = await safeCall(
+			prisma.food.findFirstOrThrow({
+				where: {
+					id: foodId,
+					OR: [{ userId: userId }, { userId: null }],
+				},
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

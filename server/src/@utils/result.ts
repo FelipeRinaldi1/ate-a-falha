@@ -24,3 +24,18 @@ export class Failure<T, E> {
 
 export const success = <T, E>(value: T): Result<T, E> => new Success(value)
 export const failure = <T, E>(error: E): Result<T, E> => new Failure(error)
+
+export const Result = {
+	combine: <T, E>(results: Result<T, E>[]): Result<T[], E> => {
+		const values: T[] = []
+
+		for (const result of results) {
+			if (result.isFailure()) {
+				return failure(result.error)
+			}
+			values.push(result.value)
+		}
+
+		return success(values)
+	},
+}

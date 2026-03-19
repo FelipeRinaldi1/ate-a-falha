@@ -7,6 +7,7 @@ export const createDietSchema = z.object({
 	dailyCarbGoal: z.number().nonnegative('Carb goal cannot be negative'),
 	dailyFatGoal: z.number().nonnegative('Fat goal cannot be negative'),
 	dailyWaterGoal: z.number().positive('Water goal must be a positive number'),
+	dailyWater: z.number().positive('Water must be a positive number'),
 	userId: z.uuid('Invalid User ID format'),
 })
 
