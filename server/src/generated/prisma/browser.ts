@@ -53,10 +53,10 @@ export type FoodInMeal = Prisma.FoodInMealModel
  */
 export type Food = Prisma.FoodModel
 /**
- * Model WorkoutPlan
+ * Model Plan
  * 
  */
-export type WorkoutPlan = Prisma.WorkoutPlanModel
+export type Plan = Prisma.PlanModel
 /**
  * Model Workout
  * 
@@ -68,10 +68,10 @@ export type Workout = Prisma.WorkoutModel
  */
 export type WorkoutExercise = Prisma.WorkoutExerciseModel
 /**
- * Model WorkoutSet
+ * Model Set
  * 
  */
-export type WorkoutSet = Prisma.WorkoutSetModel
+export type Set = Prisma.SetModel
 /**
  * Model Exercise
  * 

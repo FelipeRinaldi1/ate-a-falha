@@ -13,8 +13,7 @@ export async function safeCall<T>(promise: Promise<T>): Promise<Result<T>> {
 				case 'P2003':
 					return failure({
 						type: 'CONFLICT',
-						message:
-							'Foreign key constraint failed. A related record is required or still exists.',
+						message: 'Foreign key constraint failed. A related record is required or still exists.',
 					})
 				case 'P2025':
 					return failure({ type: 'NOT_FOUND', message: 'Register not found.' })
@@ -23,7 +22,7 @@ export async function safeCall<T>(promise: Promise<T>): Promise<Result<T>> {
 
 		return failure({
 			type: 'DATABASE_ERROR',
-			message: error instanceof Error ? error.message : 'Error in Database.',
+			message: 'Internal database error',
 		})
 	}
 }

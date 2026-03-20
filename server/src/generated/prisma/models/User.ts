@@ -200,7 +200,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   auth?: Prisma.XOR<Prisma.AuthNullableScalarRelationFilter, Prisma.AuthWhereInput> | null
   Diet?: Prisma.DietListRelationFilter
-  WorkoutPlan?: Prisma.WorkoutPlanListRelationFilter
+  Plan?: Prisma.PlanListRelationFilter
   bodyMetrics?: Prisma.BodyMetricListRelationFilter
   food?: Prisma.FoodListRelationFilter
 }
@@ -215,7 +215,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   auth?: Prisma.AuthOrderByWithRelationInput
   Diet?: Prisma.DietOrderByRelationAggregateInput
-  WorkoutPlan?: Prisma.WorkoutPlanOrderByRelationAggregateInput
+  Plan?: Prisma.PlanOrderByRelationAggregateInput
   bodyMetrics?: Prisma.BodyMetricOrderByRelationAggregateInput
   food?: Prisma.FoodOrderByRelationAggregateInput
 }
@@ -233,7 +233,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   auth?: Prisma.XOR<Prisma.AuthNullableScalarRelationFilter, Prisma.AuthWhereInput> | null
   Diet?: Prisma.DietListRelationFilter
-  WorkoutPlan?: Prisma.WorkoutPlanListRelationFilter
+  Plan?: Prisma.PlanListRelationFilter
   bodyMetrics?: Prisma.BodyMetricListRelationFilter
   food?: Prisma.FoodListRelationFilter
 }, "id">
@@ -274,7 +274,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricCreateNestedManyWithoutUserInput
   food?: Prisma.FoodCreateNestedManyWithoutUserInput
 }
@@ -289,7 +289,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthUncheckedCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietUncheckedCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanUncheckedCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricUncheckedCreateNestedManyWithoutUserInput
   food?: Prisma.FoodUncheckedCreateNestedManyWithoutUserInput
 }
@@ -304,7 +304,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUpdateManyWithoutUserNestedInput
 }
@@ -319,7 +319,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUncheckedUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUncheckedUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUncheckedUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUncheckedUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -468,18 +468,18 @@ export type UserUpdateOneWithoutFoodNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFoodInput, Prisma.UserUpdateWithoutFoodInput>, Prisma.UserUncheckedUpdateWithoutFoodInput>
 }
 
-export type UserCreateNestedOneWithoutWorkoutPlanInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutWorkoutPlanInput, Prisma.UserUncheckedCreateWithoutWorkoutPlanInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWorkoutPlanInput
+export type UserCreateNestedOneWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlanInput, Prisma.UserUncheckedCreateWithoutPlanInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlanInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutWorkoutPlanNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutWorkoutPlanInput, Prisma.UserUncheckedCreateWithoutWorkoutPlanInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWorkoutPlanInput
-  upsert?: Prisma.UserUpsertWithoutWorkoutPlanInput
+export type UserUpdateOneRequiredWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPlanInput, Prisma.UserUncheckedCreateWithoutPlanInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPlanInput
+  upsert?: Prisma.UserUpsertWithoutPlanInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWorkoutPlanInput, Prisma.UserUpdateWithoutWorkoutPlanInput>, Prisma.UserUncheckedUpdateWithoutWorkoutPlanInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPlanInput, Prisma.UserUpdateWithoutPlanInput>, Prisma.UserUncheckedUpdateWithoutPlanInput>
 }
 
 export type UserCreateWithoutAuthInput = {
@@ -491,7 +491,7 @@ export type UserCreateWithoutAuthInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Diet?: Prisma.DietCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricCreateNestedManyWithoutUserInput
   food?: Prisma.FoodCreateNestedManyWithoutUserInput
 }
@@ -505,7 +505,7 @@ export type UserUncheckedCreateWithoutAuthInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Diet?: Prisma.DietUncheckedCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanUncheckedCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricUncheckedCreateNestedManyWithoutUserInput
   food?: Prisma.FoodUncheckedCreateNestedManyWithoutUserInput
 }
@@ -535,7 +535,7 @@ export type UserUpdateWithoutAuthInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Diet?: Prisma.DietUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUpdateManyWithoutUserNestedInput
 }
@@ -549,7 +549,7 @@ export type UserUncheckedUpdateWithoutAuthInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Diet?: Prisma.DietUncheckedUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUncheckedUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUncheckedUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -564,7 +564,7 @@ export type UserCreateWithoutBodyMetricsInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanCreateNestedManyWithoutUserInput
   food?: Prisma.FoodCreateNestedManyWithoutUserInput
 }
 
@@ -578,7 +578,7 @@ export type UserUncheckedCreateWithoutBodyMetricsInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthUncheckedCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietUncheckedCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanUncheckedCreateNestedManyWithoutUserInput
   food?: Prisma.FoodUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -608,7 +608,7 @@ export type UserUpdateWithoutBodyMetricsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUpdateManyWithoutUserNestedInput
 }
 
@@ -622,7 +622,7 @@ export type UserUncheckedUpdateWithoutBodyMetricsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUncheckedUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUncheckedUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUncheckedUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -635,7 +635,7 @@ export type UserCreateWithoutDietInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   auth?: Prisma.AuthCreateNestedOneWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricCreateNestedManyWithoutUserInput
   food?: Prisma.FoodCreateNestedManyWithoutUserInput
 }
@@ -649,7 +649,7 @@ export type UserUncheckedCreateWithoutDietInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   auth?: Prisma.AuthUncheckedCreateNestedOneWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanUncheckedCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricUncheckedCreateNestedManyWithoutUserInput
   food?: Prisma.FoodUncheckedCreateNestedManyWithoutUserInput
 }
@@ -679,7 +679,7 @@ export type UserUpdateWithoutDietInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUpdateOneWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUpdateManyWithoutUserNestedInput
 }
@@ -693,7 +693,7 @@ export type UserUncheckedUpdateWithoutDietInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUncheckedUpdateOneWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUncheckedUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUncheckedUpdateManyWithoutUserNestedInput
   food?: Prisma.FoodUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -708,7 +708,7 @@ export type UserCreateWithoutFoodInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricCreateNestedManyWithoutUserInput
 }
 
@@ -722,7 +722,7 @@ export type UserUncheckedCreateWithoutFoodInput = {
   updatedAt?: Date | string
   auth?: Prisma.AuthUncheckedCreateNestedOneWithoutUserInput
   Diet?: Prisma.DietUncheckedCreateNestedManyWithoutUserInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedCreateNestedManyWithoutUserInput
+  Plan?: Prisma.PlanUncheckedCreateNestedManyWithoutUserInput
   bodyMetrics?: Prisma.BodyMetricUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -752,7 +752,7 @@ export type UserUpdateWithoutFoodInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUpdateManyWithoutUserNestedInput
 }
 
@@ -766,11 +766,11 @@ export type UserUncheckedUpdateWithoutFoodInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auth?: Prisma.AuthUncheckedUpdateOneWithoutUserNestedInput
   Diet?: Prisma.DietUncheckedUpdateManyWithoutUserNestedInput
-  WorkoutPlan?: Prisma.WorkoutPlanUncheckedUpdateManyWithoutUserNestedInput
+  Plan?: Prisma.PlanUncheckedUpdateManyWithoutUserNestedInput
   bodyMetrics?: Prisma.BodyMetricUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutWorkoutPlanInput = {
+export type UserCreateWithoutPlanInput = {
   id?: string
   role?: $Enums.ROLE
   name: string
@@ -784,7 +784,7 @@ export type UserCreateWithoutWorkoutPlanInput = {
   food?: Prisma.FoodCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutWorkoutPlanInput = {
+export type UserUncheckedCreateWithoutPlanInput = {
   id?: string
   role?: $Enums.ROLE
   name: string
@@ -798,23 +798,23 @@ export type UserUncheckedCreateWithoutWorkoutPlanInput = {
   food?: Prisma.FoodUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutWorkoutPlanInput = {
+export type UserCreateOrConnectWithoutPlanInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutWorkoutPlanInput, Prisma.UserUncheckedCreateWithoutWorkoutPlanInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlanInput, Prisma.UserUncheckedCreateWithoutPlanInput>
 }
 
-export type UserUpsertWithoutWorkoutPlanInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutWorkoutPlanInput, Prisma.UserUncheckedUpdateWithoutWorkoutPlanInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutWorkoutPlanInput, Prisma.UserUncheckedCreateWithoutWorkoutPlanInput>
+export type UserUpsertWithoutPlanInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPlanInput, Prisma.UserUncheckedUpdateWithoutPlanInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPlanInput, Prisma.UserUncheckedCreateWithoutPlanInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutWorkoutPlanInput = {
+export type UserUpdateToOneWithWhereWithoutPlanInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutWorkoutPlanInput, Prisma.UserUncheckedUpdateWithoutWorkoutPlanInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPlanInput, Prisma.UserUncheckedUpdateWithoutPlanInput>
 }
 
-export type UserUpdateWithoutWorkoutPlanInput = {
+export type UserUpdateWithoutPlanInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumROLEFieldUpdateOperationsInput | $Enums.ROLE
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -828,7 +828,7 @@ export type UserUpdateWithoutWorkoutPlanInput = {
   food?: Prisma.FoodUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutWorkoutPlanInput = {
+export type UserUncheckedUpdateWithoutPlanInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumROLEFieldUpdateOperationsInput | $Enums.ROLE
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -849,14 +849,14 @@ export type UserUncheckedUpdateWithoutWorkoutPlanInput = {
 
 export type UserCountOutputType = {
   Diet: number
-  WorkoutPlan: number
+  Plan: number
   bodyMetrics: number
   food: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Diet?: boolean | UserCountOutputTypeCountDietArgs
-  WorkoutPlan?: boolean | UserCountOutputTypeCountWorkoutPlanArgs
+  Plan?: boolean | UserCountOutputTypeCountPlanArgs
   bodyMetrics?: boolean | UserCountOutputTypeCountBodyMetricsArgs
   food?: boolean | UserCountOutputTypeCountFoodArgs
 }
@@ -881,8 +881,8 @@ export type UserCountOutputTypeCountDietArgs<ExtArgs extends runtime.Types.Exten
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountWorkoutPlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WorkoutPlanWhereInput
+export type UserCountOutputTypeCountPlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlanWhereInput
 }
 
 /**
@@ -910,7 +910,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   auth?: boolean | Prisma.User$authArgs<ExtArgs>
   Diet?: boolean | Prisma.User$DietArgs<ExtArgs>
-  WorkoutPlan?: boolean | Prisma.User$WorkoutPlanArgs<ExtArgs>
+  Plan?: boolean | Prisma.User$PlanArgs<ExtArgs>
   bodyMetrics?: boolean | Prisma.User$bodyMetricsArgs<ExtArgs>
   food?: boolean | Prisma.User$foodArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -950,7 +950,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   auth?: boolean | Prisma.User$authArgs<ExtArgs>
   Diet?: boolean | Prisma.User$DietArgs<ExtArgs>
-  WorkoutPlan?: boolean | Prisma.User$WorkoutPlanArgs<ExtArgs>
+  Plan?: boolean | Prisma.User$PlanArgs<ExtArgs>
   bodyMetrics?: boolean | Prisma.User$bodyMetricsArgs<ExtArgs>
   food?: boolean | Prisma.User$foodArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -963,7 +963,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     auth: Prisma.$AuthPayload<ExtArgs> | null
     Diet: Prisma.$DietPayload<ExtArgs>[]
-    WorkoutPlan: Prisma.$WorkoutPlanPayload<ExtArgs>[]
+    Plan: Prisma.$PlanPayload<ExtArgs>[]
     bodyMetrics: Prisma.$BodyMetricPayload<ExtArgs>[]
     food: Prisma.$FoodPayload<ExtArgs>[]
   }
@@ -1371,7 +1371,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   auth<T extends Prisma.User$authArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authArgs<ExtArgs>>): Prisma.Prisma__AuthClient<runtime.Types.Result.GetResult<Prisma.$AuthPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   Diet<T extends Prisma.User$DietArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$DietArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DietPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  WorkoutPlan<T extends Prisma.User$WorkoutPlanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$WorkoutPlanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkoutPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Plan<T extends Prisma.User$PlanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$PlanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bodyMetrics<T extends Prisma.User$bodyMetricsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bodyMetricsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BodyMetricPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   food<T extends Prisma.User$foodArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foodArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FoodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1841,27 +1841,27 @@ export type User$DietArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 }
 
 /**
- * User.WorkoutPlan
+ * User.Plan
  */
-export type User$WorkoutPlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$PlanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the WorkoutPlan
+   * Select specific fields to fetch from the Plan
    */
-  select?: Prisma.WorkoutPlanSelect<ExtArgs> | null
+  select?: Prisma.PlanSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the WorkoutPlan
+   * Omit specific fields from the Plan
    */
-  omit?: Prisma.WorkoutPlanOmit<ExtArgs> | null
+  omit?: Prisma.PlanOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.WorkoutPlanInclude<ExtArgs> | null
-  where?: Prisma.WorkoutPlanWhereInput
-  orderBy?: Prisma.WorkoutPlanOrderByWithRelationInput | Prisma.WorkoutPlanOrderByWithRelationInput[]
-  cursor?: Prisma.WorkoutPlanWhereUniqueInput
+  include?: Prisma.PlanInclude<ExtArgs> | null
+  where?: Prisma.PlanWhereInput
+  orderBy?: Prisma.PlanOrderByWithRelationInput | Prisma.PlanOrderByWithRelationInput[]
+  cursor?: Prisma.PlanWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.WorkoutPlanScalarFieldEnum | Prisma.WorkoutPlanScalarFieldEnum[]
+  distinct?: Prisma.PlanScalarFieldEnum | Prisma.PlanScalarFieldEnum[]
 }
 
 /**

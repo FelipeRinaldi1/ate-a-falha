@@ -32,6 +32,7 @@ export type DietAvgAggregateOutputType = {
   dailyCarbGoal: number | null
   dailyFatGoal: number | null
   dailyWaterGoal: number | null
+  dailyWater: number | null
 }
 
 export type DietSumAggregateOutputType = {
@@ -40,6 +41,7 @@ export type DietSumAggregateOutputType = {
   dailyCarbGoal: number | null
   dailyFatGoal: number | null
   dailyWaterGoal: number | null
+  dailyWater: number | null
 }
 
 export type DietMinAggregateOutputType = {
@@ -50,6 +52,7 @@ export type DietMinAggregateOutputType = {
   dailyCarbGoal: number | null
   dailyFatGoal: number | null
   dailyWaterGoal: number | null
+  dailyWater: number | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +66,7 @@ export type DietMaxAggregateOutputType = {
   dailyCarbGoal: number | null
   dailyFatGoal: number | null
   dailyWaterGoal: number | null
+  dailyWater: number | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -76,6 +80,7 @@ export type DietCountAggregateOutputType = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -89,6 +94,7 @@ export type DietAvgAggregateInputType = {
   dailyCarbGoal?: true
   dailyFatGoal?: true
   dailyWaterGoal?: true
+  dailyWater?: true
 }
 
 export type DietSumAggregateInputType = {
@@ -97,6 +103,7 @@ export type DietSumAggregateInputType = {
   dailyCarbGoal?: true
   dailyFatGoal?: true
   dailyWaterGoal?: true
+  dailyWater?: true
 }
 
 export type DietMinAggregateInputType = {
@@ -107,6 +114,7 @@ export type DietMinAggregateInputType = {
   dailyCarbGoal?: true
   dailyFatGoal?: true
   dailyWaterGoal?: true
+  dailyWater?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -120,6 +128,7 @@ export type DietMaxAggregateInputType = {
   dailyCarbGoal?: true
   dailyFatGoal?: true
   dailyWaterGoal?: true
+  dailyWater?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -133,6 +142,7 @@ export type DietCountAggregateInputType = {
   dailyCarbGoal?: true
   dailyFatGoal?: true
   dailyWaterGoal?: true
+  dailyWater?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -233,6 +243,7 @@ export type DietGroupByOutputType = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -269,6 +280,7 @@ export type DietWhereInput = {
   dailyCarbGoal?: Prisma.IntFilter<"Diet"> | number
   dailyFatGoal?: Prisma.IntFilter<"Diet"> | number
   dailyWaterGoal?: Prisma.IntFilter<"Diet"> | number
+  dailyWater?: Prisma.IntFilter<"Diet"> | number
   userId?: Prisma.StringFilter<"Diet"> | string
   createdAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
@@ -284,6 +296,7 @@ export type DietOrderByWithRelationInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -293,6 +306,7 @@ export type DietOrderByWithRelationInput = {
 
 export type DietWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  uniqueId?: Prisma.DietUniqueIdCompoundUniqueInput
   AND?: Prisma.DietWhereInput | Prisma.DietWhereInput[]
   OR?: Prisma.DietWhereInput[]
   NOT?: Prisma.DietWhereInput | Prisma.DietWhereInput[]
@@ -302,12 +316,13 @@ export type DietWhereUniqueInput = Prisma.AtLeast<{
   dailyCarbGoal?: Prisma.IntFilter<"Diet"> | number
   dailyFatGoal?: Prisma.IntFilter<"Diet"> | number
   dailyWaterGoal?: Prisma.IntFilter<"Diet"> | number
+  dailyWater?: Prisma.IntFilter<"Diet"> | number
   userId?: Prisma.StringFilter<"Diet"> | string
   createdAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   Meal?: Prisma.MealListRelationFilter
-}, "id">
+}, "id" | "uniqueId">
 
 export type DietOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -317,6 +332,7 @@ export type DietOrderByWithAggregationInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -338,6 +354,7 @@ export type DietScalarWhereWithAggregatesInput = {
   dailyCarbGoal?: Prisma.IntWithAggregatesFilter<"Diet"> | number
   dailyFatGoal?: Prisma.IntWithAggregatesFilter<"Diet"> | number
   dailyWaterGoal?: Prisma.IntWithAggregatesFilter<"Diet"> | number
+  dailyWater?: Prisma.IntWithAggregatesFilter<"Diet"> | number
   userId?: Prisma.StringWithAggregatesFilter<"Diet"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Diet"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Diet"> | Date | string
@@ -351,6 +368,7 @@ export type DietCreateInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDietInput
@@ -365,6 +383,7 @@ export type DietUncheckedCreateInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -379,6 +398,7 @@ export type DietUpdateInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDietNestedInput
@@ -393,6 +413,7 @@ export type DietUncheckedUpdateInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +428,7 @@ export type DietCreateManyInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -420,6 +442,7 @@ export type DietUpdateManyMutationInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -432,6 +455,7 @@ export type DietUncheckedUpdateManyInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -447,6 +471,11 @@ export type DietOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type DietUniqueIdCompoundUniqueInput = {
+  id: string
+  userId: string
+}
+
 export type DietCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -455,6 +484,7 @@ export type DietCountOrderByAggregateInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -466,6 +496,7 @@ export type DietAvgOrderByAggregateInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
 }
 
 export type DietMaxOrderByAggregateInput = {
@@ -476,6 +507,7 @@ export type DietMaxOrderByAggregateInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -489,6 +521,7 @@ export type DietMinOrderByAggregateInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -500,6 +533,7 @@ export type DietSumOrderByAggregateInput = {
   dailyCarbGoal?: Prisma.SortOrder
   dailyFatGoal?: Prisma.SortOrder
   dailyWaterGoal?: Prisma.SortOrder
+  dailyWater?: Prisma.SortOrder
 }
 
 export type DietScalarRelationFilter = {
@@ -571,6 +605,7 @@ export type DietCreateWithoutUserInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   createdAt?: Date | string
   updatedAt?: Date | string
   Meal?: Prisma.MealCreateNestedManyWithoutDietInput
@@ -584,6 +619,7 @@ export type DietUncheckedCreateWithoutUserInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   createdAt?: Date | string
   updatedAt?: Date | string
   Meal?: Prisma.MealUncheckedCreateNestedManyWithoutDietInput
@@ -626,6 +662,7 @@ export type DietScalarWhereInput = {
   dailyCarbGoal?: Prisma.IntFilter<"Diet"> | number
   dailyFatGoal?: Prisma.IntFilter<"Diet"> | number
   dailyWaterGoal?: Prisma.IntFilter<"Diet"> | number
+  dailyWater?: Prisma.IntFilter<"Diet"> | number
   userId?: Prisma.StringFilter<"Diet"> | string
   createdAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Diet"> | Date | string
@@ -639,6 +676,7 @@ export type DietCreateWithoutMealInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDietInput
@@ -652,6 +690,7 @@ export type DietUncheckedCreateWithoutMealInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -681,6 +720,7 @@ export type DietUpdateWithoutMealInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDietNestedInput
@@ -694,6 +734,7 @@ export type DietUncheckedUpdateWithoutMealInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -707,6 +748,7 @@ export type DietCreateManyUserInput = {
   dailyCarbGoal: number
   dailyFatGoal: number
   dailyWaterGoal: number
+  dailyWater: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -719,6 +761,7 @@ export type DietUpdateWithoutUserInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Meal?: Prisma.MealUpdateManyWithoutDietNestedInput
@@ -732,6 +775,7 @@ export type DietUncheckedUpdateWithoutUserInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Meal?: Prisma.MealUncheckedUpdateManyWithoutDietNestedInput
@@ -745,6 +789,7 @@ export type DietUncheckedUpdateManyWithoutUserInput = {
   dailyCarbGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyFatGoal?: Prisma.IntFieldUpdateOperationsInput | number
   dailyWaterGoal?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyWater?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -788,6 +833,7 @@ export type DietSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   dailyCarbGoal?: boolean
   dailyFatGoal?: boolean
   dailyWaterGoal?: boolean
+  dailyWater?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -804,6 +850,7 @@ export type DietSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   dailyCarbGoal?: boolean
   dailyFatGoal?: boolean
   dailyWaterGoal?: boolean
+  dailyWater?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -818,6 +865,7 @@ export type DietSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   dailyCarbGoal?: boolean
   dailyFatGoal?: boolean
   dailyWaterGoal?: boolean
+  dailyWater?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -832,12 +880,13 @@ export type DietSelectScalar = {
   dailyCarbGoal?: boolean
   dailyFatGoal?: boolean
   dailyWaterGoal?: boolean
+  dailyWater?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DietOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "dailyKcalGoal" | "dailyProteinGoal" | "dailyCarbGoal" | "dailyFatGoal" | "dailyWaterGoal" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["diet"]>
+export type DietOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "dailyKcalGoal" | "dailyProteinGoal" | "dailyCarbGoal" | "dailyFatGoal" | "dailyWaterGoal" | "dailyWater" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["diet"]>
 export type DietInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Meal?: boolean | Prisma.Diet$MealArgs<ExtArgs>
@@ -864,6 +913,7 @@ export type $DietPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     dailyCarbGoal: number
     dailyFatGoal: number
     dailyWaterGoal: number
+    dailyWater: number
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -1299,6 +1349,7 @@ export interface DietFieldRefs {
   readonly dailyCarbGoal: Prisma.FieldRef<"Diet", 'Int'>
   readonly dailyFatGoal: Prisma.FieldRef<"Diet", 'Int'>
   readonly dailyWaterGoal: Prisma.FieldRef<"Diet", 'Int'>
+  readonly dailyWater: Prisma.FieldRef<"Diet", 'Int'>
   readonly userId: Prisma.FieldRef<"Diet", 'String'>
   readonly createdAt: Prisma.FieldRef<"Diet", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Diet", 'DateTime'>

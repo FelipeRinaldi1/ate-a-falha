@@ -1,14 +1,12 @@
-import {prisma} from '@/@infra/prisma.client.js'
+import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { IFoodRepository } from '../interfaces/food.interfaces.js'
 import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../DTOs/food.schema.js'
 import { FoodEntity } from '../entities/food.entity.js'
-import { FoodMapper } from '../mapper/food.mapper.js'
+import { FoodMapper } from '../mappers/food.mapper.js'
 
 export class FoodRepository implements IFoodRepository {
-	constructor() {}
-
 	async create(data: createFoodDTO, userId?: string): Promise<Result<FoodEntity>> {
 		const result = await safeCall(
 			prisma.food.create({
@@ -23,21 +21,22 @@ export class FoodRepository implements IFoodRepository {
 	async findAll(data: foodSearchDTO, userId?: string): Promise<Result<FoodEntity[]>> {
 		const result = await safeCall(
 			prisma.food.findMany({
-				take: data.take || 10, 
+				take: data.take || 10,
 				skip: data.cursorId ? 1 : 0,
 				cursor: data.cursorId ? { id: data.cursorId } : undefined,
 				where: {
 					AND: [
-						userId ? {
-							OR: [
-								{ userId: userId },
-								{ userId: null }
-							]
-						} : {},
-						data.name ? { 
-							name: { contains: data.name, mode: 'insensitive' } 
-						} : {}
-					]
+						userId
+							? {
+									OR: [{ userId: userId }, { userId: null }],
+								}
+							: {},
+						data.name
+							? {
+									name: { contains: data.name, mode: 'insensitive' },
+								}
+							: {},
+					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],
 			})

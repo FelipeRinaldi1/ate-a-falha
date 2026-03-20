@@ -5,89 +5,95 @@ import { success, failure, Result } from '@/@utils/result.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class FoodService {
-    constructor(private foodRepository: IFoodRepository) {}
+	constructor(private foodRepository: IFoodRepository) {}
 
-    private async validatePermission(id: string, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
-        const result = await this.foodRepository.findById(id)
-        if (result.isFailure()) return failure(result.error)
+	private async validatePermission(
+		id: string,
+		authUser: authenticatedUser
+	): Promise<Result<FoodEntity>> {
+		const result = await this.foodRepository.findById(id)
+		if (result.isFailure()) return failure(result.error)
 
-        const food = result.value
-        const isAdmin = authUser.role === 'ADMIN'
-        const isOwner = food.userId === authUser.id
+		const food = result.value
+		const isAdmin = authUser.role === 'ADMIN'
+		const isOwner = food.userId === authUser.id
 
-        // Only Admins or the Owner can modify/delete
-        if (isAdmin || isOwner) {
-            return success(food)
-        }
+		if (isAdmin || isOwner) {
+			return success(food)
+		}
 
-        return failure({ 
-            type: 'FORBIDDEN', 
-            message: 'You do not have permission to modify this food item.' 
-        })
-    }
+		return failure({
+			type: 'FORBIDDEN',
+			message: 'You do not have permission to modify this food item.',
+		})
+	}
 
-    async create(data: createFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
-        const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
+	async create(data: createFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
+		const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
 
-        const result = await this.foodRepository.create(data, ownerId)
-        if (result.isFailure()) {
-            return failure(result.error)
-        }
-        return success(result.value)
-    }
+		const result = await this.foodRepository.create(data, ownerId)
+		if (result.isFailure()) {
+			return failure(result.error)
+		}
+		return success(result.value)
+	}
 
-    async findById(id: string, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
-        const result = await this.foodRepository.findById(id)
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
+		const result = await this.foodRepository.findById(id)
 
-        if (result.isFailure()) return failure(result.error)
+		if (result.isFailure()) return failure(result.error)
 
-        const food = result.value
+		const food = result.value
 
-        const isAdmin = authUser.role === 'ADMIN'
-        const isOwner = food.userId === authUser.id
-        const isGlobal = !food.userId 
+		const isAdmin = authUser.role === 'ADMIN'
+		const isOwner = food.userId === authUser.id
+		const isGlobal = !food.userId
 
-        if (isAdmin || isOwner || isGlobal) {
-            return success(food)
-        }
+		if (isAdmin || isOwner || isGlobal) {
+			return success(food)
+		}
 
-        return failure({ 
-            type: 'FORBIDDEN',
-            message: 'Access denied for this food item.' 
-        })
-    }
+		return failure({
+			type: 'FORBIDDEN',
+			message: 'Access denied for this food item.',
+		})
+	}
 
-    async findAll(data: foodSearchDTO, authUser: authenticatedUser): Promise<Result<FoodEntity[]>> {
-        const isAdmin = authUser.role === 'ADMIN'
-        const userId = isAdmin ? undefined : authUser.id
-        const result = await this.foodRepository.findAll(data, userId)
+	async findAll(data: foodSearchDTO, authUser: authenticatedUser): Promise<Result<FoodEntity[]>> {
+		const isAdmin = authUser.role === 'ADMIN'
+		const userId = isAdmin ? undefined : authUser.id
+		const result = await this.foodRepository.findAll(data, userId)
 
-        if (result.isFailure()) {
-            return failure(result.error)
-        }
-        return success(result.value)
-    }
+		if (result.isFailure()) {
+			return failure(result.error)
+		}
+		return success(result.value)
+	}
 
-    async update(id: string, data: updateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
-        const check = await this.validatePermission(id, authUser)
+	async update(
+		id: string,
+		data: updateFoodDTO,
+		authUser: authenticatedUser
+	): Promise<Result<FoodEntity>> {
+		const check = await this.validatePermission(id, authUser)
 
-        if (check.isFailure()) return failure(check.error)
+		if (check.isFailure()) return failure(check.error)
 
-        const result = await this.foodRepository.update(id, data)
+		const result = await this.foodRepository.update(id, data)
 
-        if (result.isFailure()) return failure(result.error)
-        return success(result.value)
-    }
+		if (result.isFailure()) return failure(result.error)
+		return success(result.value)
+	}
 
-    async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
-        const check = await this.validatePermission(id, authUser)
+	async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
+		const check = await this.validatePermission(id, authUser)
 
-        if (check.isFailure()) return failure(check.error)
-            
-        const result = await this.foodRepository.delete(id)
+		if (check.isFailure()) return failure(check.error)
 
-        if (result.isFailure()) return failure(result.error)
+		const result = await this.foodRepository.delete(id)
 
-        return success(result.value)
-    }
+		if (result.isFailure()) return failure(result.error)
+
+		return success(result.value)
+	}
 }
