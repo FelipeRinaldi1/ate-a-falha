@@ -11,7 +11,7 @@ export class PlanController {
 		const validation = validateData(CreatePlanSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)
 
-		const result = await this.planService.create(validation.value, req.user.id!)
+		const result = await this.planService.create(validation.value, req.user)
 
 		if (result.isFailure()) return next(result.error)
 
@@ -30,7 +30,7 @@ export class PlanController {
 		const id = idValid.value
 		const data = validation.value
 
-		const result = await this.planService.update(id, data, req.user.id!)
+		const result = await this.planService.update(id, data, req.user)
 
 		if (result.isFailure()) return next(result.error)
 
@@ -44,7 +44,7 @@ export class PlanController {
 
 		const id = idValid.value
 
-		const result = await this.planService.delete(id, req.user.id!)
+		const result = await this.planService.delete(id, req.user)
 
 		if (result.isFailure()) return next(result.error)
 
@@ -52,7 +52,7 @@ export class PlanController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const result = await this.planService.findAll(req.user.id!)
+		const result = await this.planService.findAll(req.user)
 		if (result.isFailure()) return next(result.error)
 		return res.status(HTTP_STATUS.OK).json(result.value)
 	}
@@ -61,7 +61,7 @@ export class PlanController {
 		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const result = await this.planService.findById(idValid.value, req.user.id!)
+		const result = await this.planService.findById(idValid.value, req.user)
 		if (result.isFailure()) return next(result.error)
 		return res.status(HTTP_STATUS.OK).json(result.value)
 	}
