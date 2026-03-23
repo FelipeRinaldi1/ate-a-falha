@@ -1,6 +1,6 @@
 import { Result } from '@/@utils/result.js'
 
-export interface IAccessControl {
+export interface IWorkoutAccessControl {
 	canAccessSet(setId: string, userId: string): Promise<Result<boolean>>
 
 	canAccessWorkoutExercise(workoutExerciseId: string, userId: string): Promise<Result<boolean>>
