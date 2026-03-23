@@ -1,9 +1,9 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { Result, success, failure } from '@/@utils/result.js'
-import { IAccessControl } from '../interfaces/accessControl.interface.js'
+import { IWorkoutAccessControl } from '../interfaces/accessControl.interface.js'
 
-export class AccessControlRepository implements IAccessControl {
+export class WorkoutAccessControlRepository implements IWorkoutAccessControl {
 	async canAccessSet(setId: string, userId: string): Promise<Result<boolean>> {
 		const result = await safeCall(
 			prisma.set.findFirstOrThrow({
