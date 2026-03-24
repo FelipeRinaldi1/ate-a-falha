@@ -3,17 +3,11 @@ export interface WorkoutEntity {
 	id: string
 	name?: string | null
 	day: 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-	PlanId: string
+	planId: string
 	createdAt: Date
 	updatedAt: Date
 }
 
-export interface FullWorkoutEntity {
-	id: string
-	name?: string | null
-	day: 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-	PlanId: string
+export interface FullWorkoutEntity extends WorkoutEntity {
 	workoutExercises?: FullWorkoutExerciseEntity[]
-	createdAt: Date
-	updatedAt: Date
 }

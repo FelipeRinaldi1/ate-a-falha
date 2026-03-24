@@ -4,10 +4,10 @@ import { Result, success, failure } from '@/@utils/result.js'
 import { CreateWorkoutDTO, UpdateWorkoutDTO } from '@/modules/workout/DTOs/workout.schema.js'
 import { WorkoutEntity } from '@/modules/workout/entities/workout.entity.js'
 import { FullWorkoutEntity } from '@/modules/workout/entities/workout.entity.js'
-import { IWorkoutInterface } from '@/modules/workout/interfaces/workout.interface.js'
+import { IWorkoutRepository } from '@/modules/workout/interfaces/workout.interface.js'
 import { WorkoutMapper } from '@/modules/workout/mappers/workout.mapper.js'
 
-export class WorkoutRepository implements IWorkoutInterface {
+export class WorkoutRepository implements IWorkoutRepository {
 	async create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutEntity>> {
 		const result = await safeCall(
 			prisma.workout.create({
@@ -17,7 +17,9 @@ export class WorkoutRepository implements IWorkoutInterface {
 				},
 			})
 		)
-		return result
+		if (result.isFailure()) return failure(result.error)
+
+		return success(WorkoutMapper.toEntity(result.value))
 	}
 	async update(id: string, data: UpdateWorkoutDTO, userId: string): Promise<Result<WorkoutEntity>> {
 		const result = await safeCall(
@@ -29,7 +31,9 @@ export class WorkoutRepository implements IWorkoutInterface {
 				data: data,
 			})
 		)
-		return result
+		if (result.isFailure()) return failure(result.error)
+
+		return success(WorkoutMapper.toEntity(result.value))
 	}
 	async delete(id: string, userId: string): Promise<Result<void>> {
 		const result = await safeCall(
@@ -61,6 +65,8 @@ export class WorkoutRepository implements IWorkoutInterface {
 				},
 			})
 		)
-		return result
+		if (result.isFailure()) return failure(result.error)
+
+		return success(WorkoutMapper.toEntity(result.value))
 	}
 }

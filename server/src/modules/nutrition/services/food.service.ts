@@ -7,10 +7,7 @@ import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 export class FoodService {
 	constructor(private foodRepository: IFoodRepository) {}
 
-	private async validatePermission(
-		id: string,
-		authUser: authenticatedUser
-	): Promise<Result<FoodEntity>> {
+	private async validatePermission(id: string, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
 		const result = await this.foodRepository.findById(id)
 		if (result.isFailure()) return failure(result.error)
 
@@ -70,11 +67,7 @@ export class FoodService {
 		return success(result.value)
 	}
 
-	async update(
-		id: string,
-		data: updateFoodDTO,
-		authUser: authenticatedUser
-	): Promise<Result<FoodEntity>> {
+	async update(id: string, data: updateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
 		const check = await this.validatePermission(id, authUser)
 
 		if (check.isFailure()) return failure(check.error)
