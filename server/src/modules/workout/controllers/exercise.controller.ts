@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { ExerciseService } from '../services/exercise.service.js'
-import {
-	CreateExerciseSchema,
-	SearchExerciseSChema,
-	UpdateExerciseSchema,
-} from '../DTOs/exercise.schema.js'
+import { CreateExerciseSchema, SearchExerciseSChema, UpdateExerciseSchema } from '../DTOs/exercise.schema.js'
 import { validateData } from '@/@utils/validateData.js'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
