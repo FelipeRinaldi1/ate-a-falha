@@ -13,4 +13,5 @@ export class ExerciseMapper {
 			updatedAt: exercise.updatedAt,
 		}
 	}
+
 }
