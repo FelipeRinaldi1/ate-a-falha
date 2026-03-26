@@ -1,5 +1,5 @@
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
-import { AccessControlService } from './accessControl.service.js'
+import { WorkoutAccessControlService } from './accessControl.service.js'
 import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '../DTOs/exercise.schema.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { ExerciseEntity } from '../entities/exercise.entity.js'
@@ -8,7 +8,7 @@ import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 export class ExerciseService {
 	constructor(
 		private exerciseRepo: IExerciseRepository,
-		private accessControlService: AccessControlService
+		private accessControlService: WorkoutAccessControlService
 	) {}
 
 	async create(data: CreateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseEntity>> {
