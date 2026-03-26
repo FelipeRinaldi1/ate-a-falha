@@ -10,6 +10,7 @@ import * as swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './config/swagger.js'
 import { foodRoutes } from './modules/nutrition/routers/food.routes.js'
 import { bodyMetricRoutes } from './modules/user/routers/bodyMetric.router.js'
+import { userRoutes } from './modules/user/routers/user.router.js'
 import { globalErrorHandler } from './@middlewares/globalErrorHandler.js'
 
 const app = express()
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use('/foods', foodRoutes)
 app.use('/body-metrics', bodyMetricRoutes)
+app.use('/users', userRoutes)
 
 app.get('/', (_req, res) => {
 	res.send('Hello World!')

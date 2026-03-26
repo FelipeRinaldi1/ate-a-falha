@@ -1,79 +1,74 @@
 import { Request, Response, NextFunction } from 'express'
-import { FoodInMealService } from '../services/foodInMeal.service.js'
-import { CreateFoodInMealSchema, UpdateFoodInMealSchema } from '../DTOs/foodInMeal.schema.js'
+import { FoodService } from '../services/food.service.js'
+import { createFoodSchema, updateFoodSchema,foodSearchSchema } from '../DTOs/food.schema.js'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { validateData } from '@/@utils/validateData.js'
 
-export class FoodInMealController {
-	constructor(private foodInMealService: FoodInMealService) {}
+export class FoodController {
+    constructor(private foodService: FoodService) {}
 
-	create = async (req: Request, res: Response, next: NextFunction) => {
-		const mealIdValidation = validateData(z.uuid(), req.params.mealId, 'ID da refeição inválido')
-		if (mealIdValidation.isFailure()) return next(mealIdValidation.error)
+    create = async (req: Request, res: Response, next: NextFunction) => {
+        const bodyValidation = validateData(createFoodSchema, req.body, 'Dados do alimento inválidos')
+        if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
-		const foodIdValidation = validateData(z.uuid(), req.params.foodId, 'ID do alimento inválido')
-		if (foodIdValidation.isFailure()) return next(foodIdValidation.error)
+        const result = await this.foodService.create(
+            bodyValidation.value,
+            req.user
+        )
 
-		const bodyValidation = validateData(CreateFoodInMealSchema, req.body, 'Dados de quantidade inválidos')
-		if (bodyValidation.isFailure()) return next(bodyValidation.error)
+        if (result.isFailure()) return next(result.error)
 
-		const result = await this.foodInMealService.create(
-			mealIdValidation.value,
-			foodIdValidation.value,
-			bodyValidation.value,
-			req.user
-		)
+        return res.status(HTTP_STATUS.CREATED).json(result.value)
+    }
 
-		if (result.isFailure()) return next(result.error)
+    findAll = async (req: Request, res: Response, next: NextFunction) => {
+        // Busca todos os alimentos vinculados ao usuário (ou globais, dependendo da sua Service)
+        const result = await this.foodService.findAll(req.user)
 
-		return res.status(HTTP_STATUS.CREATED).json(result.value)
-	}
+        if (result.isFailure()) return next(result.error)
 
-	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const mealIdValidation = validateData(z.uuid(), req.params.mealId, 'ID da refeição inválido')
-		if (mealIdValidation.isFailure()) return next(mealIdValidation.error)
+        return res.status(HTTP_STATUS.OK).json(result.value)
+    }
 
-		const result = await this.foodInMealService.findAll(mealIdValidation.value, req.user)
+    findById = async (req: Request, res: Response, next: NextFunction) => {
+        // Validação do UUID do alimento vindo dos parâmetros da URL
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'ID do alimento inválido')
+        if (idValidation.isFailure()) return next(idValidation.error)
 
-		if (result.isFailure()) return next(result.error)
+        const result = await this.foodService.findById(idValidation.value, req.user)
 
-		return res.status(HTTP_STATUS.OK).json(result.value)
-	}
+        if (result.isFailure()) return next(result.error)
 
-	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.uuid(), req.params.id, 'ID do item inválido')
-		if (idValidation.isFailure()) return next(idValidation.error)
+        return res.status(HTTP_STATUS.OK).json(result.value)
+    }
 
-		const result = await this.foodInMealService.findById(idValidation.value, req.user)
+    update = async (req: Request, res: Response, next: NextFunction) => {
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'ID do alimento inválido')
+        if (idValidation.isFailure()) return next(idValidation.error)
 
-		if (result.isFailure()) return next(result.error)
+        const bodyValidation = validateData(UpdateFoodSchema, req.body, 'Dados de atualização inválidos')
+        if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
-		return res.status(HTTP_STATUS.OK).json(result.value)
-	}
+        const result = await this.foodService.update(
+            idValidation.value, 
+            bodyValidation.value, 
+            req.user
+        )
 
-	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.uuid(), req.params.id, 'ID do item inválido')
-		if (idValidation.isFailure()) return next(idValidation.error)
+        if (result.isFailure()) return next(result.error)
 
-		const bodyValidation = validateData(UpdateFoodInMealSchema, req.body, 'Dados de atualização inválidos')
-		if (bodyValidation.isFailure()) return next(bodyValidation.error)
+        return res.status(HTTP_STATUS.OK).json(result.value)
+    }
 
-		const result = await this.foodInMealService.update(idValidation.value, bodyValidation.value, req.user)
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'ID do alimento inválido')
+        if (idValidation.isFailure()) return next(idValidation.error)
 
-		if (result.isFailure()) return next(result.error)
+        const result = await this.foodService.delete(idValidation.value, req.user)
 
-		return res.status(HTTP_STATUS.OK).json(result.value)
-	}
+        if (result.isFailure()) return next(result.error)
 
-	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.uuid(), req.params.id, 'ID do item inválido')
-		if (idValidation.isFailure()) return next(idValidation.error)
-
-		const result = await this.foodInMealService.delete(idValidation.value, req.user)
-
-		if (result.isFailure()) return next(result.error)
-
-		return res.status(HTTP_STATUS.OK).json(result.value)
-	}
+        return res.status(HTTP_STATUS.OK).json(result.value)
+    }
 }

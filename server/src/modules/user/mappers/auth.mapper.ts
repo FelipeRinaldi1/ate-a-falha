@@ -1,15 +1,12 @@
-import { AuthEntity } from '../entities.ts/auth.entity.js'
 import { Auth } from '@/generated/prisma/client.js'
+import { AuthEntity } from '../entities/auth.entity.js'
 
-export class authMapper {
-	static toEntity(auth: Auth): AuthEntity {
+export class AuthMapper {
+	static toEntity(auth: Auth, hidePassword = true): AuthEntity {
+		const { password, ...rest } = auth
 		return {
-			id: auth.id,
-			email: auth.email,
-			password: auth.password,
-			userId: auth.userId,
-			createdAt: auth.createdAt,
-			updatedAt: auth.updatedAt,
+			...rest,
+			password: hidePassword ? undefined : password,
 		}
 	}
 }

@@ -1,7 +1,6 @@
 import { FoodRepository } from '../repositories/food.repository.js'
 import { FoodService } from '../services/food.service.js'
-import { FoodController } from '../controllers/food.controller.js'
-
+import FoodController
 export class FoodFactory {
 	static createController() {
 		const foodRepository = new FoodRepository()

@@ -11,7 +11,6 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 		workoutId: string,
 		exerciseId: string,
 		data: CreateWorkoutExerciseDTO,
-		userId: string
 	): Promise<Result<WorkoutExerciseEntity>> {
 		const result = await safeCall(
 			prisma.workoutExercise.create({
