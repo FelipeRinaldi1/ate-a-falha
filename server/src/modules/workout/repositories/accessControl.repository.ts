@@ -9,7 +9,7 @@ export class WorkoutAccessControlRepository implements IWorkoutAccessControl {
 			prisma.set.findFirstOrThrow({
 				where: {
 					id: setId,
-					workoutExercise: { workout: { Plan: { userId: userId } } },
+					workoutExercise: { workout: { plan: { userId: userId } } },
 				},
 				select: { id: true },
 			})
@@ -24,7 +24,7 @@ export class WorkoutAccessControlRepository implements IWorkoutAccessControl {
 			prisma.workoutExercise.findFirstOrThrow({
 				where: {
 					id: workoutExerciseId,
-					workout: { Plan: { userId: userId } },
+					workout: { plan: { userId: userId } },
 				},
 				select: { id: true },
 			})
@@ -39,7 +39,7 @@ export class WorkoutAccessControlRepository implements IWorkoutAccessControl {
 			prisma.workout.findFirstOrThrow({
 				where: {
 					id: workoutId,
-					Plan: { userId: userId },
+					plan: { userId: userId },
 				},
 				select: { id: true },
 			})

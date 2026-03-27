@@ -1,5 +1,5 @@
 import { FoodInMealService } from '../services/foodInMeal.service.js'
-import { FoodInMealController } from '../controllers/food.controller.js'
+import { FoodInMealController } from '../controllers/foodInMeal.controller.js'
 import { FoodInMealRepository } from '../repositories/foodInMeal.repository.js'
 import { NutritionAccessControlService } from '../services/nutritionAccessControl.service.js'
 import { NutritionAccessControlRepository } from '../repositories/accessControl.repository.js'

@@ -1,6 +1,6 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { MealEntity } from '../entities/meal.enitity.js'
+import { MealEntity } from '../entities/meal.entity.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { IMealRepository } from '../interfaces/meal.interface.js'
 import { CreateMealDTO, UpdateMealDTO } from '../DTOs/meal.schema.js'

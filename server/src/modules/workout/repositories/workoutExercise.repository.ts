@@ -30,7 +30,7 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 			prisma.workoutExercise.update({
 				where: {
 					id: id,
-					workout: { Plan: { userId: userId } },
+					workout: { plan: { userId: userId } },
 				},
 				data: {
 					...data,
@@ -46,7 +46,7 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 			prisma.workoutExercise.delete({
 				where: {
 					id: id,
-					workout: { Plan: { userId: userId } },
+					workout: { plan: { userId: userId } },
 				},
 			})
 		)
@@ -59,7 +59,7 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 			prisma.workoutExercise.findMany({
 				where: {
 					workoutId: workoutId,
-					workout: { Plan: { userId } },
+					workout: { plan: { userId } },
 				},
 			})
 		)
@@ -73,7 +73,7 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 			prisma.workoutExercise.findFirstOrThrow({
 				where: {
 					id: id,
-					workout: { Plan: { userId: userId } },
+					workout: { plan: { userId: userId } },
 				},
 			})
 		)

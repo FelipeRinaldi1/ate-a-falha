@@ -1,5 +1,5 @@
 import { Result } from '@/@utils/result.js'
-import { MealEntity } from '../entities/meal.enitity.js'
+import { MealEntity } from '../entities/meal.entity.js'
 import { CreateMealDTO, UpdateMealDTO } from '../DTOs/meal.schema.js'
 
 export interface IMealRepository {

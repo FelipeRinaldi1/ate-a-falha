@@ -1,6 +1,6 @@
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 import { Result, failure } from '@/@utils/result.js'
-import { MealEntity } from '../entities/meal.enitity.js'
+import { MealEntity } from '../entities/meal.entity.js'
 import { MealRepository } from '../repositories/meal.repository.js'
 import { CreateMealDTO, UpdateMealDTO } from '../DTOs/meal.schema.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'

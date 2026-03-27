@@ -7,7 +7,7 @@ export class WorkoutMapper {
 			id: workout.id,
 			name: workout.name,
 			day: workout.day,
-			PlanId: workout.PlanId,
+			planId: workout.planId,
 			createdAt: workout.createdAt,
 			updatedAt: workout.updatedAt,
 		}

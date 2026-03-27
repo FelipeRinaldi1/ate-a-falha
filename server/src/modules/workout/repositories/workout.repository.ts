@@ -13,7 +13,8 @@ export class WorkoutRepository implements IWorkoutRepository {
 			prisma.workout.create({
 				data: {
 					...data,
-					Plan: { connect: { uniqueId: { id: planId, userId: userId } } },
+					plan:{connect:{uniqueId:{id:planId,userId:userId}}}
+					
 				},
 			})
 		)
@@ -26,7 +27,7 @@ export class WorkoutRepository implements IWorkoutRepository {
 			prisma.workout.update({
 				where: {
 					id: id,
-					Plan: { userId: userId },
+					plan: { userId: userId },
 				},
 				data: data,
 			})
@@ -38,7 +39,7 @@ export class WorkoutRepository implements IWorkoutRepository {
 	async delete(id: string, userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.workout.delete({
-				where: { id: id, Plan: { userId: userId } },
+				where: { id: id, plan: { userId: userId } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -48,7 +49,7 @@ export class WorkoutRepository implements IWorkoutRepository {
 	async findAll(planId: string, userId: string): Promise<Result<WorkoutEntity[]>> {
 		const result = await safeCall(
 			prisma.workout.findMany({
-				where: { PlanId: planId, Plan: { userId: userId } },
+				where: { planId: planId, plan: { userId: userId } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -61,7 +62,7 @@ export class WorkoutRepository implements IWorkoutRepository {
 			prisma.workout.findFirstOrThrow({
 				where: {
 					id: id,
-					Plan: { userId: userId },
+					plan: { userId: userId },
 				},
 			})
 		)

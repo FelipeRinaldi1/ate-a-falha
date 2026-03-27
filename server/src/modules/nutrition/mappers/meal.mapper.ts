@@ -1,4 +1,4 @@
-import { MealEntity } from '../entities/meal.enitity.js'
+import { MealEntity } from '../entities/meal.entity.js'
 import { Meal } from '@/generated/prisma/client.js'
 
 export class MealMapper {

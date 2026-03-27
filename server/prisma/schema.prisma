@@ -182,8 +182,8 @@ model Workout {
   name String?
   day  WORKOUT_DAY
 
-  Plan   Plan @relation(fields: [PlanId], references: [id], onDelete: Cascade)
-  PlanId String
+  plan   Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId String
 
   workoutExercises WorkoutExercise[]
 

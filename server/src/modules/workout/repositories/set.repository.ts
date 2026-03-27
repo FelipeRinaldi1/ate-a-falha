@@ -8,7 +8,7 @@ import { SetMapper } from '../mappers/set.mapper.js'
 export class SetRepository implements ISetRepository {
 	private ownershipFilter(userId: string) {
 		return {
-			workoutExercise: { workout: { Plan: { userId: userId } } },
+			workoutExercise: { workout: { plan: { userId: userId } } },
 		}
 	}
 
