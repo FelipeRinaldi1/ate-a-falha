@@ -1,4 +1,4 @@
-import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../DTOs/food.schema.js'
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '../DTOs/food.schema.js'
 import { FoodEntity } from '../entities/food.entity.js'
 import type { IFoodRepository } from '../interfaces/food.interfaces.js'
 import { success, failure, Result } from '@/@utils/result.js'
@@ -11,7 +11,7 @@ export class FoodService {
 		private accessControl: NutritionAccessControlService
 	) {}
 
-	async create(data: createFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
+	async create(data: CreateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
 		const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
 
 		const result = await this.foodRepository.create(data, ownerId)
@@ -21,7 +21,7 @@ export class FoodService {
 		return success(result.value)
 	}
 
-	async update(id: string, data: updateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
+	async update(id: string, data: UpdateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodEntity>> {
 		const access = await this.accessControl.canAccessFood(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
@@ -37,7 +37,7 @@ export class FoodService {
 		return await this.foodRepository.delete(id, ownerId)
 	}
 
-	async findAll(data: foodSearchDTO, authUser: authenticatedUser): Promise<Result<FoodEntity[]>> {
+	async findAll(data: FoodSearchDTO, authUser: authenticatedUser): Promise<Result<FoodEntity[]>> {
 		const isAdmin = authUser.role === 'ADMIN'
 		const userId = isAdmin ? undefined : authUser.id
 		const result = await this.foodRepository.findAll(data, userId)

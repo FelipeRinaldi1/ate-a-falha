@@ -19,6 +19,6 @@ export const foodSearchSchema = z.object({
   take: z.coerce.number().min(1).max(100).default(10),
 })
 
-export type createFoodDTO = z.infer<typeof createFoodSchema>
-export type updateFoodDTO = z.infer<typeof updateFoodSchema>
-export type foodSearchDTO = z.infer<typeof foodSearchSchema>
+export type CreateFoodDTO = z.infer<typeof createFoodSchema>
+export type UpdateFoodDTO = z.infer<typeof updateFoodSchema>
+export type FoodSearchDTO = z.infer<typeof foodSearchSchema>

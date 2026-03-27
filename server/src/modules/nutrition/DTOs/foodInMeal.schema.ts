@@ -1,10 +1,10 @@
 import z from 'zod'
 
-export const CreateFoodInMealSchema = z.object({
+export const createFoodInMealSchema = z.object({
 	quantity: z.number().positive(),
 })
 
-export const UpdateFoodInMealSchema = CreateFoodInMealSchema.partial()
+export const updateFoodInMealSchema = createFoodInMealSchema.partial()
 
-export type CreateFoodInMealDTO = z.infer<typeof CreateFoodInMealSchema>
-export type UpdateFoodInMealDTO = z.infer<typeof UpdateFoodInMealSchema>
+export type CreateFoodInMealDTO = z.infer<typeof createFoodInMealSchema>
+export type UpdateFoodInMealDTO = z.infer<typeof updateFoodInMealSchema>

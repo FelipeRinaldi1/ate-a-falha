@@ -2,12 +2,12 @@ import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { IFoodRepository } from '../interfaces/food.interfaces.js'
-import { createFoodDTO, foodSearchDTO, updateFoodDTO } from '../DTOs/food.schema.js'
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '../DTOs/food.schema.js'
 import { FoodEntity } from '../entities/food.entity.js'
 import { FoodMapper } from '../mappers/food.mapper.js'
 
 export class FoodRepository implements IFoodRepository {
-	async create(data: createFoodDTO, userId?: string): Promise<Result<FoodEntity>> {
+	async create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodEntity>> {
 		const result = await safeCall(
 			prisma.food.create({
 				data: { ...data, userId },
@@ -18,7 +18,7 @@ export class FoodRepository implements IFoodRepository {
 		return success(FoodMapper.toEntity(result.value))
 	}
 
-	async findAll(data: foodSearchDTO, userId?: string): Promise<Result<FoodEntity[]>> {
+	async findAll(data: FoodSearchDTO, userId?: string): Promise<Result<FoodEntity[]>> {
 		const result = await safeCall(
 			prisma.food.findMany({
 				take: data.take || 10,
@@ -60,7 +60,7 @@ export class FoodRepository implements IFoodRepository {
 		return success(FoodMapper.toEntity(result.value))
 	}
 
-	async update(id: string, data: updateFoodDTO, userId?: string): Promise<Result<FoodEntity>> {
+	async update(id: string, data: UpdateFoodDTO, userId?: string): Promise<Result<FoodEntity>> {
 		const result = await safeCall(
 			prisma.food.update({
 				where: { id, userId },

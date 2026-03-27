@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { MealService } from '../services/meal.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { CreateMealSchema, UpdateMealSchema } from '../DTOs/meal.schema.js'
+import { createMealSchema, updateMealSchema } from '../DTOs/meal.schema.js'
 
 export class MealController {
 	constructor(private mealService: MealService) {}
@@ -12,7 +12,7 @@ export class MealController {
 		const dietIdValidation = validateData(z.uuid(), req.params.dietId, 'Invalid diet ID')
 		if (dietIdValidation.isFailure()) return next(dietIdValidation.error)
 
-		const bodyValidation = validateData(CreateMealSchema, req.body, 'Invalid Request Body')
+		const bodyValidation = validateData(createMealSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.mealService.create(dietIdValidation.value, bodyValidation.value, req.user)
@@ -48,7 +48,7 @@ export class MealController {
 		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid meal ID in URL')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
-		const bodyValidation = validateData(UpdateMealSchema, req.body, 'Invalid Request Body')
+		const bodyValidation = validateData(updateMealSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.mealService.update(idValidation.value, bodyValidation.value, req.user)
