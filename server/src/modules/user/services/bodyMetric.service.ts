@@ -1,20 +1,21 @@
 import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO, BodyMetricFull } from '../schema/bodyMetric.schema.js'
 import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 import { success, failure, Result } from '@/@utils/result.js'
+import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class BodyMetricService {
 	constructor(private bodyMetricRepository: IBodyMetricRepository) {}
 
-	async create(data: createBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
-		const result = await this.bodyMetricRepository.create(data, userId)
+	async create(data: createBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
+		const result = await this.bodyMetricRepository.create(data, authUser.id)
 		if (result.isFailure()) {
 			return failure(result.error)
 		}
 		return success(result.value)
 	}
 
-	async findById(id: string, userId: string): Promise<Result<BodyMetricFull>> {
-		const result = await this.bodyMetricRepository.findById(id, userId)
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
+		const result = await this.bodyMetricRepository.findById(id, authUser.id)
 
 		if (result.isFailure()) return failure({
 			type: 'NOT_FOUND',
@@ -24,8 +25,8 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async findAll(data: bodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>> {
-		const result = await this.bodyMetricRepository.findAll(data, userId)
+	async findAll(data: bodyMetricSearchDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull[]>> {
+		const result = await this.bodyMetricRepository.findAll(data, authUser.id)
 
 		if (result.isFailure()) {
 			return failure(result.error)
@@ -36,10 +37,10 @@ export class BodyMetricService {
 	async update(
 		id: string,
 		data: updateBodyMetricDTO,
-		userId: string
+		authUser: authenticatedUser
 	): Promise<Result<BodyMetricFull>> {
 
-		const result = await this.bodyMetricRepository.update(id, data, userId)
+		const result = await this.bodyMetricRepository.update(id, data, authUser.id)
 
 		if (result.isFailure()) return failure({
 			type: 'NOT_FOUND',
@@ -48,8 +49,8 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async delete(id: string, userId: string): Promise<Result<void>> {
-		const result = await this.bodyMetricRepository.delete(id, userId)
+	async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
+		const result = await this.bodyMetricRepository.delete(id, authUser.id)
 
 		if (result.isFailure()) return failure({
 			type: 'NOT_FOUND',
