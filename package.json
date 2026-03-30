@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Sistema de Gerenciamento de Dietas e Treinos.",
   "main": "index.js",
+  "private":true,
+  "packageManager": "npm@11.10.1",
   "scripts": {
       "dev": "turbo dev",
       "build": "turbo build",

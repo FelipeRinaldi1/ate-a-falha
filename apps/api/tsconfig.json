@@ -8,10 +8,16 @@
 				"./src/*"
 			],
 			"@infra/*": [
-				"./src/infra/*"
+				"./src/@infra/*"
 			],
 			"@middlewares/*": [
-				"./src/middlewares/*"
+				"./src/@middlewares/*"
+			],
+			"@ate-a-falha/shared": [
+				"../../packages/shared/src/index.ts"
+			],
+			"@ate-a-falha/database": [
+				"../../packages/database/src/index.ts"
 			]
 		}
 	},
