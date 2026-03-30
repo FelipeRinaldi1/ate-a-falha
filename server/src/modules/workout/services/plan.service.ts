@@ -1,5 +1,4 @@
-import { CreatePlanDTO, UpdatePlanDTO } from '../DTOs/plan.schema.js'
-import { PlanEntity } from '../entities/workoutPlan.entity.js'
+import { CreatePlanDTO, UpdatePlanDTO, PlanFull } from '../schema/plan.schema.js'
 import { IPlanRepository } from '../interfaces/plan.interface.js'
 import { failure, Result } from '@/@utils/result.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
@@ -11,11 +10,11 @@ export class PlanService {
 		private accessServ: WorkoutAccessControlService
 	) {}
 
-	async create(data: CreatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanEntity>> {
+	async create(data: CreatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanFull>> {
 		const result = await this.planRepo.create(data, authUser.id)
 		return result
 	}
-	async update(id: string, data: UpdatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanEntity>> {
+	async update(id: string, data: UpdatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanFull>> {
 		const access = await this.accessServ.canAccessPlan(id, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 
@@ -29,11 +28,11 @@ export class PlanService {
 		const result = await this.planRepo.delete(id, authUser.id)
 		return result
 	}
-	async findAll(authUser: authenticatedUser): Promise<Result<PlanEntity[]>> {
+	async findAll(authUser: authenticatedUser): Promise<Result<PlanFull[]>> {
 		const result = await this.planRepo.findAll(authUser.id)
 		return result
 	}
-	async findById(id: string, authUser: authenticatedUser): Promise<Result<PlanEntity>> {
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<PlanFull>> {
 		const access = await this.accessServ.canAccessPlan(id, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 

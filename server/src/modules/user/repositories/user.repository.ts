@@ -1,24 +1,22 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { UserEntity } from '../entities/user.entity.js'
 import { IUserRepository } from '../interfaces/user.interfaces.js'
 import { Result, success, failure } from '@/@utils/result.js'
-import { createUserDTO, updateUserDTO } from '../DTOs/user.schema.js'
-import { UserMapper } from '../mappers/user.mapper.js'
+import { UserFull, createUserDTO, updateUserDTO } from '../schema/user.schema.js'
 
 export class UserRepository implements IUserRepository {
-	async create(data: createUserDTO): Promise<Result<UserEntity>> {
+	async create(data: createUserDTO): Promise<Result<UserFull>> {
 		const result = await safeCall(
 			prisma.user.create({
 				data,
-				include: { auth: true },
+				include: { auth: true, bodyMetrics: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
-		return success(UserMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async update(id: string, data: updateUserDTO): Promise<Result<UserEntity>> {
+	async update(id: string, data: updateUserDTO): Promise<Result<UserFull>> {
 		const result = await safeCall(
 			prisma.user.update({
 				where: { id },
@@ -28,11 +26,11 @@ export class UserRepository implements IUserRepository {
 					gender: data.gender,
 					role: data.role,
 				},
-				include: { auth: true },
+				include: { auth: true, bodyMetrics: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
-		return success(UserMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
 	async delete(id: string): Promise<Result<void>> {
@@ -41,15 +39,15 @@ export class UserRepository implements IUserRepository {
 		return success(undefined)
 	}
 
-	async findById(id: string): Promise<Result<UserEntity>> {
-		const result = await safeCall(prisma.user.findUniqueOrThrow({ where: { id }, include: { auth: true } }))
+	async findById(id: string): Promise<Result<UserFull>> {
+		const result = await safeCall(prisma.user.findUniqueOrThrow({ where: { id }, include: { auth: true, bodyMetrics: true } }))
 		if (result.isFailure()) return failure(result.error)
-		return success(UserMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async findAll(): Promise<Result<UserEntity[]>> {
-		const result = await safeCall(prisma.user.findMany({ include: { auth: true } }))
+	async findAll(): Promise<Result<UserFull[]>> {
+		const result = await safeCall(prisma.user.findMany({ include: { auth: true, bodyMetrics: true } }))
 		if (result.isFailure()) return failure(result.error)
-		return success(result.value.map(UserMapper.toEntity))
+		return success(result.value)
 	}
 }

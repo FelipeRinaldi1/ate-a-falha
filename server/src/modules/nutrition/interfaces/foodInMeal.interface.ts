@@ -1,15 +1,14 @@
 import { Result } from '@/@utils/result.js'
-import { FoodInMealEntity } from '../entities/foodInMeal.entity.js'
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '../DTOs/foodInMeal.schema.js'
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO, FoodInMealFull } from '../schema/foodInMeal.schema.js'
 
 export interface IFoodInMealRepository {
-	create(mealId: string, foodId: string, data: CreateFoodInMealDTO, userId: string): Promise<Result<FoodInMealEntity>>
+	create(mealId: string, foodId: string, data: CreateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>>
 
-	findAll(mealId: string, userId: string): Promise<Result<FoodInMealEntity[]>>
+	findAll(mealId: string, userId: string): Promise<Result<FoodInMealFull[]>>
 
-	findById(id: string, userId: string): Promise<Result<FoodInMealEntity>>
+	findById(id: string, userId: string): Promise<Result<FoodInMealFull>>
 
-	update(id: string, data: UpdateFoodInMealDTO, userId: string): Promise<Result<FoodInMealEntity>>
+	update(id: string, data: UpdateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>>
 
 	delete(id: string, userId: string): Promise<Result<void>>
 }

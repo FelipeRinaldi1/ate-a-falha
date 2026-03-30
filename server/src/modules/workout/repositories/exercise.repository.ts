@@ -1,31 +1,31 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '../DTOs/exercise.schema.js'
+import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO, ExerciseFull } from '../schema/exercise.schema.js'
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
 import { failure, Result, success } from '@/@utils/result.js'
-import { ExerciseEntity } from '../entities/exercise.entity.js'
-import { ExerciseMapper } from '../mappers/exercise.mapper.js'
 
 export class ExerciseRepository implements IExerciseRepository {
-	async create(data: CreateExerciseDTO): Promise<Result<ExerciseEntity>> {
+	async create(data: CreateExerciseDTO): Promise<Result<ExerciseFull>> {
 		const result = await safeCall(
 			prisma.exercise.create({
 				data: data,
+				include: { usedInWorkouts: true },
 			})
 		)
 
 		if (result.isFailure()) return failure(result.error)
-		return success(ExerciseMapper.toEntity(result.value))
+		return success(result.value)
 	}
-	async update(id: string, data: UpdateExerciseDTO): Promise<Result<ExerciseEntity>> {
+	async update(id: string, data: UpdateExerciseDTO): Promise<Result<ExerciseFull>> {
 		const result = await safeCall(
 			prisma.exercise.update({
 				where: { id: id },
 				data: data,
+				include: { usedInWorkouts: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
-		return success(ExerciseMapper.toEntity(result.value))
+		return success(result.value)
 	}
 	async delete(id: string): Promise<Result<void>> {
 		const result = await safeCall(
@@ -38,7 +38,7 @@ export class ExerciseRepository implements IExerciseRepository {
 		return success(undefined)
 	}
 
-	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseEntity[]>> {
+	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseFull[]>> {
 		const result = await safeCall(
 			prisma.exercise.findMany({
 				take: data.take || 10,
@@ -54,23 +54,23 @@ export class ExerciseRepository implements IExerciseRepository {
 					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],
+				include: { usedInWorkouts: true },
 			})
 		)
 
 		if (result.isFailure()) return result
-
-		const entities = result.value.map((exercise) => ExerciseMapper.toEntity(exercise))
-		return success(entities)
+		return success(result.value)
 	}
-	async findById(id: string): Promise<Result<ExerciseEntity>> {
+	async findById(id: string): Promise<Result<ExerciseFull>> {
 		const result = await safeCall(
 			prisma.exercise.findUniqueOrThrow({
 				where: { id: id },
+				include: { usedInWorkouts: true },
 			})
 		)
 
 		if (result.isFailure()) return result
 
-		return success(ExerciseMapper.toEntity(result.value))
+		return success(result.value)
 	}
 }

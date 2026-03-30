@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { PlanService } from '../services/plan.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { CreatePlanSchema, UpdatePlanSchema } from '../DTOs/plan.schema.js'
+import { CreatePlanSchema, UpdatePlanSchema } from '../schema/plan.schema.js'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 

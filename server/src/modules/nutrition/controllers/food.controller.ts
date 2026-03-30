@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { FoodService } from '../services/food.service.js'
-import { createFoodSchema, updateFoodSchema, foodSearchSchema } from '../DTOs/food.schema.js'
+import { createFoodSchema, updateFoodSchema, foodSearchSchema } from '../schema/food.schema.js'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { validateData } from '@/@utils/validateData.js'

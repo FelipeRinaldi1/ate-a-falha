@@ -1,28 +1,32 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { Result, success, failure } from '@/@utils/result.js'
-import { CreateWorkoutDTO, UpdateWorkoutDTO } from '@/modules/workout/DTOs/workout.schema.js'
-import { WorkoutEntity } from '@/modules/workout/entities/workout.entity.js'
-import { FullWorkoutEntity } from '@/modules/workout/entities/workout.entity.js'
+import { CreateWorkoutDTO, UpdateWorkoutDTO, WorkoutFull } from '@/modules/workout/schema/workout.schema.js'
 import { IWorkoutRepository } from '@/modules/workout/interfaces/workout.interface.js'
-import { WorkoutMapper } from '@/modules/workout/mappers/workout.mapper.js'
 
 export class WorkoutRepository implements IWorkoutRepository {
-	async create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutEntity>> {
+	async create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutFull>> {
 		const result = await safeCall(
 			prisma.workout.create({
 				data: {
 					...data,
-					plan:{connect:{uniqueId:{id:planId,userId:userId}}}
-					
+					plan: { connect: { uniqueId: { id: planId, userId: userId } } },
+				},
+				include: {
+					workoutExercises: {
+						include: {
+							sets: true,
+							exercise: true,
+						},
+					},
 				},
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(WorkoutMapper.toEntity(result.value))
+		return success(result.value)
 	}
-	async update(id: string, data: UpdateWorkoutDTO, userId: string): Promise<Result<WorkoutEntity>> {
+	async update(id: string, data: UpdateWorkoutDTO, userId: string): Promise<Result<WorkoutFull>> {
 		const result = await safeCall(
 			prisma.workout.update({
 				where: {
@@ -30,11 +34,19 @@ export class WorkoutRepository implements IWorkoutRepository {
 					plan: { userId: userId },
 				},
 				data: data,
+				include: {
+					workoutExercises: {
+						include: {
+							sets: true,
+							exercise: true,
+						},
+					},
+				},
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(WorkoutMapper.toEntity(result.value))
+		return success(result.value)
 	}
 	async delete(id: string, userId: string): Promise<Result<void>> {
 		const result = await safeCall(
@@ -46,28 +58,43 @@ export class WorkoutRepository implements IWorkoutRepository {
 
 		return success(undefined)
 	}
-	async findAll(planId: string, userId: string): Promise<Result<WorkoutEntity[]>> {
+	async findAll(planId: string, userId: string): Promise<Result<WorkoutFull[]>> {
 		const result = await safeCall(
 			prisma.workout.findMany({
 				where: { planId: planId, plan: { userId: userId } },
+				include: {
+					workoutExercises: {
+						include: {
+							sets: true,
+							exercise: true,
+						},
+					},
+				},
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		const entities = result.value.map((value) => WorkoutMapper.toEntity(value))
-		return success(entities)
+		return success(result.value)
 	}
-	async findById(id: string, userId: string): Promise<Result<FullWorkoutEntity>> {
+	async findById(id: string, userId: string): Promise<Result<WorkoutFull>> {
 		const result = await safeCall(
 			prisma.workout.findFirstOrThrow({
 				where: {
 					id: id,
 					plan: { userId: userId },
 				},
+				include: {
+					workoutExercises: {
+						include: {
+							sets: true,
+							exercise: true,
+						},
+					},
+				},
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(WorkoutMapper.toEntity(result.value))
+		return success(result.value)
 	}
 }

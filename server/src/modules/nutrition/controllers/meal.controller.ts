@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { MealService } from '../services/meal.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { createMealSchema, updateMealSchema } from '../DTOs/meal.schema.js'
+import { createMealSchema, updateMealSchema } from '../schema/meal.schema.js'
 
 export class MealController {
 	constructor(private mealService: MealService) {}
