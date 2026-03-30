@@ -7,12 +7,6 @@
 			"@/*": [
 				"./src/*"
 			],
-			"@infra/*": [
-				"./src/infra/*"
-			],
-			"@middlewares/*": [
-				"./src/middlewares/*"
-			]
 		}
 	},
 	"include": [
