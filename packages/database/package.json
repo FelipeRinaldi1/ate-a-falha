@@ -1,13 +1,24 @@
 {
   "name": "@ate-a-falha/database",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+ "scripts": {
+    "db:gen": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.0",
+    "@prisma/adapter-pg": "^6.0.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.0.0",
+    "@types/pg": "^8.11.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "module"
 }

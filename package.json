@@ -4,7 +4,20 @@
   "description": "Sistema de Gerenciamento de Dietas e Treinos.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "dev": "turbo dev",
+      "build": "turbo build",
+      "lint": "eslint .",
+      "format": "prettier --write .",
+      "prepare": "husky"
+    },
+  "devDependencies": {
+      "turbo": "^2.0.0",
+      "typescript": "^5.7.0",
+      "tsx": "^4.19.0",
+      "eslint": "^9.0.0",
+      "prettier": "^3.0.0",
+      "husky": "^9.0.0",
+      "lint-staged": "^15.0.0"
   },
   "repository": {
     "type": "git",
@@ -13,7 +26,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/FelipeRinaldi1/ate-a-falha/issues"
   },
