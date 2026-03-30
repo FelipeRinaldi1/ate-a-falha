@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { UserService } from '../services/user.service.js'
-import { createUserWithAuthSchema, updateUserSchema } from '../DTOs/user.schema.js'
+import { createUserWithAuthSchema, updateUserSchema } from '../schema/user.schema.js'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { validateData } from '@/@utils/validateData.js'

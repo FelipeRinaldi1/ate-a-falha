@@ -1,8 +1,7 @@
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '../DTOs/exercise.schema.js'
+import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO, ExerciseFull } from '../schema/exercise.schema.js'
 import { Result, success, failure } from '@/@utils/result.js'
-import { ExerciseEntity } from '../entities/exercise.entity.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class ExerciseService {
@@ -11,7 +10,7 @@ export class ExerciseService {
 		private accessControlService: WorkoutAccessControlService
 	) {}
 
-	async create(data: CreateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseEntity>> {
+	async create(data: CreateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseFull>> {
 		const access = await this.accessControlService.canManageGlobalExercises(authUser)
 		if (access.isFailure()) return failure(access.error)
 
@@ -22,7 +21,7 @@ export class ExerciseService {
 		return success(result.value)
 	}
 
-	async update(id: string, data: UpdateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseEntity>> {
+	async update(id: string, data: UpdateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseFull>> {
 		const access = await this.accessControlService.canManageGlobalExercises(authUser)
 		if (access.isFailure()) return failure(access.error)
 
@@ -41,7 +40,7 @@ export class ExerciseService {
 		return success(result.value)
 	}
 
-	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseEntity[]>> {
+	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseFull[]>> {
 		const result = await this.exerciseRepo.findAll(data)
 
 		if (result.isFailure()) return failure(result.error)
@@ -49,7 +48,7 @@ export class ExerciseService {
 		return success(result.value)
 	}
 
-	async findById(id: string): Promise<Result<ExerciseEntity>> {
+	async findById(id: string): Promise<Result<ExerciseFull>> {
 		const result = await this.exerciseRepo.findById(id)
 
 		if (result.isFailure()) return failure(result.error)

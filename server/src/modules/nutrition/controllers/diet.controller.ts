@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { DietService } from '../services/diet.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { createDietSchema, updateDietSchema } from '../DTOs/diet.schema.js'
+import { createDietSchema, updateDietSchema } from '../schema/diet.schema.js'
 
 export class DietController {
 	constructor(private dietService: DietService) {}

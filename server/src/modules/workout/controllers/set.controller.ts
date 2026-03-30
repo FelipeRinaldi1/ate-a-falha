@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { SetService } from '../services/set.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { CreateSetSchema, UpdateSetSchema } from '../DTOs/set.schema.js'
+import { CreateSetSchema, UpdateSetSchema } from '../schema/set.schema.js'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { BodyMetricService } from '../services/bodyMetric.service.js'
-import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from '../DTOs/bodyMetric.schema.js'
+import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from '../schema/bodyMetric.schema.js'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { validateData } from '@/@utils/validateData.js'

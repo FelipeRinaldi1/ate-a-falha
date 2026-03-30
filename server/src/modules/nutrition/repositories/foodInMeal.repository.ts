@@ -1,13 +1,11 @@
 import { prisma } from '@/@infra/prisma.client.js'
 import { failure, Result, success } from '@/@utils/result.js'
 import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '../DTOs/foodInMeal.schema.js'
-import { FoodInMealEntity } from '../entities/foodInMeal.entity.js'
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO, FoodInMealFull } from '../schema/foodInMeal.schema.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { FoodInMealMapper } from '../mappers/foodInMeal.mapper.js'
 
 export class FoodInMealRepository implements IFoodInMealRepository {
-	async create(mealId: string, foodId: string, data: CreateFoodInMealDTO): Promise<Result<FoodInMealEntity>> {
+	async create(mealId: string, foodId: string, data: CreateFoodInMealDTO): Promise<Result<FoodInMealFull>> {
 		const result = await safeCall(
 			prisma.foodInMeal.create({
 				data: {
@@ -15,15 +13,16 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 					mealId: mealId,
 					foodId: foodId,
 				},
+				include: { food: true }
 			})
 		)
 
 		if (result.isFailure()) return failure(result.error)
 
-		return success(FoodInMealMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async findAll(mealId: string, userId: string): Promise<Result<FoodInMealEntity[]>> {
+	async findAll(mealId: string, userId: string): Promise<Result<FoodInMealFull[]>> {
 		const result = await safeCall(
 			prisma.foodInMeal.findMany({
 				where: {
@@ -34,27 +33,29 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 						},
 					},
 				},
+				include: { food: true }
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
-		return success(result.value.map((val) => FoodInMealMapper.toEntity(val)))
+		return success(result.value)
 	}
 
-	async findById(id: string, userId: string): Promise<Result<FoodInMealEntity>> {
+	async findById(id: string, userId: string): Promise<Result<FoodInMealFull>> {
 		const result = await safeCall(
 			prisma.foodInMeal.findFirstOrThrow({
 				where: {
 					id: id,
 					meal: { diet: { userId: userId } },
 				},
+				include: { food: true }
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(FoodInMealMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async update(id: string, data: UpdateFoodInMealDTO, userId: string): Promise<Result<FoodInMealEntity>> {
+	async update(id: string, data: UpdateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>> {
 		const result = await safeCall(
 			prisma.foodInMeal.update({
 				where: {
@@ -66,11 +67,12 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 					},
 				},
 				data: data,
+				include: { food: true }
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
 
-		return success(FoodInMealMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
 	async delete(id: string, userId: string): Promise<Result<void>> {

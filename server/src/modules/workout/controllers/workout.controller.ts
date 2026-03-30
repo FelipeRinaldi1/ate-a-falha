@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { WorkoutService } from '../services/workout.service.js'
 import { validateData } from '@/@utils/validateData.js'
-import { CreateWorkoutSchema, UpdateWorkoutSchema } from '../DTOs/workout.schema.js'
+import { CreateWorkoutSchema, UpdateWorkoutSchema } from '../schema/workout.schema.js'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 

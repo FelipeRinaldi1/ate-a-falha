@@ -1,15 +1,15 @@
-import { CreateDietDTO, UpdateDietDTO } from '../DTOs/diet.schema.js'
-import { DietEntity } from '../entities/diet.entity.js'
+import { CreateDietDTO, UpdateDietDTO } from '../schema/diet.schema.js'
+import { DietFull } from '../schema/diet.schema.js'
 import { Result } from '@/@utils/result.js'
 
 export interface IDietRepository {
-	create(data: CreateDietDTO, userId: string): Promise<Result<DietEntity>>
+	create(data: CreateDietDTO, userId: string): Promise<Result<DietFull>>
 
-	update(id: string, data: UpdateDietDTO, userId: string): Promise<Result<DietEntity>>
+	update(id: string, data: UpdateDietDTO, userId: string): Promise<Result<DietFull>>
 
 	delete(id: string, userId: string): Promise<Result<void>>
 
-	findAll(userId: string): Promise<Result<DietEntity[]>>
+	findAll(userId: string): Promise<Result<DietFull[]>>
 
-	findById(id: string, userId: string): Promise<Result<DietEntity>>
+	findById(id: string, userId: string): Promise<Result<DietFull>>
 }

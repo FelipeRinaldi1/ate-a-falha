@@ -1,8 +1,7 @@
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 import { Result, failure } from '@/@utils/result.js'
-import { MealEntity } from '../entities/meal.entity.js'
 import { MealRepository } from '../repositories/meal.repository.js'
-import { CreateMealDTO, UpdateMealDTO } from '../DTOs/meal.schema.js'
+import { CreateMealDTO, UpdateMealDTO, MealFull } from '../schema/meal.schema.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class MealService {
@@ -10,7 +9,7 @@ export class MealService {
 		private mealRepo: MealRepository,
 		private accessControl: NutritionAccessControlService
 	) {}
-	async create(dietId: string, data: CreateMealDTO, authUser: authenticatedUser): Promise<Result<MealEntity>> {
+	async create(dietId: string, data: CreateMealDTO, authUser: authenticatedUser): Promise<Result<MealFull>> {
 		const access = await this.accessControl.canAccessDiet(dietId, authUser)
 
 		if (access.isFailure()) return failure(access.error)
@@ -22,7 +21,7 @@ export class MealService {
 		return result
 	}
 
-	async update(id: string, data: UpdateMealDTO, authUser: authenticatedUser): Promise<Result<MealEntity>> {
+	async update(id: string, data: UpdateMealDTO, authUser: authenticatedUser): Promise<Result<MealFull>> {
 		const access = await this.accessControl.canAccessMeal(id, authUser)
 
 		if (access.isFailure()) return failure(access.error)
@@ -46,7 +45,7 @@ export class MealService {
 		return result
 	}
 
-	async findAll(dietId: string, authUser: authenticatedUser): Promise<Result<MealEntity[]>> {
+	async findAll(dietId: string, authUser: authenticatedUser): Promise<Result<MealFull[]>> {
 		const access = await this.accessControl.canAccessDiet(dietId, authUser)
 
 		if (access.isFailure()) return failure(access.error)

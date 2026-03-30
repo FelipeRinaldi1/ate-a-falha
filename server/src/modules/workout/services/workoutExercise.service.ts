@@ -1,8 +1,7 @@
 import { Result, failure } from '@/@utils/result.js'
 import { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
-import { WorkoutExerciseEntity } from '../entities/workoutExercise.entity.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from '../DTOs/workoutExercise.schema.js'
+import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO, WorkoutExerciseFull } from '../schema/workoutExercise.schema.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class WorkoutExerciseService {
@@ -15,7 +14,7 @@ export class WorkoutExerciseService {
 		workoutId: string,
 		data: CreateWorkoutExerciseDTO,
 		authUser: authenticatedUser
-	): Promise<Result<WorkoutExerciseEntity>> {
+	): Promise<Result<WorkoutExerciseFull>> {
 		const access = await this.accessControl.canAccessWorkout(workoutId, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 
@@ -27,7 +26,7 @@ export class WorkoutExerciseService {
 		id: string,
 		data: UpdateWorkoutExerciseDTO,
 		authUser: authenticatedUser
-	): Promise<Result<WorkoutExerciseEntity>> {
+	): Promise<Result<WorkoutExerciseFull>> {
 		const access = await this.accessControl.canAccessWorkoutExercise(id, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 
@@ -41,14 +40,14 @@ export class WorkoutExerciseService {
 		return await this.workoutExerciseRepo.delete(id, authUser.id)
 	}
 
-	async findAll(workoutId: string, authUser: authenticatedUser): Promise<Result<WorkoutExerciseEntity[]>> {
+	async findAll(workoutId: string, authUser: authenticatedUser): Promise<Result<WorkoutExerciseFull[]>> {
 		const access = await this.accessControl.canAccessWorkout(workoutId, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 
 		return await this.workoutExerciseRepo.findAll(workoutId, authUser.id)
 	}
 
-	async findById(id: string, authUser: authenticatedUser): Promise<Result<WorkoutExerciseEntity>> {
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<WorkoutExerciseFull>> {
 		const access = await this.accessControl.canAccessWorkoutExercise(id, authUser.id)
 		if (access.isFailure()) return failure(access.error)
 

@@ -1,9 +1,8 @@
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '../DTOs/foodInMeal.schema.js'
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO, FoodInMealFull } from '../schema/foodInMeal.schema.js'
 import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 import { failure, Result } from '@/@utils/result.js'
-import { FoodInMealEntity } from '../entities/foodInMeal.entity.js'
 
 export class FoodInMealService {
 	constructor(
@@ -16,7 +15,7 @@ export class FoodInMealService {
 		foodId: string,
 		data: CreateFoodInMealDTO,
 		authUser: authenticatedUser
-	): Promise<Result<FoodInMealEntity>> {
+	): Promise<Result<FoodInMealFull>> {
 		const validation = await Promise.all([
 			this.accessControl.canAccessMeal(mealId, authUser),
 			this.accessControl.canAccessFood(foodId, authUser),
@@ -37,7 +36,7 @@ export class FoodInMealService {
 		id: string,
 		data: UpdateFoodInMealDTO,
 		authUser: authenticatedUser
-	): Promise<Result<FoodInMealEntity>> {
+	): Promise<Result<FoodInMealFull>> {
 		const access = await this.accessControl.canAccessFoodInMeal(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
@@ -51,14 +50,14 @@ export class FoodInMealService {
 		return await this.foodInMealRepo.delete(id, authUser.id)
 	}
 
-	async findAll(mealId: string, authUser: authenticatedUser): Promise<Result<FoodInMealEntity[]>> {
+	async findAll(mealId: string, authUser: authenticatedUser): Promise<Result<FoodInMealFull[]>> {
 		const access = await this.accessControl.canAccessMeal(mealId, authUser)
 		if (access.isFailure()) return failure(access.error)
 
 		return await this.foodInMealRepo.findAll(mealId, authUser.id)
 	}
 
-	async findById(id: string, authUser: authenticatedUser): Promise<Result<FoodInMealEntity>> {
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<FoodInMealFull>> {
 		const access = await this.accessControl.canAccessFoodInMeal(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 

@@ -1,8 +1,14 @@
 import { Router } from 'express'
-import { UserFactory } from '../factory/user.factory.js'
+import { UserRepository } from '../repositories/user.repository.js'
+import { AuthRepository } from '../repositories/auth.repository.js'
+import { UserService } from '../services/user.service.js'
+import { UserController } from '../controllers/user.controller.js'
 
 const userRoutes = Router()
-const userController = UserFactory.createController()
+const userRepo = new UserRepository()
+const authRepo = new AuthRepository()
+const userService = new UserService(userRepo, authRepo)
+const userController = new UserController(userService)
 
 userRoutes.post('/', userController.create)
 userRoutes.get('/:id', userController.findById)

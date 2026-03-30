@@ -1,5 +1,4 @@
-import { createUserWithAuthDTO, updateUserDTO } from '../DTOs/user.schema.js'
-import { UserEntity } from '../entities/user.entity.js'
+import { createUserWithAuthDTO, updateUserDTO, UserFull } from '../schema/user.schema.js'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
 import { success, failure, Result } from '@/@utils/result.js'
@@ -10,7 +9,7 @@ export class UserService {
 		private authRepository: IAuthRepository
 	) {}
 
-	async create(data: createUserWithAuthDTO): Promise<Result<UserEntity>> {
+	async create(data: createUserWithAuthDTO): Promise<Result<UserFull>> {
 		const { auth, ...userData } = data
 
 		const userResult = await this.userRepository.create(userData)
@@ -24,23 +23,22 @@ export class UserService {
 			return failure(authResult.error)
 		}
 
-		userResult.value.auth = authResult.value
-		return success(userResult.value)
+		return success({ ...userResult.value, auth: authResult.value })
 	}
 
-	async findById(id: string): Promise<Result<UserEntity>> {
+	async findById(id: string): Promise<Result<UserFull>> {
 		const result = await this.userRepository.findById(id)
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
 	}
 
-	async findAll(): Promise<Result<UserEntity[]>> {
+	async findAll(): Promise<Result<UserFull[]>> {
 		const result = await this.userRepository.findAll()
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
 	}
 
-	async update(id: string, data: updateUserDTO): Promise<Result<UserEntity>> {
+	async update(id: string, data: updateUserDTO): Promise<Result<UserFull>> {
 		const { auth, ...userData } = data
 		const userResult = await this.userRepository.update(id, userData)
 		if (userResult.isFailure()) return failure(userResult.error)
@@ -48,7 +46,7 @@ export class UserService {
 		if (auth) {
 			const authResult = await this.authRepository.update(id, auth)
 			if (authResult.isFailure()) return failure(authResult.error)
-			userResult.value.auth = authResult.value
+			return success({ ...userResult.value, auth: authResult.value })
 		}
 
 		return success(userResult.value)

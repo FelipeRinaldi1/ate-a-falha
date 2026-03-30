@@ -2,23 +2,21 @@ import { prisma } from '@/@infra/prisma.client.js'
 import { safeCall } from '@/@infra/prisma.safeCall.js'
 import { Result, success, failure } from '@/@utils/result.js'
 import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO } from '../DTOs/bodyMetric.schema.js'
-import { BodyMetricEntity } from '../entities/bodyMetric.entity.js'
-import { BodyMetricMapper } from '../mappers/bodyMetric.mapper.js'
+import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO, BodyMetricFull } from '../schema/bodyMetric.schema.js'
 
 export class BodyMetricRepository implements IBodyMetricRepository {
-	async create(data: createBodyMetricDTO, userId: string): Promise<Result<BodyMetricEntity>> {
+	async create(data: createBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.create({
 				data: { ...data, userId },
 			})
 		)
-		if (result.isFailure()) return result
+		if (result.isFailure()) return result as any
 
-		return success(BodyMetricMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async findAll(data: bodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricEntity[]>> {
+	async findAll(data: bodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>> {
 		const result = await safeCall(
 			prisma.bodyMetric.findMany({
 				take: data.take || 10,
@@ -31,25 +29,24 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 			})
 		)
 
-		if (result.isFailure()) return result
+		if (result.isFailure()) return result as any
 
-		const entities = result.value.map((metric) => BodyMetricMapper.toEntity(metric))
-		return success(entities)
+		return success(result.value)
 	}
 
-	async findById(id: string, userId: string): Promise<Result<BodyMetricEntity>> {
+	async findById(id: string, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.findUniqueOrThrow({
 				where: { id, userId },
 			})
 		)
 
-		if (result.isFailure()) return result
+		if (result.isFailure()) return result as any
 
-		return success(BodyMetricMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
-	async update(id: string, data: updateBodyMetricDTO, userId: string): Promise<Result<BodyMetricEntity>> {
+	async update(id: string, data: updateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.update({
 				where: { id, userId },
@@ -57,9 +54,9 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 			})
 		)
 
-		if (result.isFailure()) return result
+		if (result.isFailure()) return result as any
 
-		return success(BodyMetricMapper.toEntity(result.value))
+		return success(result.value)
 	}
 
 	async delete(id: string, userId: string): Promise<Result<void>> {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { ExerciseService } from '../services/exercise.service.js'
-import { CreateExerciseSchema, SearchExerciseSChema, UpdateExerciseSchema } from '../DTOs/exercise.schema.js'
+import { CreateExerciseSchema, SearchExerciseSchema, UpdateExerciseSchema } from '../schema/exercise.schema.js'
 import { validateData } from '@/@utils/validateData.js'
 import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
@@ -53,7 +53,7 @@ export class ExerciseController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(SearchExerciseSChema, req.query, 'Invalid search Data')
+		const validation = validateData(SearchExerciseSchema, req.query, 'Invalid search Data')
 
 		if (validation.isFailure()) return next(validation.error)
 

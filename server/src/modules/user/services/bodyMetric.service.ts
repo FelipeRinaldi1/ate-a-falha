@@ -1,13 +1,12 @@
-import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO } from '../DTOs/bodyMetric.schema.js'
-import { BodyMetricEntity } from '../entities/bodyMetric.entity.js'
-import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
+import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO, BodyMetricFull } from '../schema/bodyMetric.schema.js'
+import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 import { success, failure, Result } from '@/@utils/result.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 
 export class BodyMetricService {
 	constructor(private bodyMetricRepository: IBodyMetricRepository) {}
 
-	async create(data: createBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricEntity>> {
+	async create(data: createBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
 		const result = await this.bodyMetricRepository.create(data, authUser.id)
 		if (result.isFailure()) {
 			return failure(result.error)
@@ -15,7 +14,7 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async findById(id: string, authUser: authenticatedUser): Promise<Result<BodyMetricEntity>> {
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
 		const result = await this.bodyMetricRepository.findById(id, authUser.id)
 
 		if (result.isFailure()) return failure({
@@ -26,7 +25,7 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async findAll(data: bodyMetricSearchDTO, authUser: authenticatedUser): Promise<Result<BodyMetricEntity[]>> {
+	async findAll(data: bodyMetricSearchDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull[]>> {
 		const result = await this.bodyMetricRepository.findAll(data, authUser.id)
 
 		if (result.isFailure()) {
@@ -39,7 +38,7 @@ export class BodyMetricService {
 		id: string,
 		data: updateBodyMetricDTO,
 		authUser: authenticatedUser
-	): Promise<Result<BodyMetricEntity>> {
+	): Promise<Result<BodyMetricFull>> {
 
 		const result = await this.bodyMetricRepository.update(id, data, authUser.id)
 

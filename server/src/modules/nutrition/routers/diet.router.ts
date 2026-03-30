@@ -1,10 +1,18 @@
 import { Router } from 'express'
-import { DietFactory } from '../factory/diet.factory.js'
+import { DietController } from '../controllers/diet.controller.js'
+import { DietRepository } from '../repositories/diet.repository.js'
+import { DietService } from '../services/diet.service.js'
+import { NutritionAccessControlRepository } from '../repositories/accessControl.repository.js'
+import { NutritionAccessControlService } from '../services/nutritionAccessControl.service.js'
 import { ensureAuthenticated } from '@/@middlewares/ensureAuthenticated.js'
 
 const dietRouter = Router()
 
-const dietController = DietFactory.createController()
+const accessRepo = new NutritionAccessControlRepository()
+const accessServ = new NutritionAccessControlService(accessRepo)
+const dietRepo = new DietRepository()
+const dietService = new DietService(dietRepo, accessServ)
+const dietController = new DietController(dietService)
 
 dietRouter.use(ensureAuthenticated)
 

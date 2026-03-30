@@ -1,8 +1,7 @@
 import { IDietRepository } from '../interfaces/diet.interface.js'
 import { Result, failure } from '@/@utils/result.js'
-import { DietEntity } from '../entities/diet.entity.js'
+import { DietFull, CreateDietDTO, UpdateDietDTO } from '../schema/diet.schema.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { CreateDietDTO, UpdateDietDTO } from '../DTOs/diet.schema.js'
 import { authenticatedUser } from '@/@shared/authenticatedUser.js'
 export class DietService {
 	constructor(
@@ -10,11 +9,11 @@ export class DietService {
 		private accessControl: NutritionAccessControlService
 	) {}
 
-	async create(data: CreateDietDTO, authUser: authenticatedUser): Promise<Result<DietEntity>> {
+	async create(data: CreateDietDTO, authUser: authenticatedUser): Promise<Result<DietFull>> {
 		return await this.dietRepo.create(data, authUser.id)
 	}
 
-	async update(id: string, data: UpdateDietDTO, authUser: authenticatedUser): Promise<Result<DietEntity>> {
+	async update(id: string, data: UpdateDietDTO, authUser: authenticatedUser): Promise<Result<DietFull>> {
 		const access = await this.accessControl.canAccessDiet(id, authUser)
 
 		if (access.isFailure()) return failure(access.error)
@@ -30,11 +29,11 @@ export class DietService {
 		return await this.dietRepo.delete(id, authUser.id)
 	}
 
-	async findAll(authUser: authenticatedUser): Promise<Result<DietEntity[]>> {
+	async findAll(authUser: authenticatedUser): Promise<Result<DietFull[]>> {
 		return await this.dietRepo.findAll(authUser.id)
 	}
 
-	async findById(id: string, authUser: authenticatedUser): Promise<Result<DietEntity>> {
+	async findById(id: string, authUser: authenticatedUser): Promise<Result<DietFull>> {
 		const access = await this.accessControl.canAccessDiet(id, authUser)
 
 		if (access.isFailure()) return failure(access.error)
