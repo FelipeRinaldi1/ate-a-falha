@@ -4,9 +4,7 @@ Um sistema para o gerenciamento de dietas e treinos.
 
 ---
 
-## Arquitetura do Projeto
-
-O projeto é estruturado utilizando **Turborepo**, garantindo uma separação clara de responsabilidades e facilitando a manutenção. Abaixo está a visão geral da estrutura de pastas:
+## Arquitetura de pastas
 
 ```text
 .
