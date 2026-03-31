@@ -18,10 +18,11 @@ app.use(helmet())
 app.use(cors(corsOptions))
 app.use(apiRateLimiter)
 
+app.use(express.json())
+
 // Logger
 app.use(pinoHttp({ logger }))
 
-app.use(express.json())
 
 // Routes
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))

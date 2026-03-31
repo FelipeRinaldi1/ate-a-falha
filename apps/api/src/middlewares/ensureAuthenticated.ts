@@ -1,57 +1,59 @@
 import { Request, Response, NextFunction } from 'express'
-import { z } from 'zod'
-import jwt from 'jsonwebtoken'
 import { AppError } from "@ate-a-falha/shared"
-const tokenPayloadSchema = z.object({
-    sub: z.uuid(),
-    role: z.enum(['USER', 'ADMIN'])
-})
+import { prisma } from "@ate-a-falha/database"
+import { safeCall } from '@ate-a-falha/database'
+import { validateToken } from '@ate-a-falha/shared'
 
-export const ensureAuthenticated = (req: Request, _res: Response, next: NextFunction) => {
+export const ensureAuthenticated = async (req: Request, _res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization
 
         if (!authHeader) {
-            const error: AppError = { type: 'UNAUTHORIZED', message: 'Token not provided' }
-            throw error
+            return next({ type: 'UNAUTHORIZED', message: 'Token not provided' } as AppError)
         }
 
         const [scheme, token] = authHeader.split(' ')
 
         if (scheme !== 'Bearer' || !token) {
-            const error: AppError = { type: 'UNAUTHORIZED', message: 'Token malformatted' }
-            throw error
+            return next({ type: 'UNAUTHORIZED', message: 'Token malformatted' } as AppError)
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret')
-
-        const result = tokenPayloadSchema.safeParse(decoded)
+        const result = validateToken(token, process.env.JWT_SECRET!)
 
         if (!result.success) {
-            throw {
+            return next({
                 type: 'UNAUTHORIZED',
-                message: 'Invalid token payload',
+                message: 'Invalid or expired token',
                 details: result.error.issues
-            } as AppError
+            } as AppError)
         }
 
-        const { sub: userId, role } = result.data
+        const { sub: userId } = result.data
 
-        req.user = { id: userId, role: role }
+        const userResult = await safeCall(prisma.user.findUniqueOrThrow({ 
+            where: { id: userId },
+            select: { id: true, role: true } 
+        }))
+
+        if (userResult.isFailure()) {
+            return next(userResult.error)
+        }
+
+        req.user = { 
+            id: userResult.value.id, 
+            role: userResult.value.role as 'USER' | 'ADMIN' 
+        }
 
         return next()
-    } catch (error: any) {
-        if (error?.type) return next(error)
-
-        req.log.error(error as any, 'Unhandled unexpected error')
+    } catch (error: any) {        
+        req.log.error({ err: error }, 'Unhandled auth error')
 
         const fallbackError: AppError = {
             type: 'UNAUTHORIZED',
-            message: 'Invalid, expired or malformed token',
-            details: error?.message || 'Unknown error'
+            message: 'Authentication failed due to an unexpected error',
+            details: process.env.NODE_ENV === 'development' ? error?.message : undefined
         }
 
         return next(fallbackError)
-
     }
 }
