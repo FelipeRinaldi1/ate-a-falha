@@ -1,0 +1,20 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@ate-a-falha/shared": ["../../packages/shared/src/index.ts"],
+			"@ate-a-falha/database": ["../../packages/database/src/index.ts"]
+		}
+	},
+	"references": [
+		{"path": "../../packages/shared"},
+		{"path": "../../packages/database"}
+	],
+	"include": [
+		"src/**/*"
+	]
+}

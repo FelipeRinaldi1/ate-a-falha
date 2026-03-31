@@ -1,0 +1,30 @@
+import { z } from 'zod'
+
+export const createexerciseSchema = z.object({
+	name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres').max(64),
+	muscleGroup: z.string().min(2, 'Informe o grupamento muscular'),
+	description: z.string().max(255).optional().nullable(),
+	imageUrl: z.string().url('URL da imagem inválida').optional().nullable(),
+})
+export const updateexerciseSchema = createexerciseSchema.partial()
+
+export const searchexerciseSchema = z.object({
+	name: z.string().optional(),
+	cursorId: z.string().optional(),
+	take: z.coerce.number().min(1).max(100).default(10),
+})
+
+export const exerciseSchema = z.object({
+	id: z.string().uuid(),
+	name: z.string().min(2).max(64),
+	muscleGroup: z.string().min(2),
+	description: z.string().max(255).nullable(),
+	imageUrl: z.string().url().nullable(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+})
+
+export type ExerciseDTO = z.infer<typeof exerciseSchema>
+export type CreateExerciseDTO = z.infer<typeof createexerciseSchema>
+export type UpdateExerciseDTO = z.infer<typeof updateexerciseSchema>
+export type SearchExerciseDTO = z.infer<typeof searchexerciseSchema>
