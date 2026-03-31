@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ensureAuthenticated } from '@/@middlewares/ensureAuthenticated.js'
+import { ensureAuthenticated } from '../../../@middlewares/ensureAuthenticated.js'
 import { PlanRepository } from '../repositories/plan.repository.js'
 import { PlanService } from '../services/plan.service.js'
 import { PlanController } from '../controllers/plan.controller.js'

@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/library"
+import type * as runtime from "@prisma/client/runtime/client"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -261,7 +261,7 @@ export type FoodGroupByOutputType = {
   _max: FoodMaxAggregateOutputType | null
 }
 
-type GetFoodGroupByPayload<T extends FoodGroupByArgs> = Prisma.PrismaPromise<
+export type GetFoodGroupByPayload<T extends FoodGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<FoodGroupByOutputType, T['by']> &
       {
@@ -1600,6 +1600,11 @@ export type FoodFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Foods.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Foods.
+   */
   distinct?: Prisma.FoodScalarFieldEnum | Prisma.FoodScalarFieldEnum[]
 }
 

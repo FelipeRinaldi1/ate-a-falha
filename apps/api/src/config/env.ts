@@ -1,5 +1,8 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
+import path from 'node:path'
 import { z } from 'zod'
+
+dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
 import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../@constants/env/env.constants.js'
 import { ENV_ERRORS } from '../@constants/env/env.errors.js'
 
@@ -20,7 +23,7 @@ const envSchema = z.object({
 
 	CORS_ORIGIN: z.string().default('*'),
 
-	SERVER_URL: z.url({ message: 'URL do servidor inválida' }),
+	SERVER_URL: z.url({ message: 'URL do servidor inválida' }).default('http://localhost:3333'),
 
 	LOG_LEVEL: z.string().default('info'),
 })

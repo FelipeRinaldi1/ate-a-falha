@@ -1,7 +1,10 @@
-import { Result, success, failure } from '@/@utils/result.js'
+import { Result, success, failure } from "@ate-a-falha/shared"
+
 import { INutritionAccessControlRepository } from '../interfaces/accessControl.interface.js'
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
-import { AppError } from '@/@utils/appError.js'
+import { authenticatedUser } from "@ate-a-falha/shared"
+
+import { AppError } from "@ate-a-falha/shared"
+
 
 export class NutritionAccessControlService {
 	constructor(private accessRepo: INutritionAccessControlRepository) {}

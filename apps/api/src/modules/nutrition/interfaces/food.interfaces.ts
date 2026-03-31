@@ -1,5 +1,7 @@
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO, FoodFull } from '../schema/food.schema.js'
-import { Result } from '../../../@utils/result.js'
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from "@ate-a-falha/shared"
+import { FoodFull } from "@ate-a-falha/database"
+
+import { Result } from '@ate-a-falha/shared'
 
 export interface IFoodRepository {
 	create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>>

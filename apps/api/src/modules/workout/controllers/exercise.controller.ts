@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express'
 import { ExerciseService } from '../services/exercise.service.js'
-import { CreateExerciseSchema, SearchExerciseSchema, UpdateExerciseSchema } from '../schema/exercise.schema.js'
-import { validateData } from '@/@utils/validateData.js'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
+import { createexerciseSchema, searchexerciseSchema, updateexerciseSchema } from "@ate-a-falha/shared"
+
+import { validateData } from "@ate-a-falha/shared"
+
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class ExerciseController {
-	constructor(private exerciseService: ExerciseService) {}
+	constructor(private exerciseService: ExerciseService) { }
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(CreateExerciseSchema, req.body, 'Invalid Request Body')
+		const validation = validateData(createexerciseSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.exerciseService.create(validation.value, req.user!)
@@ -20,11 +22,11 @@ export class ExerciseController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const validation = validateData(UpdateExerciseSchema, req.body, 'Invalid update Body')
+		const validation = validateData(updateexerciseSchema, req.body, 'Invalid update Body')
 
 		if (validation.isFailure()) return next(validation.error)
 
@@ -39,7 +41,7 @@ export class ExerciseController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Exercise Id')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Exercise Id')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -53,7 +55,7 @@ export class ExerciseController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(SearchExerciseSchema, req.query, 'Invalid search Data')
+		const validation = validateData(searchexerciseSchema, req.query, 'Invalid search Data')
 
 		if (validation.isFailure()) return next(validation.error)
 
@@ -65,7 +67,7 @@ export class ExerciseController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.exerciseService.findById(idValid.value)

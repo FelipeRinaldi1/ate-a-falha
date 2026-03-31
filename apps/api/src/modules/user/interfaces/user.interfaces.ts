@@ -1,9 +1,12 @@
-import { Result } from '@/@utils/result.js'
-import { UserFull, createUserDTO, updateUserDTO } from '../schema/user.schema.js'
+import { Result } from "@ate-a-falha/shared"
+
+import { CreateUserDTO, UpdateUserDTO } from "@ate-a-falha/shared"
+import { UserFull } from "@ate-a-falha/database"
+
 
 export interface IUserRepository {
-	create(data: createUserDTO): Promise<Result<UserFull>>
-	update(id: string, data: updateUserDTO): Promise<Result<UserFull>>
+	create(data: CreateUserDTO): Promise<Result<UserFull>>
+	update(id: string, data: UpdateUserDTO): Promise<Result<UserFull>>
 	delete(id: string): Promise<Result<void>>
 	findById(id: string): Promise<Result<UserFull>>
 	findAll(): Promise<Result<UserFull[]>>

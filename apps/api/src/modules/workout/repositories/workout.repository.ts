@@ -1,9 +1,9 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { Result, success, failure } from '@/@utils/result.js'
-import { CreateWorkoutDTO, UpdateWorkoutDTO, WorkoutFull } from '@/modules/workout/schema/workout.schema.js'
-import { IWorkoutRepository } from '@/modules/workout/interfaces/workout.interface.js'
-
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
+import { WorkoutFull } from '@ate-a-falha/database'
+import { Result, success, failure } from "@ate-a-falha/shared"
+import { CreateWorkoutDTO, UpdateWorkoutDTO } from '@ate-a-falha/shared'
+import { IWorkoutRepository } from '../interfaces/workout.interface.js'
 export class WorkoutRepository implements IWorkoutRepository {
 	async create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutFull>> {
 		const result = await safeCall(

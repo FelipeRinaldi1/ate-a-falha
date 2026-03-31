@@ -1,11 +1,14 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { Result, success, failure } from '@/@utils/result.js'
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
+import { Result, success, failure } from "@ate-a-falha/shared"
+
 import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO, BodyMetricFull } from '../schema/bodyMetric.schema.js'
+import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from "@ate-a-falha/shared"
+import { BodyMetricFull } from "@ate-a-falha/database"
+
 
 export class BodyMetricRepository implements IBodyMetricRepository {
-	async create(data: createBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
+	async create(data: CreateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.create({
 				data: { ...data, userId },
@@ -16,7 +19,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		return success(result.value)
 	}
 
-	async findAll(data: bodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>> {
+	async findAll(data: BodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>> {
 		const result = await safeCall(
 			prisma.bodyMetric.findMany({
 				take: data.take || 10,
@@ -46,7 +49,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		return success(result.value)
 	}
 
-	async update(id: string, data: updateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
+	async update(id: string, data: UpdateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.update({
 				where: { id, userId },

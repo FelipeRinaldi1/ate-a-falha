@@ -1,8 +1,11 @@
 import { ISetRepository } from '../interfaces/set.interface.js'
-import { failure, Result, success } from '@/@utils/result.js'
-import { CreateSetDTO, UpdateSetDTO, SetFull } from '../schema/set.schema.js'
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
+import { failure, Result, success } from "@ate-a-falha/shared"
+
+import { CreateSetDTO, UpdateSetDTO } from "@ate-a-falha/shared"
+import { SetFull } from "@ate-a-falha/database"
+
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
 
 export class SetRepository implements ISetRepository {
 	private ownershipFilter(userId: string) {

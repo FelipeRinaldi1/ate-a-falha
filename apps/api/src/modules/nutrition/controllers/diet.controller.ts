@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
 import { DietService } from '../services/diet.service.js'
-import { validateData } from '@/@utils/validateData.js'
-import { createDietSchema, updateDietSchema } from '../schema/diet.schema.js'
+import { validateData } from "@ate-a-falha/shared"
+
+import { createDietSchema, updateDietSchema } from "@ate-a-falha/shared"
+
 
 export class DietController {
-	constructor(private dietService: DietService) {}
+	constructor(private dietService: DietService) { }
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const validation = validateData(createDietSchema, req.body, 'Invalid Request Body')
@@ -28,7 +30,7 @@ export class DietController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(z.uuid(), req.params.id, 'Invalid diet ID')
+		const validation = validateData(z.string().uuid(), req.params.id, 'Invalid diet ID')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.dietService.findById(validation.value, req.user)
@@ -39,7 +41,7 @@ export class DietController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid diet ID in URL')
+		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid diet ID in URL')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const bodyValidation = validateData(updateDietSchema, req.body, 'Invalid Request Body')
@@ -53,7 +55,7 @@ export class DietController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(z.uuid(), req.params.id, 'Invalid diet ID')
+		const validation = validateData(z.string().uuid(), req.params.id, 'Invalid diet ID')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.dietService.delete(validation.value, req.user)

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { AppError } from '../@utils/appError.js'
-
+import { AppError } from '@ate-a-falha/shared'
 function isAppError(err: unknown): err is AppError {
 	return typeof err === 'object' && err !== null && 'type' in err && 'message' in err
 }
@@ -33,7 +32,7 @@ export function globalErrorHandler(
 		})
 	}
 
-	req.log.error(err, 'Unhandled unexpected error')
+	req.log.error(err as any, 'Unhandled unexpected error')
 
 	return res.status(500).json({
 		status: 'error',

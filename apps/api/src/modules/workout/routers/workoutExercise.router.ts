@@ -5,8 +5,7 @@ import { WorkoutExerciseService } from '../services/workoutExercise.service.js'
 import { WorkoutExerciseController } from '../controllers/workoutExercise.controller.js'
 import { WorkoutAccessControlRepository } from '../repositories/accessControl.repository.js'
 import { WorkoutAccessControlService } from '../services/accessControl.service.js'
-import { ensureAuthenticated } from '@/@middlewares/ensureAuthenticated.js'
-
+import { ensureAuthenticated } from '../../../@middlewares/ensureAuthenticated.js'
 const workoutExerciseRepo = new WorkoutExerciseRepository()
 const accessRepo = new WorkoutAccessControlRepository()
 const accessService = new WorkoutAccessControlService(accessRepo)

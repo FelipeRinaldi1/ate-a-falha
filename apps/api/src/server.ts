@@ -1,6 +1,9 @@
+import { ENV } from './config/env.js'
 import app from './app.js'
-import { prisma } from './@infra/prisma.client.js'
-const PORT = 3000
+import { prisma } from '@ate-a-falha/database'
+
+const PORT = ENV.PORT
+
 async function main() {
 	await prisma.$connect()
 	app.listen(PORT, () => {

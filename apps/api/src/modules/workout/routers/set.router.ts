@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ensureAuthenticated } from '@/@middlewares/ensureAuthenticated.js'
+import { ensureAuthenticated } from '../../../@middlewares/ensureAuthenticated.js'
 import { SetRepository } from '../repositories/set.repository.js'
 import { SetService } from '../services/set.service.js'
 import { SetController } from '../controllers/set.controller.js'

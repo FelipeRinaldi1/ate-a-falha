@@ -1,18 +1,20 @@
 import { Request, Response, NextFunction } from 'express'
 import { FoodInMealService } from '../services/foodInMeal.service.js'
-import { createFoodInMealSchema, updateFoodInMealSchema } from '../schema/foodInMeal.schema.js'
+import { createFoodInMealSchema, updateFoodInMealSchema } from "@ate-a-falha/shared"
+
 import { z } from 'zod'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
-import { validateData } from '@/@utils/validateData.js'
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
+import { validateData } from "@ate-a-falha/shared"
+
 
 export class FoodInMealController {
-    constructor(private foodInMealService: FoodInMealService) {}
+    constructor(private foodInMealService: FoodInMealService) { }
 
     create = async (req: Request, res: Response, next: NextFunction) => {
-        const mealIdValidation = validateData(z.uuid(), req.params.mealId, 'Invalid meal ID')
+        const mealIdValidation = validateData(z.string().uuid(), req.params.mealId, 'Invalid meal ID')
         if (mealIdValidation.isFailure()) return next(mealIdValidation.error)
 
-        const foodIdValidation = validateData(z.uuid(), req.params.foodId, 'Invalid food ID')
+        const foodIdValidation = validateData(z.string().uuid(), req.params.foodId, 'Invalid food ID')
         if (foodIdValidation.isFailure()) return next(foodIdValidation.error)
 
         const bodyValidation = validateData(createFoodInMealSchema, req.body, 'Invalid Request Body')
@@ -31,7 +33,7 @@ export class FoodInMealController {
     }
 
     findAll = async (req: Request, res: Response, next: NextFunction) => {
-        const mealIdValidation = validateData(z.uuid(), req.params.mealId, 'Invalid meal ID')
+        const mealIdValidation = validateData(z.string().uuid(), req.params.mealId, 'Invalid meal ID')
         if (mealIdValidation.isFailure()) return next(mealIdValidation.error)
 
         const result = await this.foodInMealService.findAll(mealIdValidation.value, req.user)
@@ -42,7 +44,7 @@ export class FoodInMealController {
     }
 
     findById = async (req: Request, res: Response, next: NextFunction) => {
-        const idValidation = validateData(z.uuid(), req.params.id, 'Invalid item ID')
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid item ID')
         if (idValidation.isFailure()) return next(idValidation.error)
 
         const result = await this.foodInMealService.findById(idValidation.value, req.user)
@@ -53,7 +55,7 @@ export class FoodInMealController {
     }
 
     update = async (req: Request, res: Response, next: NextFunction) => {
-        const idValidation = validateData(z.uuid(), req.params.id, 'Invalid item ID')
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid item ID')
         if (idValidation.isFailure()) return next(idValidation.error)
 
         const bodyValidation = validateData(updateFoodInMealSchema, req.body, 'Invalid Request Body')
@@ -67,7 +69,7 @@ export class FoodInMealController {
     }
 
     delete = async (req: Request, res: Response, next: NextFunction) => {
-        const idValidation = validateData(z.uuid(), req.params.id, 'Invalid item ID')
+        const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid item ID')
         if (idValidation.isFailure()) return next(idValidation.error)
 
         const result = await this.foodInMealService.delete(idValidation.value, req.user)

@@ -1,18 +1,20 @@
 import { Request, Response, NextFunction } from 'express'
 import { WorkoutExerciseService } from '../services/workoutExercise.service.js'
-import { validateData } from '@/@utils/validateData.js'
-import { CreateWorkoutExerciseSchema, UpdateWorkoutExerciseSchema } from '../schema/workoutExercise.schema.js'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
+import { validateData } from "@ate-a-falha/shared"
+
+import { CreateWorkoutexerciseSchema, UpdateWorkoutexerciseSchema } from "@ate-a-falha/shared"
+
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class WorkoutExerciseController {
-	constructor(private workoutExerciseService: WorkoutExerciseService) {}
+	constructor(private workoutExerciseService: WorkoutExerciseService) { }
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const workoutIdValid = validateData(z.uuid(), req.params.workoutId, 'Invalid Workout ID')
+		const workoutIdValid = validateData(z.string().uuid(), req.params.workoutId, 'Invalid Workout ID')
 		if (workoutIdValid.isFailure()) return next(workoutIdValid.error)
 
-		const bodyValidation = validateData(CreateWorkoutExerciseSchema, req.body, 'Invalid Request Body')
+		const bodyValidation = validateData(CreateWorkoutexerciseSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.workoutExerciseService.create(workoutIdValid.value, bodyValidation.value, req.user)
@@ -23,10 +25,10 @@ export class WorkoutExerciseController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Workout Exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Workout Exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const bodyValidation = validateData(UpdateWorkoutExerciseSchema, req.body, 'Invalid update Body')
+		const bodyValidation = validateData(UpdateWorkoutexerciseSchema, req.body, 'Invalid update Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.workoutExerciseService.update(idValid.value, bodyValidation.value, req.user)
@@ -37,7 +39,7 @@ export class WorkoutExerciseController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Workout Exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Workout Exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.workoutExerciseService.delete(idValid.value, req.user)
@@ -48,7 +50,7 @@ export class WorkoutExerciseController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const workoutIdValid = validateData(z.uuid(), req.params.workoutId, 'Invalid Workout ID')
+		const workoutIdValid = validateData(z.string().uuid(), req.params.workoutId, 'Invalid Workout ID')
 		if (workoutIdValid.isFailure()) return next(workoutIdValid.error)
 
 		const result = await this.workoutExerciseService.findAll(workoutIdValid.value, req.user)
@@ -59,7 +61,7 @@ export class WorkoutExerciseController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Workout Exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Workout Exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.workoutExerciseService.findById(idValid.value, req.user)

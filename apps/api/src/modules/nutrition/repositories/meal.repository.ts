@@ -1,8 +1,11 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { Result, success, failure } from '@/@utils/result.js'
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
+import { Result, success, failure } from "@ate-a-falha/shared"
+
 import { IMealRepository } from '../interfaces/meal.interface.js'
-import { CreateMealDTO, UpdateMealDTO, MealFull } from '../schema/meal.schema.js'
+import { CreateMealDTO, UpdateMealDTO } from "@ate-a-falha/shared"
+import { MealFull } from "@ate-a-falha/database"
+
 
 export class MealRepository implements IMealRepository {
 	async create(dietId: string, data: CreateMealDTO, userId: string): Promise<Result<MealFull>> {

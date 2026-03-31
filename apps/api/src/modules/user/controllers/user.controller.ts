@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { UserService } from '../services/user.service.js'
-import { createUserWithAuthSchema, updateUserSchema } from '../schema/user.schema.js'
+import { createUserWithAuthSchema, updateUserSchema } from "@ate-a-falha/shared"
+
 import { z } from 'zod'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
-import { validateData } from '@/@utils/validateData.js'
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
+import { validateData } from "@ate-a-falha/shared"
+
 
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(private userService: UserService) { }
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const bodyValidation = validateData(createUserWithAuthSchema, req.body, 'Invalid user data')

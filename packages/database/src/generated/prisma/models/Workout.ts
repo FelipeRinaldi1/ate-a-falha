@@ -8,7 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
-import type * as runtime from "@prisma/client/runtime/library"
+import type * as runtime from "@prisma/client/runtime/client"
 import type * as $Enums from "../enums.js"
 import type * as Prisma from "../internal/prismaNamespace.js"
 
@@ -165,7 +165,7 @@ export type WorkoutGroupByOutputType = {
   _max: WorkoutMaxAggregateOutputType | null
 }
 
-type GetWorkoutGroupByPayload<T extends WorkoutGroupByArgs> = Prisma.PrismaPromise<
+export type GetWorkoutGroupByPayload<T extends WorkoutGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<WorkoutGroupByOutputType, T['by']> &
       {
@@ -1278,6 +1278,11 @@ export type WorkoutFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Workouts.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Workouts.
+   */
   distinct?: Prisma.WorkoutScalarFieldEnum | Prisma.WorkoutScalarFieldEnum[]
 }
 

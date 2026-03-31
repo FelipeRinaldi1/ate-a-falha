@@ -15,3 +15,9 @@ export type {
 } from './generated/prisma/client.js'
 export * from './generated/prisma/enums.js'
 export { prisma } from './client.js'
+export { safeCall } from './safeCall.js'
+
+// Complex types
+export * from './types/user.js'
+export * from './types/nutrition.js'
+export * from './types/workout.js'

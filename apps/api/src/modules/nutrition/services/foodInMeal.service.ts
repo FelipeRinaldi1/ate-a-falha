@@ -1,8 +1,12 @@
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO, FoodInMealFull } from '../schema/foodInMeal.schema.js'
+import { authenticatedUser } from "@ate-a-falha/shared"
+
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from "@ate-a-falha/shared"
+import { FoodInMealFull } from "@ate-a-falha/database"
+
 import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { failure, Result } from '@/@utils/result.js'
+import { failure, Result } from "@ate-a-falha/shared"
+
 
 export class FoodInMealService {
 	constructor(

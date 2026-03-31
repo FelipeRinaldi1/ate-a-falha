@@ -1,4 +1,5 @@
-import { Result } from '@/@utils/result.js'
+import { Result } from "@ate-a-falha/shared"
+
 
 export interface IWorkoutAccessControl {
 	canAccessSet(setId: string, userId: string): Promise<Result<boolean>>

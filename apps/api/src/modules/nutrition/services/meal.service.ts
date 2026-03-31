@@ -1,8 +1,12 @@
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { Result, failure } from '@/@utils/result.js'
+import { Result, failure } from "@ate-a-falha/shared"
+
 import { MealRepository } from '../repositories/meal.repository.js'
-import { CreateMealDTO, UpdateMealDTO, MealFull } from '../schema/meal.schema.js'
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
+import { CreateMealDTO, UpdateMealDTO } from "@ate-a-falha/shared"
+import { MealFull } from "@ate-a-falha/database"
+
+import { authenticatedUser } from "@ate-a-falha/shared"
+
 
 export class MealService {
 	constructor(

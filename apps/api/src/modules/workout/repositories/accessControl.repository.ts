@@ -1,6 +1,7 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { Result, success, failure } from '@/@utils/result.js'
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
+import { Result, success, failure } from "@ate-a-falha/shared"
+
 import { IWorkoutAccessControl } from '../interfaces/accessControl.interface.js'
 
 export class WorkoutAccessControlRepository implements IWorkoutAccessControl {

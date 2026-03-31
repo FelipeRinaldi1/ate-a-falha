@@ -1,8 +1,7 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { Result, failure, success } from '@/@utils/result.js'
+import { prisma, safeCall, WorkoutExerciseFull } from '@ate-a-falha/database'
+import { Result, failure, success, CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from "@ate-a-falha/shared"
+
 import { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
-import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO, WorkoutExerciseFull } from '../schema/workoutExercise.schema.js'
 
 export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 	async create(

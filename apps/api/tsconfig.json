@@ -1,11 +1,30 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+		"composite": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"paths": {
 			"@/*": [
 				"./src/*"
+			],
+			"@/@constants/*": [
+				"./src/@constants/*"
+			],
+			"@/@utils/*": [
+				"./src/@utils/*"
+			],
+			"@/@middlewares/*": [
+				"./src/@middlewares/*"
+			],
+			"@/@infra/*": [
+				"./src/@infra/*"
+			],
+			"@/@shared/*": [
+				"./src/@shared/*"
+			],
+			"@/@types/*": [
+				"./src/@types/*"
 			],
 			"@infra/*": [
 				"./src/@infra/*"
@@ -21,6 +40,14 @@
 			]
 		}
 	},
+	"references": [
+		{
+			"path": "../../packages/shared"
+		},
+		{
+			"path": "../../packages/database"
+		}
+	],
 	"include": [
 		"src/**/*"
 	]

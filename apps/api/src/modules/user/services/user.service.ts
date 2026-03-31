@@ -1,15 +1,18 @@
-import { createUserWithAuthDTO, updateUserDTO, UserFull } from '../schema/user.schema.js'
+import { CreateUserWithAuthDTO, UpdateUserDTO } from "@ate-a-falha/shared"
+import { UserFull } from "@ate-a-falha/database"
+
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
-import { success, failure, Result } from '@/@utils/result.js'
+import { success, failure, Result } from "@ate-a-falha/shared"
+
 
 export class UserService {
 	constructor(
 		private userRepository: IUserRepository,
 		private authRepository: IAuthRepository
-	) {}
+	) { }
 
-	async create(data: createUserWithAuthDTO): Promise<Result<UserFull>> {
+	async create(data: CreateUserWithAuthDTO): Promise<Result<UserFull>> {
 		const { auth, ...userData } = data
 
 		const userResult = await this.userRepository.create(userData)
@@ -38,7 +41,7 @@ export class UserService {
 		return success(result.value)
 	}
 
-	async update(id: string, data: updateUserDTO): Promise<Result<UserFull>> {
+	async update(id: string, data: UpdateUserDTO): Promise<Result<UserFull>> {
 		const { auth, ...userData } = data
 		const userResult = await this.userRepository.update(id, userData)
 		if (userResult.isFailure()) return failure(userResult.error)

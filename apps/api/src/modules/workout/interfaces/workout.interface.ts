@@ -1,5 +1,6 @@
-import { Result } from '@/@utils/result.js'
-import { CreateWorkoutDTO, UpdateWorkoutDTO, WorkoutFull } from '../schema/workout.schema.js'
+import { Result, CreateWorkoutDTO, UpdateWorkoutDTO } from "@ate-a-falha/shared"
+
+import { WorkoutFull } from '@ate-a-falha/database'
 
 export interface IWorkoutRepository {
 	create(planId: string, data: CreateWorkoutDTO, userId: string): Promise<Result<WorkoutFull>>

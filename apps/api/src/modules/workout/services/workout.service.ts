@@ -1,8 +1,12 @@
-import { Result, failure } from '@/@utils/result.js'
+import { Result, failure } from "@ate-a-falha/shared"
+
 import { IWorkoutRepository } from '../interfaces/workout.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateWorkoutDTO, UpdateWorkoutDTO, WorkoutFull } from '../schema/workout.schema.js'
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
+import { CreateWorkoutDTO, UpdateWorkoutDTO } from "@ate-a-falha/shared"
+import { WorkoutFull } from "@ate-a-falha/database"
+
+import { authenticatedUser } from "@ate-a-falha/shared"
+
 
 export class WorkoutService {
 	constructor(

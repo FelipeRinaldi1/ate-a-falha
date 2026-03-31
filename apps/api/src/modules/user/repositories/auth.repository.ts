@@ -1,11 +1,14 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
 import { IAuthRepository } from '../interfaces/auth.interfaces.js'
-import { Result, success, failure } from '@/@utils/result.js'
-import { createAuthDTO, updateAuthDTO, AuthFull } from '../schema/auth.schema.js'
+import { Result, success, failure } from "@ate-a-falha/shared"
+
+import { CreateAuthDTO, UpdateAuthDTO } from "@ate-a-falha/shared"
+import { AuthFull } from "@ate-a-falha/database"
+
 
 export class AuthRepository implements IAuthRepository {
-	async create(data: createAuthDTO, userId: string): Promise<Result<AuthFull>> {
+	async create(data: CreateAuthDTO, userId: string): Promise<Result<AuthFull>> {
 		const result = await safeCall(
 			prisma.auth.create({
 				data: {
@@ -20,7 +23,7 @@ export class AuthRepository implements IAuthRepository {
 		return success(result.value)
 	}
 
-	async update(userId: string, data: updateAuthDTO): Promise<Result<AuthFull>> {
+	async update(userId: string, data: UpdateAuthDTO): Promise<Result<AuthFull>> {
 		const result = await safeCall(
 			prisma.auth.update({
 				where: { userId },

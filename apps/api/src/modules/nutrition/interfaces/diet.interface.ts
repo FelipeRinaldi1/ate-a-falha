@@ -1,6 +1,9 @@
-import { CreateDietDTO, UpdateDietDTO } from '../schema/diet.schema.js'
-import { DietFull } from '../schema/diet.schema.js'
-import { Result } from '@/@utils/result.js'
+import { CreateDietDTO, UpdateDietDTO } from "@ate-a-falha/shared"
+
+import { DietFull } from "@ate-a-falha/database"
+
+import { Result } from "@ate-a-falha/shared"
+
 
 export interface IDietRepository {
 	create(data: CreateDietDTO, userId: string): Promise<Result<DietFull>>

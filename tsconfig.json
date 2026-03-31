@@ -37,7 +37,17 @@
         "resolveJsonModule": true
     },
     "exclude": [
-        "node_modules",
-        "**/dist/*"
+        "node_modules"
+    ],
+    "references": [
+        {
+            "path": "./packages/shared"
+        },
+        {
+            "path": "./packages/database"
+        },
+        {
+            "path": "./apps/api"
+        }
     ]
 }

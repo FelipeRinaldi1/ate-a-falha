@@ -1,18 +1,20 @@
 import { Request, Response, NextFunction } from 'express'
 import { SetService } from '../services/set.service.js'
-import { validateData } from '@/@utils/validateData.js'
-import { CreateSetSchema, UpdateSetSchema } from '../schema/set.schema.js'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
+import { validateData } from "@ate-a-falha/shared"
+
+import { createsetSchema, updatesetSchema } from "@ate-a-falha/shared"
+
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class SetController {
-	constructor(private setService: SetService) {}
+	constructor(private setService: SetService) { }
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const exerciseIdValid = validateData(z.uuid(), req.params.workoutExerciseId, 'Invalid Workout Exercise ID')
+		const exerciseIdValid = validateData(z.string().uuid(), req.params.workoutExerciseId, 'Invalid Workout Exercise ID')
 		if (exerciseIdValid.isFailure()) return next(exerciseIdValid.error)
 
-		const bodyValidation = validateData(CreateSetSchema, req.body, 'Invalid Request Body')
+		const bodyValidation = validateData(createsetSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.setService.create(bodyValidation.value, exerciseIdValid.value, req.user.id!)
@@ -23,10 +25,10 @@ export class SetController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid set ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid set ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const bodyValidation = validateData(UpdateSetSchema, req.body, 'Invalid update Body')
+		const bodyValidation = validateData(updatesetSchema, req.body, 'Invalid update Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.setService.update(idValid.value, bodyValidation.value, req.user.id!)
@@ -37,7 +39,7 @@ export class SetController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid set ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid set ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.setService.delete(idValid.value, req.user.id!)
@@ -48,7 +50,7 @@ export class SetController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const exerciseIdValid = validateData(z.uuid(), req.params.workoutExerciseId, 'Invalid Workout Exercise ID')
+		const exerciseIdValid = validateData(z.string().uuid(), req.params.workoutExerciseId, 'Invalid Workout Exercise ID')
 		if (exerciseIdValid.isFailure()) return next(exerciseIdValid.error)
 
 		const result = await this.setService.findAll(exerciseIdValid.value, req.user.id!)
@@ -59,7 +61,7 @@ export class SetController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid set ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid set ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.setService.findById(idValid.value, req.user.id!)

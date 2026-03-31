@@ -1,6 +1,7 @@
-import { prisma } from '@/@infra/prisma.client.js'
-import { safeCall } from '@/@infra/prisma.safeCall.js'
-import { failure, Result, success } from '@/@utils/result.js'
+import { prisma } from '@ate-a-falha/database'
+import { safeCall } from '@ate-a-falha/database'
+import { failure, Result, success } from "@ate-a-falha/shared"
+
 import { INutritionAccessControlRepository } from '../interfaces/accessControl.interface.js'
 
 export class NutritionAccessControlRepository implements INutritionAccessControlRepository {

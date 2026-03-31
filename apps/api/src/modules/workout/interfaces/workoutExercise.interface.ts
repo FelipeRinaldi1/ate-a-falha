@@ -1,5 +1,8 @@
-import { Result } from '@/@utils/result.js'
-import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO, WorkoutExerciseFull } from '../schema/workoutExercise.schema.js'
+import { Result } from "@ate-a-falha/shared"
+
+import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from "@ate-a-falha/shared"
+import { WorkoutExerciseFull } from "@ate-a-falha/database"
+
 export interface IWorkoutExerciseRepository {
 	create(
 		workoutId: string,

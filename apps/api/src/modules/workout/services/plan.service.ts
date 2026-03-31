@@ -1,8 +1,12 @@
-import { CreatePlanDTO, UpdatePlanDTO, PlanFull } from '../schema/plan.schema.js'
+import { CreatePlanDTO, UpdatePlanDTO } from "@ate-a-falha/shared"
+import { PlanFull } from "@ate-a-falha/database"
+
 import { IPlanRepository } from '../interfaces/plan.interface.js'
-import { failure, Result } from '@/@utils/result.js'
+import { failure, Result } from "@ate-a-falha/shared"
+
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
+import { authenticatedUser } from "@ate-a-falha/shared"
+
 
 export class PlanService {
 	constructor(

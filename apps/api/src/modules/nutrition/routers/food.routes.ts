@@ -4,7 +4,7 @@ import { FoodRepository } from '../repositories/food.repository.js'
 import { FoodService } from '../services/food.service.js'
 import { NutritionAccessControlService } from '../services/nutritionAccessControl.service.js'
 import { NutritionAccessControlRepository } from '../repositories/accessControl.repository.js'
-import { ensureAuthenticated } from '@/@middlewares/ensureAuthenticated.js'
+import { ensureAuthenticated } from 'apps/api/src/@middlewares/ensureAuthenticated.js'
 
 const foodRoutes = Router()
 const accessRepo = new NutritionAccessControlRepository()
@@ -13,7 +13,7 @@ const foodRepo = new FoodRepository()
 const foodService = new FoodService(foodRepo, accessServ)
 const foodController = new FoodController(foodService)
 
-foodRoutes.use(ensureAuthenticated) 
+foodRoutes.use(ensureAuthenticated)
 
 foodRoutes.post('/', foodController.create)
 foodRoutes.get('/:id', foodController.findById)

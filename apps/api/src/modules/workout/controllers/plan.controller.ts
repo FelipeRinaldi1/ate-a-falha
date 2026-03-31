@@ -1,14 +1,16 @@
 import { Request, Response, NextFunction } from 'express'
 import { PlanService } from '../services/plan.service.js'
-import { validateData } from '@/@utils/validateData.js'
-import { CreatePlanSchema, UpdatePlanSchema } from '../schema/plan.schema.js'
-import { HTTP_STATUS } from '@/@constants/global/httpCodesConstants.js'
+import { validateData } from "@ate-a-falha/shared"
+
+import { createplanSchema, updateplanSchema } from "@ate-a-falha/shared"
+
+import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class PlanController {
-	constructor(private planService: PlanService) {}
+	constructor(private planService: PlanService) { }
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(CreatePlanSchema, req.body, 'Invalid Request Body')
+		const validation = validateData(createplanSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.planService.create(validation.value, req.user)
@@ -19,11 +21,11 @@ export class PlanController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const validation = validateData(UpdatePlanSchema, req.body, 'Invalid update Body')
+		const validation = validateData(updateplanSchema, req.body, 'Invalid update Body')
 
 		if (validation.isFailure()) return next(validation.error)
 
@@ -38,7 +40,7 @@ export class PlanController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Exercise Id')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Exercise Id')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -58,7 +60,7 @@ export class PlanController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.planService.findById(idValid.value, req.user)

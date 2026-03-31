@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import jwt from 'jsonwebtoken'
-import { AppError } from '../@utils/appError.js' 
-
+import { AppError } from "@ate-a-falha/shared"
 const tokenPayloadSchema = z.object({
-    sub:z.uuid(),
-    role:z.enum(['USER','ADMIN'])
+    sub: z.string().uuid(),
+    role: z.enum(['USER', 'ADMIN'])
 })
 
 export const ensureAuthenticated = (req: Request, _res: Response, next: NextFunction) => {
@@ -15,7 +14,7 @@ export const ensureAuthenticated = (req: Request, _res: Response, next: NextFunc
         if (!authHeader) {
             const error: AppError = { type: 'UNAUTHORIZED', message: 'Token not provided' }
             throw error
-        } 
+        }
 
         const [scheme, token] = authHeader.split(' ')
 
@@ -28,29 +27,31 @@ export const ensureAuthenticated = (req: Request, _res: Response, next: NextFunc
 
         const result = tokenPayloadSchema.safeParse(decoded)
 
-        if(!result.success){
+        if (!result.success) {
             throw {
-                type:'UNAUTHORIZED',
-                message:'Invalid token payload',
+                type: 'UNAUTHORIZED',
+                message: 'Invalid token payload',
                 details: result.error.issues
             } as AppError
         }
 
-        const {sub:userId,role} = result.data
+        const { sub: userId, role } = result.data
 
-        req.user = { id: userId , role:role}
-        
+        req.user = { id: userId, role: role }
+
         return next()
     } catch (error: any) {
         if (error?.type) return next(error)
 
-        const fallbackError: AppError = { 
-            type: 'UNAUTHORIZED', 
+        req.log.error(error as any, 'Unhandled unexpected error')
+
+        const fallbackError: AppError = {
+            type: 'UNAUTHORIZED',
             message: 'Invalid, expired or malformed token',
             details: error?.message || 'Unknown error'
         }
 
         return next(fallbackError)
-    
+
     }
 }

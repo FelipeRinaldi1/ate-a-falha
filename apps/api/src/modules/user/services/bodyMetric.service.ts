@@ -1,12 +1,16 @@
-import { createBodyMetricDTO, bodyMetricSearchDTO, updateBodyMetricDTO, BodyMetricFull } from '../schema/bodyMetric.schema.js'
+import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from "@ate-a-falha/shared"
+import { BodyMetricFull } from "@ate-a-falha/database"
+
 import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { success, failure, Result } from '@/@utils/result.js'
-import { authenticatedUser } from '@/@shared/authenticatedUser.js'
+import { success, failure, Result } from "@ate-a-falha/shared"
+
+import { authenticatedUser } from "@ate-a-falha/shared"
+
 
 export class BodyMetricService {
-	constructor(private bodyMetricRepository: IBodyMetricRepository) {}
+	constructor(private bodyMetricRepository: IBodyMetricRepository) { }
 
-	async create(data: createBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
+	async create(data: CreateBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
 		const result = await this.bodyMetricRepository.create(data, authUser.id)
 		if (result.isFailure()) {
 			return failure(result.error)
@@ -25,7 +29,7 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async findAll(data: bodyMetricSearchDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull[]>> {
+	async findAll(data: BodyMetricSearchDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull[]>> {
 		const result = await this.bodyMetricRepository.findAll(data, authUser.id)
 
 		if (result.isFailure()) {
@@ -36,7 +40,7 @@ export class BodyMetricService {
 
 	async update(
 		id: string,
-		data: updateBodyMetricDTO,
+		data: UpdateBodyMetricDTO,
 		authUser: authenticatedUser
 	): Promise<Result<BodyMetricFull>> {
 
