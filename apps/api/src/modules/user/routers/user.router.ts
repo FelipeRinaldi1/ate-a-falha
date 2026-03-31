@@ -3,17 +3,23 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { AuthRepository } from '../repositories/auth.repository.js'
 import { UserService } from '../services/user.service.js'
 import { UserController } from '../controllers/user.controller.js'
+import { ensureAuthenticated } from '../../../middlewares/ensureAuthenticated.js'
 
-const userRoutes = Router()
+const userRouter = Router()
 const userRepo = new UserRepository()
 const authRepo = new AuthRepository()
 const userService = new UserService(userRepo, authRepo)
 const userController = new UserController(userService)
 
-userRoutes.post('/', userController.create)
-userRoutes.get('/:id', userController.findById)
-userRoutes.get('/', userController.findAll)
-userRoutes.put('/:id', userController.update)
-userRoutes.delete('/:id', userController.delete)
+// Public
+userRouter.post('/register', userController.register)
+userRouter.post('/login', userController.login)
 
-export { userRoutes }
+// Protected
+userRouter.get('/me', ensureAuthenticated, userController.getMe)
+userRouter.put('/me', ensureAuthenticated, userController.updateMe)
+userRouter.delete('/me', ensureAuthenticated, userController.deleteMe)
+userRouter.patch('/me/password', ensureAuthenticated, userController.changePassword)
+userRouter.patch('/me/email', ensureAuthenticated, userController.changeEmail)
+
+export { userRouter }
