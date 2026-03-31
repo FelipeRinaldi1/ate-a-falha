@@ -3,7 +3,7 @@ import { z } from 'zod'
 import jwt from 'jsonwebtoken'
 import { AppError } from "@ate-a-falha/shared"
 const tokenPayloadSchema = z.object({
-    sub: z.string().uuid(),
+    sub: z.uuid(),
     role: z.enum(['USER', 'ADMIN'])
 })
 

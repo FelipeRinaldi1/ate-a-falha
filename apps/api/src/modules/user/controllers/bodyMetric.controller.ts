@@ -3,7 +3,7 @@ import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from "@ate-a-falha/shared"
 
 import { z } from 'zod'
-import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
 import { validateData } from "@ate-a-falha/shared"
 
 
@@ -33,7 +33,7 @@ export class BodyMetricController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid body metric ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid body metric ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const result = await this.bodyMetricService.findById(idValidation.value, req.user)
@@ -44,7 +44,7 @@ export class BodyMetricController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid body metric ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid body metric ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const bodyValidation = validateData(updateBodyMetricSchema, req.body, 'Invalid update data for body metric')
@@ -58,7 +58,7 @@ export class BodyMetricController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid body metric ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid body metric ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const result = await this.bodyMetricService.delete(idValidation.value, req.user)

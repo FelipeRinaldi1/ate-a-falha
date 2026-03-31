@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service.js'
 import { createUserWithAuthSchema, updateUserSchema } from "@ate-a-falha/shared"
 
 import { z } from 'zod'
-import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
 import { validateData } from "@ate-a-falha/shared"
 
 
@@ -28,7 +28,7 @@ export class UserController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid user ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid user ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const result = await this.userService.findById(idValidation.value)
@@ -38,7 +38,7 @@ export class UserController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid user ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid user ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const bodyValidation = validateData(updateUserSchema, req.body, 'Invalid update data')
@@ -51,7 +51,7 @@ export class UserController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValidation = validateData(z.string().uuid(), req.params.id, 'Invalid user ID')
+		const idValidation = validateData(z.uuid(), req.params.id, 'Invalid user ID')
 		if (idValidation.isFailure()) return next(idValidation.error)
 
 		const result = await this.userService.delete(idValidation.value)

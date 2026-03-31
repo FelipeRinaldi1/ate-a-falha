@@ -4,7 +4,7 @@ import { validateData } from "@ate-a-falha/shared"
 
 import { createplanSchema, updateplanSchema } from "@ate-a-falha/shared"
 
-import { HTTP_STATUS } from 'apps/api/src/@constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class PlanController {
@@ -21,7 +21,7 @@ export class PlanController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -40,7 +40,7 @@ export class PlanController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid Exercise Id')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Exercise Id')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -60,7 +60,7 @@ export class PlanController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.string().uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.planService.findById(idValid.value, req.user)

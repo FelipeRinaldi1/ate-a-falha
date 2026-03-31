@@ -5,48 +5,14 @@
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"paths": {
-			"@/*": [
-				"./src/*"
-			],
-			"@/@constants/*": [
-				"./src/@constants/*"
-			],
-			"@/@utils/*": [
-				"./src/@utils/*"
-			],
-			"@/@middlewares/*": [
-				"./src/@middlewares/*"
-			],
-			"@/@infra/*": [
-				"./src/@infra/*"
-			],
-			"@/@shared/*": [
-				"./src/@shared/*"
-			],
-			"@/@types/*": [
-				"./src/@types/*"
-			],
-			"@infra/*": [
-				"./src/@infra/*"
-			],
-			"@middlewares/*": [
-				"./src/@middlewares/*"
-			],
-			"@ate-a-falha/shared": [
-				"../../packages/shared/src/index.ts"
-			],
-			"@ate-a-falha/database": [
-				"../../packages/database/src/index.ts"
-			]
+			"@/*": ["./src/*"],
+			"@ate-a-falha/shared": ["../../packages/shared/src/index.ts"],
+			"@ate-a-falha/database": ["../../packages/database/src/index.ts"]
 		}
 	},
 	"references": [
-		{
-			"path": "../../packages/shared"
-		},
-		{
-			"path": "../../packages/database"
-		}
+		{"path": "../../packages/shared"},
+		{"path": "../../packages/database"}
 	],
 	"include": [
 		"src/**/*"

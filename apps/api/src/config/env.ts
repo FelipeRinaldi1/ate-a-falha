@@ -3,8 +3,8 @@ import path from 'node:path'
 import { z } from 'zod'
 
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
-import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../@constants/env/env.constants.js'
-import { ENV_ERRORS } from '../@constants/env/env.errors.js'
+import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../constants/env/env.constants.js'
+import { ENV_ERRORS } from '../constants/env/env.errors.js'
 
 const nodeEnvValues = Object.values(NODE_ENV) as [string, ...string[]]
 

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ensureAuthenticated } from 'apps/api/src/@middlewares/ensureAuthenticated.js'
+import { ensureAuthenticated } from 'apps/api/src/middlewares/ensureAuthenticated.js'
 import { ExerciseRepository } from '../repositories/exercise.repository.js'
 import { ExerciseService } from '../services/exercise.service.js'
 import { ExerciseController } from '../controllers/exercise.controller.js'
