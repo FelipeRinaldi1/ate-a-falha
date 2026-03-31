@@ -1,34 +1,66 @@
-# Até a Falha
+# Até a Falha 
 
-Sistema de Gerenciamento de Dietas e Treinos.
+Um sistema moderno e robusto para o gerenciamento de dietas e treinos. Focado em organização, performance e escalabilidade, o projeto utiliza uma arquitetura de monorepo para facilitar o compartilhamento de código entre diferentes partes do ecossistema.
 
-### Pré requisitos
+---
 
-Antes de Começar, certifique-se de ter instalado na sua máquina:
+##  Arquitetura do Projeto
 
-Node.js & Typescript
-Express
-Prisma & Postgresql
-Zod (Validation)
-JWT (Auth)
+O projeto é estruturado utilizando **Turborepo**, garantindo uma separação clara de responsabilidades e facilitando a manutenção. Abaixo está a visão geral da estrutura de pastas:
 
-### Configuração de Variaveis de Ambiente
+```text
+.
+├── apps/                    # Aplicações principais
+│   ├── api/                 # Backend (Node.js/Express)
+│   │   ├── src/             # Código fonte da API
+│   │   │   ├── modules/     # Domínios (nutrition, user, workout)
+│   │   │   ├── middlewares/ # Regras interceptoras
+│   │   │   └── server.ts    # Ponto de entrada do servidor
+│   └── web/                 # Frontend (Em desenvolvimento)
+│
+├── packages/                # Bibliotecas e pacotes compartilhados
+│   ├── database/            # Camada de persistência e ORM
+│   │   └── src/             # Configurações do Prisma e cliente
+│   └── shared/              # Regras de negócio e tipos comuns
+│       └── src/             # Schemas Zod, tipos e utilitários
+│
+├── turbo.json               # Configurações de pipeline do Turborepo
+└── package.json             # Dependências e scripts do Workspace
+```
 
-### Como rodar meu projeto?
+---
 
-git clone https://github.com/FelipeRinaldi1/Ate-a-Falha
 
-npm install (client)
-npm install (server)
+## 🛠️ Tecnologias Principais
 
-npx prisma migrate dev
+-   **Runtime:** [Node.js](https://nodejs.org/)
+-   **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+-   **Monorepo:** [Turborepo](https://turbo.build/)
+-   **Backend:** [Express](https://expressjs.com/)
+-   **ORM:** [Prisma](https://www.prisma.io/)
+-   **Validação:** [Zod](https://zod.dev/)
 
+---
+
+## 🚀 Como Executar
+
+### 1. Pré-requisitos
+- Node.js (v18 ou superior)
+- npm (v10 ou superior)
+
+### 2. Instalação
+```bash
+npm install
+```
+
+### 3. Configuração
+Crie um arquivo `.env` na raiz (baseado no `.env.example`) com suas credenciais de banco de dados.
+
+### 4. Desenvolvimento
+Para rodar todas as aplicações simultaneamente em modo dev:
+```bash
 npm run dev
+```
 
-### Estrutura do Projeto
+---
 
-### Como me localizar no projeto?
-
-### Como executar o projeto?
-
-https://taco-api.netlify.app/about/
