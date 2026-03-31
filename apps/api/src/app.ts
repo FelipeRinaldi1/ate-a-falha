@@ -8,7 +8,7 @@ import helmet from 'helmet'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'
 import * as swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './config/swagger.js'
-import { userRoutes } from './modules/user/routers/user.router.js'
+import { userRouter } from './modules/user/routers/user.router.js'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 
 const app = express()
@@ -18,13 +18,14 @@ app.use(helmet())
 app.use(cors(corsOptions))
 app.use(apiRateLimiter)
 
+// Logger
 app.use(pinoHttp({ logger }))
 
 app.use(express.json())
 
-//Routes
+// Routes
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-app.use('/users', userRoutes)
+app.use('/users', userRouter)
 
 
 app.get('/', (_req, res) => {

@@ -32,3 +32,17 @@ export const UserSchema = z.object({
 export type CreateUserDTO = z.infer<typeof createUserSchema>
 export type CreateUserWithAuthDTO = z.infer<typeof createUserWithAuthSchema>
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>
+
+export interface UserResponseDTO {
+	id: string
+	name: string
+	role: z.infer<typeof ROLE>
+	gender: z.infer<typeof GENDER>
+	birthDate: Date
+	email: string
+}
+
+export interface AuthResponseDTO {
+	user: UserResponseDTO
+	token: string
+}

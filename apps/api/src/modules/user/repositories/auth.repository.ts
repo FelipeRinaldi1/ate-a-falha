@@ -3,7 +3,7 @@ import { safeCall } from '@ate-a-falha/database'
 import { IAuthRepository } from '../interfaces/auth.interfaces.js'
 import { Result, success, failure } from "@ate-a-falha/shared"
 
-import { CreateAuthDTO, UpdateAuthDTO } from "@ate-a-falha/shared"
+import { CreateAuthDTO } from "@ate-a-falha/shared"
 import { AuthFull } from "@ate-a-falha/database"
 
 
@@ -23,12 +23,26 @@ export class AuthRepository implements IAuthRepository {
 		return success(result.value)
 	}
 
-	async update(userId: string, data: UpdateAuthDTO): Promise<Result<AuthFull>> {
+	async updatePassword(userId: string, newPasswordHash: string): Promise<Result<AuthFull>> {
 		const result = await safeCall(
 			prisma.auth.update({
 				where: { userId },
 				data: {
-					...data,
+					password: newPasswordHash,
+					updatedAt: new Date(),
+				},
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+		return success(result.value)
+	}
+
+	async updateEmail(userId: string, newEmail: string): Promise<Result<AuthFull>> {
+		const result = await safeCall(
+			prisma.auth.update({
+				where: { userId },
+				data: {
+					email: newEmail,
 					updatedAt: new Date(),
 				},
 			})
