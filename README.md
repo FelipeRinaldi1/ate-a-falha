@@ -28,7 +28,7 @@ Um sistema para o gerenciamento de dietas e treinos.
 
 ---
 
-## 🛠️ Tecnologias Principais
+## Tecnologias Principais
 
 - **Runtime:** [Node.js](https://nodejs.org/)
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
@@ -39,7 +39,7 @@ Um sistema para o gerenciamento de dietas e treinos.
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 ### 1. Pré-requisitos
 
