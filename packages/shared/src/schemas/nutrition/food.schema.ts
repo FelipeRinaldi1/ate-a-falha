@@ -8,7 +8,7 @@ export const createFoodSchema = z.object({
   carbohydrate: z.number().nonnegative(),
   protein: z.number().nonnegative(),
   fat: z.number().nonnegative(),
-  fiber: z.number().nonnegative().optional().nullable(),
+  fiber: z.number().nonnegative(),
 })
 
 export const updateFoodSchema = createFoodSchema.partial()
@@ -20,7 +20,7 @@ export const foodSearchSchema = z.object({
 })
 
 export const FoodSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   baseUnit: z.string(),
   baseAmount: z.number(),
@@ -28,7 +28,7 @@ export const FoodSchema = z.object({
   carbohydrate: z.number(),
   protein: z.number(),
   fat: z.number(),
-  fiber: z.number().nullable(),
+  fiber: z.number(),
   userId: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),

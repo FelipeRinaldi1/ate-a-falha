@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { FoodInMealSchema } from './foodInMeal.schema.js'
 
 export const createMealSchema = z.object({
 	name: z.string().min(1, 'Name is required').max(64, 'Name must be at most 64 characters'),
@@ -9,11 +10,12 @@ export const createMealSchema = z.object({
 export const updateMealSchema = createMealSchema.partial()
 
 export const MealSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
+	foodsInMeal: z.array(z.object(FoodInMealSchema.shape)),
 	name: z.string().min(1).max(64),
 	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
 	orderIndex: z.number().int().min(0),
-	dietId: z.string().uuid(),
+	dietId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date()
 })
