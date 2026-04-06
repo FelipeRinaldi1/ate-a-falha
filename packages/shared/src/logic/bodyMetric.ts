@@ -1,3 +1,4 @@
+import {z} from 'zod'
 import { GENDER } from "../schemas/user/user.schema.js";
 
 export class BodyMetricLogic{
@@ -5,8 +6,8 @@ export class BodyMetricLogic{
         return weight / (height * height);
     }
 
-    static calculateBMR(gender:typeof GENDER,weight:number,height:number,age:number):number{
-        if (gender === GENDER.MALE) {
+    static calculateBMR(gender:z.infer<typeof GENDER>,weight:number,height:number,age:number):number{
+        if (gender === GENDER.enum.MALE) {
             return 10 * weight + 6.25 * height - 5 * age + 5;
         } else {
             return 10 * weight + 6.25 * height - 5 * age - 161;
