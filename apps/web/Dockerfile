@@ -3,36 +3,24 @@ FROM node:24 AS base
 WORKDIR /app
 
 FROM base AS prepare
-
 RUN npm install -g turbo
-
 COPY . .
-
-RUN turbo prune @ate-a-falha/api --docker
+RUN turbo prune web --docker
 
 FROM base AS builder
-
 WORKDIR /app
-
 COPY --from=prepare /app/out/json/ .
 COPY --from=prepare /app/out/package-lock.json ./package-lock.json
-
 RUN npm install
 
 COPY --from=prepare /app/out/full .
-
 COPY tsconfig.json .
 
-RUN DATABASE_URL="postgresql://postgres:mysecretpassword@db:5432/ate_a_falha_db?schema=public" npm run db:gen --workspace=@ate-a-falha/database
-
-RUN npx turbo run build --filter=@ate-a-falha/api...
+RUN npx turbo run build --filter=web...
 
 FROM base AS runner
-
 WORKDIR /app
-
 COPY --from=builder /app/ .
+EXPOSE 3000
 
-EXPOSE 3333
-
-CMD ["npm", "run", "start", "-w" , "apps/api"]
+CMD ["npm", "run", "preview", "-w", "apps/web", "--", "--port", "3000", "--host"]

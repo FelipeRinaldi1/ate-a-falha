@@ -1,0 +1,39 @@
+services:
+    db:
+        image: postgres:18
+        container_name: ate-a-falha-db
+        env_file:
+            - .env
+        ports:
+            - '5432:5432'
+        volumes:
+            - pgdata:/var/lib/postgresql
+
+    api:
+        image: node:24
+        container_name: ate-a-falha-api
+        working_dir: /app
+        env_file:
+            - .env
+        volumes:
+            - .:/app
+        ports:
+            - '3333:3333'
+        depends_on:
+            - db
+        command: /bin/sh -c "npm install && npx turbo run dev --filter=@ate-a-falha/api"
+
+    web:
+        image: node:24
+        container_name: ate-a-falha-web
+        working_dir: /app
+        env_file:
+            - .env
+        volumes:
+            - .:/app
+        ports:
+            - '3000:3000'
+        command: /bin/sh -c "npm install && npx turbo run dev --filter=web"
+
+volumes:
+    pgdata:
