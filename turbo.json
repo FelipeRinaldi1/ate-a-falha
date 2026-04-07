@@ -1,22 +1,19 @@
 {
-  "tasks": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "db:gen": {
-      "cache": false
-    },
-    "db:migrate": {
-      "cache": false
-    }
-  }
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
+		},
+		"dev": {
+			"dependsOn": ["db:gen"],
+			"cache": false,
+			"persistent": true
+		},
+		"db:gen": {
+			"cache": false
+		},
+		"db:migrate": {
+			"cache": false
+		}
+	}
 }
