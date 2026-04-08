@@ -1,121 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useUsers } from './hooks/useUsers'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+	// 1. Puxa os dados, o estado de carregamento e o erro do seu hook profissional
+	const { data: users, isLoading, error } = useUsers()
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+	return (
+		<div className="App">
+			<h1>🚀 Ate a Falha - Sistema de Gestão</h1>
 
-      <div className="ticks"></div>
+			<div className="card">
+				<h2>Lista de Usuários (Vindo da API Docker)</h2>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+				{/* 2. Trata o estado de carregamento */}
+				{isLoading && <p>Carregando usuários do servidor...</p>}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+				{/* 3. Trata erros amigavelmente */}
+				{error && <p style={{ color: 'red' }}>Erro ao buscar dados: {error.message}</p>}
+
+				{/* 4. Renderiza a lista de usuários quando os dados chegam */}
+				<ul style={{ textAlign: 'left' }}>
+					{users?.map((user: any) => (
+						<li key={user.id}>
+							<strong>{user.name}</strong> - {user.email}
+						</li>
+					))}
+				</ul>
+
+				{/* 5. Mostra uma mensagem se a lista estiver vazia */}
+				{!isLoading && users?.length === 0 && <p>Nenhum usuário cadastrado no banco.</p>}
+			</div>
+		</div>
+	)
 }
 
 export default App
