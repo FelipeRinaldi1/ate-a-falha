@@ -33,7 +33,7 @@
 		"5432": { "label": "PostgreSQL", "onAutoForward": "silent" }
 	},
 
-	"postCreateCommand": "npm install && npx turbo run dev",
+	"postCreateCommand": "npm install",
 
 	"remoteUser": "node"
 }
