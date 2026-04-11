@@ -17,7 +17,7 @@ services:
             - .env
         volumes:
             - .:/app
-            - api_node_modules:/app/node_modules
+            - /app/node_modules
         ports:
             - '3333:3333'
         depends_on:
@@ -34,7 +34,7 @@ services:
             - .env
         volumes:
             - .:/app
-            - web_node_modules:/app/node_modules
+            - /app/node_modules
         ports:
             - '3000:3000'
         stdin_open: true
