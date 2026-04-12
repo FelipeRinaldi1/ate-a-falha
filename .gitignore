@@ -149,3 +149,5 @@ vite.config.ts.timestamp-*
 .vite/
 /../../../../../generated/prisma
 .turbo
+.venv
+.venv/*

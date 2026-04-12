@@ -1,0 +1,9 @@
+{
+	"name": "@ate-a-falha/pipeline",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "python src/main.py",
+		"process": "python src/proccess_taco.py"
+	}
+}
