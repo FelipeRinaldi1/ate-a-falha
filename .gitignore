@@ -151,4 +151,5 @@ vite.config.ts.timestamp-*
 .venv
 .venv/*
 
-./packages/database/src/generated/*
+**/generated/*
+packages/database/src/generated/*
