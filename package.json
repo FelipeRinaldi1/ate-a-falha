@@ -9,13 +9,10 @@
 		"dev": "turbo dev",
 		"build": "turbo build",
 		"lint": "eslint .",
-		"format": "prettier --write .",
-		"prepare": "husky"
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"eslint": "^9.0.0",
-		"husky": "^9.0.0",
-		"lint-staged": "^15.0.0",
 		"prettier": "^3.0.0",
 		"tsx": "^4.19.0",
 		"turbo": "^2.9.1",
