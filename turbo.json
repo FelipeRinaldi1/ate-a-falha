@@ -14,6 +14,10 @@
 		},
 		"db:migrate": {
 			"cache": false
+		},
+		"ingest": {
+			"dependsOn": ["db:gen"],
+			"outputs": ["data/proccessed/**"]
 		}
 	}
 }
