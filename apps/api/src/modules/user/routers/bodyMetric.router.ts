@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ensureAuthenticated } from 'apps/api/src/middlewares/ensureAuthenticated.js'
+import { ensureAuthenticated } from '@/middlewares/ensureAuthenticated.js'
 import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
 import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { BodyMetricController } from '../controllers/bodyMetric.controller.js'

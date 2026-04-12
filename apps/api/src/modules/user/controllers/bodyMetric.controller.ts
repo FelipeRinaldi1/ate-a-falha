@@ -3,7 +3,7 @@ import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from "@ate-a-falha/shared"
 
 import { z } from 'zod'
-import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { validateData } from "@ate-a-falha/shared"
 
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { DietService } from '../services/diet.service.js'
 import { validateData } from "@ate-a-falha/shared"
 

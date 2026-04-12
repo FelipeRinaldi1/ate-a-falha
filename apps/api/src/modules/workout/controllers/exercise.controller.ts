@@ -4,7 +4,7 @@ import { createexerciseSchema, searchexerciseSchema, updateexerciseSchema } from
 
 import { validateData } from "@ate-a-falha/shared"
 
-import { HTTP_STATUS } from 'apps/api/src/constants/global/httpCodesConstants.js'
+import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class ExerciseController {
