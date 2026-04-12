@@ -17,7 +17,7 @@
 		},
 		"ingest": {
 			"dependsOn": ["db:gen"],
-			"outputs": ["data/proccessed/**"]
+			"outputs": ["data/processed/**"]
 		}
 	}
 }
