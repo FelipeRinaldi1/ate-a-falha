@@ -1,8 +1,11 @@
 import dotenv from 'dotenv'
+import { expand } from 'dotenv-expand'
 import path from 'node:path'
 import { z } from 'zod'
 
-dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
+const myEnv = dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
+expand(myEnv)
+
 import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../constants/env/env.constants.js'
 import { ENV_ERRORS } from '../constants/env/env.errors.js'
 
@@ -23,7 +26,9 @@ const envSchema = z.object({
 
 	CORS_ORIGIN: z.string().default('*'),
 
-	SERVER_URL: z.url({ message: 'URL do servidor inválida' }).default('http://localhost:3333'),
+	SERVER_URL: z
+		.preprocess((val) => (val === '' ? undefined : val), z.string().url({ message: 'URL do servidor inválida' }))
+		.default('http://localhost:3333'),
 
 	LOG_LEVEL: z.string().default('info'),
 })
@@ -31,9 +36,7 @@ const envSchema = z.object({
 const _env = envSchema.safeParse(process.env)
 
 if (!_env.success) {
-	const formattedErrors = z.treeifyError(_env.error)
-
-	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, JSON.stringify(formattedErrors, null, 2))
+	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, JSON.stringify(_env.error.format(), null, 2))
 
 	throw new Error(ENV_ERRORS.FATAL_ERROR)
 }
