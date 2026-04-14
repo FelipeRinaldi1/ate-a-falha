@@ -40,5 +40,3 @@ seeds = final_dataframe.to_dict(orient='records')
 
 with open(exit_path.resolve(), 'w', encoding='utf-8') as file:
     json.dump(seeds, file, indent=4,ensure_ascii=False)
-
-print(f"sucesso! arquivo em: {exit_path.resolve()}")
