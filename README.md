@@ -74,3 +74,12 @@ docker compose run --rm api npx prisma migrate dev --schema packages/database/pr
 ```
 
 ---
+
+### Creditos de dados:
+
+    Dados de Alimentos:
+        - Biblioteca de alimentos[**Tabela TACO](https://nepa.unicamp.br/tabela-brasileira-de-composicao-de-alimentos-4a-edicao/)
+
+    Dados de Exercícios:
+        - Biblioteca de Exercícios: [Free Exercise Db](https://github.com/yuhonas/free-exercise-db)
+        - Tradução: [Exercícios DB PTBR](https://github.com/joao-gugel/exercicios-bd-ptbr)
