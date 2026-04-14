@@ -136,16 +136,13 @@ model FoodInMeal {
 
 model Food {
   id   String @id @default(uuid())
-  name String @db.VarChar(64)
+  name String @db.VarChar(128)
 
-  baseUnit   String @default("g") // "g","ml","un",serving
-  baseAmount Int    @default(100)
-
-  calories     Int
-  carbohydrate Int
-  protein      Int
-  fat          Int
-  fiber        Int?
+  calories     Float
+  carbohydrate Float
+  protein      Float
+  lipids       Float
+  fiber        Float
 
   userId String?
 
