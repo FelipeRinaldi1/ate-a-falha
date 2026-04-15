@@ -70,7 +70,7 @@ npm run dev
 Para aplicar migrations do prisma:
 
 ```bash
-docker compose run --rm api npx prisma migrate dev --schema packages/database/prisma/schema.prisma^C
+docker compose run --rm api npx prisma migrate dev --schema packages/database/prisma/schema.prisma
 ```
 
 ---
