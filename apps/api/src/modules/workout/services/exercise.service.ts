@@ -1,12 +1,11 @@
 import { IExerciseRepository } from '../interfaces/exercise.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from "@ate-a-falha/shared"
-import { ExerciseFull } from "@ate-a-falha/database"
+import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '@ate-a-falha/shared'
+import { ExerciseFull } from '@ate-a-falha/database'
 
-import { Result, success, failure } from "@ate-a-falha/shared"
+import { Result, success, failure } from '@ate-a-falha/shared'
 
-import { authenticatedUser } from "@ate-a-falha/shared"
-
+import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class ExerciseService {
 	constructor(

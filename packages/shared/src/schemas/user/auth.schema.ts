@@ -43,5 +43,3 @@ export type UpdateAuthDTO = z.infer<typeof updateAuthSchema>
 export type LoginDTO = z.infer<typeof loginSchema>
 export type ChangePasswordDTO = z.infer<typeof changePasswordSchema>
 export type ChangeEmailDTO = z.infer<typeof changeEmailSchema>
-
-

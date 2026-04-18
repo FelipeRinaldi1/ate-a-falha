@@ -1,7 +1,7 @@
 import { prisma } from '@ate-a-falha/database'
 import { safeCall } from '@ate-a-falha/database'
 import { WorkoutFull } from '@ate-a-falha/database'
-import { Result, success, failure } from "@ate-a-falha/shared"
+import { Result, success, failure } from '@ate-a-falha/shared'
 import { CreateWorkoutDTO, UpdateWorkoutDTO } from '@ate-a-falha/shared'
 import { IWorkoutRepository } from '../interfaces/workout.interface.js'
 export class WorkoutRepository implements IWorkoutRepository {

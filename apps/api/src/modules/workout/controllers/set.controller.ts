@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { SetService } from '../services/set.service.js'
-import { validateData } from "@ate-a-falha/shared"
+import { validateData } from '@ate-a-falha/shared'
 
-import { createsetSchema, updatesetSchema } from "@ate-a-falha/shared"
+import { createsetSchema, updatesetSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class SetController {
-	constructor(private setService: SetService) { }
+	constructor(private setService: SetService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const exerciseIdValid = validateData(z.uuid(), req.params.workoutExerciseId, 'Invalid Workout Exercise ID')

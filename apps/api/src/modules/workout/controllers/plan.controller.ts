@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { PlanService } from '../services/plan.service.js'
-import { validateData } from "@ate-a-falha/shared"
+import { validateData } from '@ate-a-falha/shared'
 
-import { createplanSchema, updateplanSchema } from "@ate-a-falha/shared"
+import { createplanSchema, updateplanSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class PlanController {
-	constructor(private planService: PlanService) { }
+	constructor(private planService: PlanService) {}
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const validation = validateData(createplanSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)

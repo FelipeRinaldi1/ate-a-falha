@@ -1,14 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import { BodyMetricService } from '../services/bodyMetric.service.js'
-import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from "@ate-a-falha/shared"
+import { createBodyMetricSchema, updateBodyMetricSchema, bodyMetricSearchSchema } from '@ate-a-falha/shared'
 
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
-import { validateData } from "@ate-a-falha/shared"
-
+import { validateData } from '@ate-a-falha/shared'
 
 export class BodyMetricController {
-	constructor(private bodyMetricService: BodyMetricService) { }
+	constructor(private bodyMetricService: BodyMetricService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const bodyValidation = validateData(createBodyMetricSchema, req.body, 'Invalid body metric data')

@@ -1,10 +1,10 @@
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from "@ate-a-falha/shared"
-import { FoodFull } from "@ate-a-falha/database"
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
+import { FoodFull } from '@ate-a-falha/database'
 
 import type { IFoodRepository } from '../interfaces/food.interfaces.js'
-import { success, failure, Result } from "@ate-a-falha/shared"
+import { success, failure, Result } from '@ate-a-falha/shared'
 
-import { authenticatedUser } from "@ate-a-falha/shared"
+import { authenticatedUser } from '@ate-a-falha/shared'
 
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 

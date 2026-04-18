@@ -10,11 +10,6 @@
 			"@ate-a-falha/database": ["../../packages/database/src/index.ts"]
 		}
 	},
-	"references": [
-		{"path": "../../packages/shared"},
-		{"path": "../../packages/database"}
-	],
-	"include": [
-		"src/**/*"
-	]
+	"references": [{ "path": "../../packages/shared" }, { "path": "../../packages/database" }],
+	"include": ["src/**/*"]
 }

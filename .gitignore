@@ -153,3 +153,5 @@ vite.config.ts.timestamp-*
 
 **/generated/*
 packages/database/src/generated/*
+**/__pycache__/*
+**/*.pyc

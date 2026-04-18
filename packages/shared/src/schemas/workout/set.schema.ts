@@ -10,12 +10,12 @@ export const createsetSchema = z.object({
 export const updatesetSchema = createsetSchema.partial()
 
 export const setSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	setNumber: z.number().int().positive(),
 	repetitions: z.number().int().positive(),
 	weight: z.number().nonnegative().nullable(),
 	restTimeSeconds: z.number().int().nonnegative(),
-	workoutExerciseId: z.string().uuid(),
+	workoutExerciseId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })

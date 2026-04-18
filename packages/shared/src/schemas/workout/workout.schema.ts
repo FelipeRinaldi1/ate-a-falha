@@ -8,10 +8,10 @@ export const createworkoutSchema = z.object({
 export const updateworkoutSchema = createworkoutSchema.partial()
 
 export const workoutSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	name: z.string().min(3).max(32).nullable(),
 	day: z.enum(['A', 'B', 'C', 'D', 'E', 'F']),
-	planId: z.string().uuid(),
+	planId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })

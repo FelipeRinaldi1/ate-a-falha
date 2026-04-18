@@ -23,9 +23,14 @@ services:
             - .env
         ports:
             - '${API_PORT:-3333}:${API_PORT:-3333}'
+            - '51212:51212' # Prisma Studio
+        volumes:
+            - .:/app
+            - /app/node_modules
         depends_on:
             db:
                 condition: service_healthy
+        restart: always
 
     web:
         build:
@@ -34,11 +39,16 @@ services:
         container_name: ate-a-falha-web
         env_file:
             - .env
+        volumes:
+            - .:/app
+            - /app/node_modules
         ports:
             - '${WEB_PORT:-3000}:${WEB_PORT:-3000}'
 
         depends_on:
             - api
+
+        restart: always
 
     pipeline:
         build:

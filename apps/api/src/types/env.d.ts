@@ -1,8 +1,8 @@
-declare namespace NodeJS{
-    interface ProcessEnv{
-        JWT_SECRET: string;
-        JWT_EXPIRES_IN:string;
-        DATABASE_URL: string;
-        NODE_ENV:string
-    }
+declare namespace NodeJS {
+	interface ProcessEnv {
+		JWT_SECRET: string
+		JWT_EXPIRES_IN: string
+		DATABASE_URL: string
+		NODE_ENV: string
+	}
 }

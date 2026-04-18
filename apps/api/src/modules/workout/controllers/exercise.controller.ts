@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { ExerciseService } from '../services/exercise.service.js'
-import { createexerciseSchema, searchexerciseSchema, updateexerciseSchema } from "@ate-a-falha/shared"
+import { createexerciseSchema, searchexerciseSchema, updateexerciseSchema } from '@ate-a-falha/shared'
 
-import { validateData } from "@ate-a-falha/shared"
+import { validateData } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class ExerciseController {
-	constructor(private exerciseService: ExerciseService) { }
+	constructor(private exerciseService: ExerciseService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const validation = validateData(createexerciseSchema, req.body, 'Invalid Request Body')

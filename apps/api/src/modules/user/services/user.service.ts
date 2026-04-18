@@ -9,12 +9,12 @@ import {
 	ChangeEmailDTO,
 	AuthResponseDTO,
 	UserResponseDTO,
-} from "@ate-a-falha/shared"
-import { UserFull, AuthFull } from "@ate-a-falha/database"
+} from '@ate-a-falha/shared'
+import { UserFull, AuthFull } from '@ate-a-falha/database'
 
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
-import { success, failure, Result } from "@ate-a-falha/shared"
+import { success, failure, Result } from '@ate-a-falha/shared'
 import { ENV } from '../../../config/env.js'
 import { logger } from '../../../config/logger.js'
 
@@ -24,7 +24,7 @@ export class UserService {
 	constructor(
 		private userRepository: IUserRepository,
 		private authRepository: IAuthRepository
-	) { }
+	) {}
 
 	// Private helpers ────────────────────────────────────────────────────────
 
@@ -37,11 +37,10 @@ export class UserService {
 	}
 
 	private generateToken(userId: string, email: string): string {
-		return jwt.sign(
-			{ id: userId, email },
-			ENV.JWT_SECRET,
-			{ subject: userId, expiresIn: ENV.JWT_EXPIRES_IN } as SignOptions
-		)
+		return jwt.sign({ id: userId, email }, ENV.JWT_SECRET, {
+			subject: userId,
+			expiresIn: ENV.JWT_EXPIRES_IN,
+		} as SignOptions)
 	}
 
 	private async findAuthOrFail(userId: string): Promise<Result<AuthFull>> {
@@ -58,7 +57,7 @@ export class UserService {
 			role: user.role,
 			gender: user.gender,
 			birthDate: user.birthDate,
-			email: user.auth.email
+			email: user.auth.email,
 		})
 	}
 

@@ -1,12 +1,11 @@
-import { authenticatedUser } from "@ate-a-falha/shared"
+import { authenticatedUser } from '@ate-a-falha/shared'
 
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from "@ate-a-falha/shared"
-import { FoodInMealFull } from "@ate-a-falha/database"
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '@ate-a-falha/shared'
+import { FoodInMealFull } from '@ate-a-falha/database'
 
 import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { failure, Result } from "@ate-a-falha/shared"
-
+import { failure, Result } from '@ate-a-falha/shared'
 
 export class FoodInMealService {
 	constructor(
@@ -36,11 +35,7 @@ export class FoodInMealService {
 		return result
 	}
 
-	async update(
-		id: string,
-		data: UpdateFoodInMealDTO,
-		authUser: authenticatedUser
-	): Promise<Result<FoodInMealFull>> {
+	async update(id: string, data: UpdateFoodInMealDTO, authUser: authenticatedUser): Promise<Result<FoodInMealFull>> {
 		const access = await this.accessControl.canAccessFoodInMeal(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 

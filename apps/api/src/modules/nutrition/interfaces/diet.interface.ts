@@ -1,9 +1,8 @@
-import { CreateDietDTO, UpdateDietDTO } from "@ate-a-falha/shared"
+import { CreateDietDTO, UpdateDietDTO } from '@ate-a-falha/shared'
 
-import { DietFull } from "@ate-a-falha/database"
+import { DietFull } from '@ate-a-falha/database'
 
-import { Result } from "@ate-a-falha/shared"
-
+import { Result } from '@ate-a-falha/shared'
 
 export interface IDietRepository {
 	create(data: CreateDietDTO, userId: string): Promise<Result<DietFull>>

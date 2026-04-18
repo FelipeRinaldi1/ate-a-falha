@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express'
 import { UserService } from '../services/user.service.js'
-import { createUserWithAuthSchema, updateUserSchema, loginSchema, changeEmailSchema, changePasswordSchema } from "@ate-a-falha/shared"
+import {
+	createUserWithAuthSchema,
+	updateUserSchema,
+	loginSchema,
+	changeEmailSchema,
+	changePasswordSchema,
+} from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
-import { validateData } from "@ate-a-falha/shared"
-
+import { validateData } from '@ate-a-falha/shared'
 
 export class UserController {
-	constructor(private userService: UserService) { }
+	constructor(private userService: UserService) {}
 
 	// User CRUD  ────────────────────────────────────────────────────────
 
@@ -74,6 +79,4 @@ export class UserController {
 
 		return res.status(HTTP_STATUS.OK).json(result.value)
 	}
-
 }
-

@@ -1,0 +1,24 @@
+import 'dotenv/config'
+import { prisma } from '../client.js'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { Exercise } from '@/generated/prisma/client.js'
+
+export async function seedExercises() {
+	console.log('Starting exercise seed')
+	try {
+		const goldPath = resolve(process.cwd(), '../../data/gold/exercise.gold.json')
+		const exercises: Exercise[] = JSON.parse(readFileSync(goldPath, 'utf-8'))
+
+		for (const exercise of exercises) {
+			await prisma.exercise.upsert({
+				where: { externalId: exercise.externalId },
+				update: exercise,
+				create: exercise,
+			})
+		}
+	} catch (error) {
+		console.error('No seed', error)
+		process.exit(1)
+	}
+}

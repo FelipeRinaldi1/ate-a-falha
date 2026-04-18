@@ -1,8 +1,8 @@
 import { ISetRepository } from '../interfaces/set.interface.js'
-import { failure, Result } from "@ate-a-falha/shared"
+import { failure, Result } from '@ate-a-falha/shared'
 
-import { CreateSetDTO, UpdateSetDTO } from "@ate-a-falha/shared"
-import { SetFull } from "@ate-a-falha/database"
+import { CreateSetDTO, UpdateSetDTO } from '@ate-a-falha/shared'
+import { SetFull } from '@ate-a-falha/database'
 
 import { WorkoutAccessControlService } from './accessControl.service.js'
 

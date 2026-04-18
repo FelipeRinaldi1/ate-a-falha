@@ -24,7 +24,7 @@ export const DietSchema = z.object({
 	dailyWater: z.number().nonnegative('Water must be a nonnegative number'),
 	userId: z.string().uuid('Invalid User ID format'),
 	createdAt: z.date(),
-	updatedAt: z.date()
+	updatedAt: z.date(),
 })
 
 export type CreateDietDTO = z.infer<typeof createDietSchema>

@@ -23,11 +23,9 @@ app.use(express.json())
 // Logger
 app.use(pinoHttp({ logger }))
 
-
 // Routes
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use('/users', userRouter)
-
 
 app.get('/', (_req, res) => {
 	res.send('Hello World!')
