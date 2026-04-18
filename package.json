@@ -6,8 +6,10 @@
 	"private": true,
 	"packageManager": "npm@11.10.1",
 	"scripts": {
+		"setup": "docker compose up -d --build && npm run db:migrate && npm run db:seed",
 		"dev": "docker compose up",
 		"build": "npm run build -w apps/api && npm run build -w apps/web",
+		"data:pipeline": "docker compose run --rm pipeline",
 		"lint": "eslint .",
 		"format": "prettier --write .",
 		"db:migrate": "docker compose exec api npm run db:migrate -w @ate-a-falha/database",
