@@ -2,15 +2,15 @@ import { z } from 'zod'
 
 export const CreateWorkoutexerciseSchema = z.object({
 	orderIndex: z.number().int().nonnegative(),
-	exerciseId: z.string().uuid(),
+	exerciseId: z.uuid(),
 })
 export const UpdateWorkoutexerciseSchema = CreateWorkoutexerciseSchema.partial().omit({ exerciseId: true })
 
 export const WorkoutexerciseSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	orderIndex: z.number().int().nonnegative(),
-	workoutId: z.string().uuid(),
-	exerciseId: z.string().uuid(),
+	workoutId: z.uuid(),
+	exerciseId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })

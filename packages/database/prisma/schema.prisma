@@ -223,11 +223,13 @@ model Set {
 
 model Exercise {
   id          String  @id @default(uuid())
-  name        String  @unique
-  instructions String
-  primaryMuscles String
-  equipment   String
-  imageUrl      String
+  externalId   String? @unique
+  name        String  
+  primaryMuscles String[]
+  secondaryMuscles String[]
+  instructions String[]
+  category    String
+  images      String[]
 
   usedInWorkouts WorkoutExercise[]
 

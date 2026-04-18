@@ -14,10 +14,10 @@ export const createplanSchema = z.object({
 export const updateplanSchema = createplanSchema.partial()
 
 export const planSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	name: z.string().min(3).max(50),
 	isActive: z.boolean(),
-	userId: z.string().uuid(),
+	userId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })
