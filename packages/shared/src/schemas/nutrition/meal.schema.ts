@@ -17,7 +17,7 @@ export const MealSchema = z.object({
 	orderIndex: z.number().int().min(0),
 	dietId: z.uuid(),
 	createdAt: z.date(),
-	updatedAt: z.date()
+	updatedAt: z.date(),
 })
 
 export type CreateMealDTO = z.infer<typeof createMealSchema>

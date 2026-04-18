@@ -4,12 +4,7 @@ function isAppError(err: unknown): err is AppError {
 	return typeof err === 'object' && err !== null && 'type' in err && 'message' in err
 }
 
-export function globalErrorHandler(
-	err: unknown,
-	req: Request,
-	res: Response,
-	_next: NextFunction
-) {
+export function globalErrorHandler(err: unknown, req: Request, res: Response, _next: NextFunction) {
 	const statusMap: Record<AppError['type'], number> = {
 		VALIDATION: 400,
 		UNAUTHORIZED: 401,

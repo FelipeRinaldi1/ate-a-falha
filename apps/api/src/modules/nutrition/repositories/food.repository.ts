@@ -1,18 +1,17 @@
 import { prisma } from '@ate-a-falha/database'
 import { safeCall } from '@ate-a-falha/database'
-import { Result, success, failure } from "@ate-a-falha/shared"
+import { Result, success, failure } from '@ate-a-falha/shared'
 
 import { IFoodRepository } from '../interfaces/food.interfaces.js'
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from "@ate-a-falha/shared"
-import { FoodFull } from "@ate-a-falha/database"
-
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
+import { FoodFull } from '@ate-a-falha/database'
 
 export class FoodRepository implements IFoodRepository {
 	async create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>> {
 		const result = await safeCall(
 			prisma.food.create({
 				data: { ...data, userId },
-				include: { foodInMeals: true }
+				include: { foodInMeals: true },
 			})
 		)
 		if (result.isFailure()) return result
@@ -41,7 +40,7 @@ export class FoodRepository implements IFoodRepository {
 					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],
-				include: { foodInMeals: true }
+				include: { foodInMeals: true },
 			})
 		)
 
@@ -54,7 +53,7 @@ export class FoodRepository implements IFoodRepository {
 		const result = await safeCall(
 			prisma.food.findUniqueOrThrow({
 				where: { id, userId },
-				include: { foodInMeals: true }
+				include: { foodInMeals: true },
 			})
 		)
 
@@ -68,7 +67,7 @@ export class FoodRepository implements IFoodRepository {
 			prisma.food.update({
 				where: { id, userId },
 				data: { ...data },
-				include: { foodInMeals: true }
+				include: { foodInMeals: true },
 			})
 		)
 

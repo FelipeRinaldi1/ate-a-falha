@@ -1,9 +1,9 @@
 import { prisma } from '@ate-a-falha/database'
-import { failure, Result, success } from "@ate-a-falha/shared"
+import { failure, Result, success } from '@ate-a-falha/shared'
 
 import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from "@ate-a-falha/shared"
-import { FoodInMealFull } from "@ate-a-falha/database"
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '@ate-a-falha/shared'
+import { FoodInMealFull } from '@ate-a-falha/database'
 
 import { safeCall } from '@ate-a-falha/database'
 
@@ -16,7 +16,7 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 					mealId: mealId,
 					foodId: foodId,
 				},
-				include: { food: true }
+				include: { food: true },
 			})
 		)
 
@@ -36,7 +36,7 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 						},
 					},
 				},
-				include: { food: true }
+				include: { food: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -50,7 +50,7 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 					id: id,
 					meal: { diet: { userId: userId } },
 				},
-				include: { food: true }
+				include: { food: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -70,7 +70,7 @@ export class FoodInMealRepository implements IFoodInMealRepository {
 					},
 				},
 				data: data,
-				include: { food: true }
+				include: { food: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

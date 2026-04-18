@@ -1,8 +1,8 @@
 import { IDietRepository } from '../interfaces/diet.interface.js'
-import { Result, failure, success } from "@ate-a-falha/shared"
+import { Result, failure, success } from '@ate-a-falha/shared'
 
-import { CreateDietDTO, UpdateDietDTO } from "@ate-a-falha/shared"
-import { DietFull } from "@ate-a-falha/database"
+import { CreateDietDTO, UpdateDietDTO } from '@ate-a-falha/shared'
+import { DietFull } from '@ate-a-falha/database'
 
 import { safeCall } from '@ate-a-falha/database'
 import { prisma } from '@ate-a-falha/database'
@@ -15,7 +15,7 @@ export class DietRepository implements IDietRepository {
 					...data,
 					userId: userId,
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } }
+				include: { Meal: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -30,7 +30,7 @@ export class DietRepository implements IDietRepository {
 					uniqueId: { id, userId },
 				},
 				data: data,
-				include: { Meal: { include: { foods: { include: { food: true } } } } }
+				include: { Meal: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -57,7 +57,7 @@ export class DietRepository implements IDietRepository {
 				where: {
 					userId: userId,
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } }
+				include: { Meal: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -71,7 +71,7 @@ export class DietRepository implements IDietRepository {
 				where: {
 					uniqueId: { id, userId },
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } }
+				include: { Meal: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

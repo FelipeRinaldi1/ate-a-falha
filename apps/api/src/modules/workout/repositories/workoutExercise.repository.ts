@@ -1,5 +1,5 @@
 import { prisma, safeCall, WorkoutExerciseFull } from '@ate-a-falha/database'
-import { Result, failure, success, CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from "@ate-a-falha/shared"
+import { Result, failure, success, CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from '@ate-a-falha/shared'
 
 import { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
 
@@ -7,7 +7,7 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 	async create(
 		workoutId: string,
 		exerciseId: string,
-		data: CreateWorkoutExerciseDTO,
+		data: CreateWorkoutExerciseDTO
 	): Promise<Result<WorkoutExerciseFull>> {
 		const result = await safeCall(
 			prisma.workoutExercise.create({

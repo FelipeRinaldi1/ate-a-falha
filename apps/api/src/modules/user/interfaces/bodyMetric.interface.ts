@@ -1,5 +1,5 @@
-import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from "@ate-a-falha/shared"
-import { BodyMetricFull } from "@ate-a-falha/database"
+import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from '@ate-a-falha/shared'
+import { BodyMetricFull } from '@ate-a-falha/database'
 
 import { Result } from '@ate-a-falha/shared'
 

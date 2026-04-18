@@ -1,12 +1,11 @@
-import { Result, failure } from "@ate-a-falha/shared"
+import { Result, failure } from '@ate-a-falha/shared'
 
 import { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from "@ate-a-falha/shared"
-import { WorkoutExerciseFull } from "@ate-a-falha/database"
+import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from '@ate-a-falha/shared'
+import { WorkoutExerciseFull } from '@ate-a-falha/database'
 
-import { authenticatedUser } from "@ate-a-falha/shared"
-
+import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class WorkoutExerciseService {
 	constructor(

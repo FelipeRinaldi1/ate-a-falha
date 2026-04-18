@@ -1,11 +1,10 @@
 import { prisma } from '@ate-a-falha/database'
 import { safeCall } from '@ate-a-falha/database'
 import { IAuthRepository } from '../interfaces/auth.interfaces.js'
-import { Result, success, failure } from "@ate-a-falha/shared"
+import { Result, success, failure } from '@ate-a-falha/shared'
 
-import { CreateAuthDTO } from "@ate-a-falha/shared"
-import { AuthFull } from "@ate-a-falha/database"
-
+import { CreateAuthDTO } from '@ate-a-falha/shared'
+import { AuthFull } from '@ate-a-falha/database'
 
 export class AuthRepository implements IAuthRepository {
 	async create(data: CreateAuthDTO, userId: string): Promise<Result<AuthFull>> {

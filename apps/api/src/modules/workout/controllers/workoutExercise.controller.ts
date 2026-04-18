@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import { WorkoutExerciseService } from '../services/workoutExercise.service.js'
-import { validateData } from "@ate-a-falha/shared"
+import { validateData } from '@ate-a-falha/shared'
 
-import { CreateWorkoutexerciseSchema, UpdateWorkoutexerciseSchema } from "@ate-a-falha/shared"
+import { CreateWorkoutexerciseSchema, UpdateWorkoutexerciseSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class WorkoutExerciseController {
-	constructor(private workoutExerciseService: WorkoutExerciseService) { }
+	constructor(private workoutExerciseService: WorkoutExerciseService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const workoutIdValid = validateData(z.uuid(), req.params.workoutId, 'Invalid Workout ID')

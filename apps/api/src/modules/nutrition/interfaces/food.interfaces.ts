@@ -1,5 +1,5 @@
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from "@ate-a-falha/shared"
-import { FoodFull } from "@ate-a-falha/database"
+import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
+import { FoodFull } from '@ate-a-falha/database'
 
 import { Result } from '@ate-a-falha/shared'
 

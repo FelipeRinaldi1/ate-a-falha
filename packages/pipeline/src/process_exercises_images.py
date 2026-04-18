@@ -39,5 +39,3 @@ def convert_to_webp(quality=80):
         except Exception as e:
             print(f"Error converting {img_path}: {e}")
 
-if __name__ == "__main__":
-    convert_to_webp()

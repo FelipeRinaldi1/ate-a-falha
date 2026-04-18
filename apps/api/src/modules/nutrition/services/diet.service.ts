@@ -1,11 +1,11 @@
 import { IDietRepository } from '../interfaces/diet.interface.js'
-import { Result, failure } from "@ate-a-falha/shared"
+import { Result, failure } from '@ate-a-falha/shared'
 
-import { CreateDietDTO, UpdateDietDTO } from "@ate-a-falha/shared"
-import { DietFull } from "@ate-a-falha/database"
+import { CreateDietDTO, UpdateDietDTO } from '@ate-a-falha/shared'
+import { DietFull } from '@ate-a-falha/database'
 
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { authenticatedUser } from "@ate-a-falha/shared"
+import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class DietService {
 	constructor(

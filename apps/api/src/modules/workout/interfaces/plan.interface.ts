@@ -1,8 +1,7 @@
-import { CreatePlanDTO, UpdatePlanDTO } from "@ate-a-falha/shared"
-import { PlanFull } from "@ate-a-falha/database"
+import { CreatePlanDTO, UpdatePlanDTO } from '@ate-a-falha/shared'
+import { PlanFull } from '@ate-a-falha/database'
 
-import { Result } from "@ate-a-falha/shared"
-
+import { Result } from '@ate-a-falha/shared'
 
 export interface IPlanRepository {
 	create(data: CreatePlanDTO, userId: string): Promise<Result<PlanFull>>

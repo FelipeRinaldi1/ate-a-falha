@@ -223,7 +223,7 @@ model Set {
 
 model Exercise {
   id          String  @id @default(uuid())
-  externalId   String? @unique
+  externalId   String @unique
   name        String  
   primaryMuscles String[]
   secondaryMuscles String[]

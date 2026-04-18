@@ -1,4 +1,4 @@
-import { Result, CreateWorkoutDTO, UpdateWorkoutDTO } from "@ate-a-falha/shared"
+import { Result, CreateWorkoutDTO, UpdateWorkoutDTO } from '@ate-a-falha/shared'
 
 import { WorkoutFull } from '@ate-a-falha/database'
 

@@ -1,9 +1,9 @@
-import { AppError } from "@ate-a-falha/shared"
+import { AppError } from '@ate-a-falha/shared'
 
 import { IWorkoutAccessControl } from '../interfaces/accessControl.interface.js'
-import { Result, failure, success } from "@ate-a-falha/shared"
+import { Result, failure, success } from '@ate-a-falha/shared'
 
-import { authenticatedUser } from "@ate-a-falha/shared"
+import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class WorkoutAccessControlService {
 	constructor(private accessControlRepo: IWorkoutAccessControl) {}

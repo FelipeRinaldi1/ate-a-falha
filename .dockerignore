@@ -6,3 +6,8 @@ dist
 npm-debug.log
 apps/**/node_modules
 packages/**/node_modules
+python-env
+.venv
+.vscode
+__pycache__
+*.pyc

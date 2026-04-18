@@ -5,9 +5,9 @@ export {}
 declare global {
 	namespace Express {
 		interface Request {
-			log: Logger,
+			log: Logger
 			user: {
-				id: string,
+				id: string
 				role: 'USER' | 'ADMIN'
 			}
 		}

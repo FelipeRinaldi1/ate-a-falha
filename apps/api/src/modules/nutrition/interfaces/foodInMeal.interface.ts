@@ -1,8 +1,7 @@
-import { Result } from "@ate-a-falha/shared"
+import { Result } from '@ate-a-falha/shared'
 
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from "@ate-a-falha/shared"
-import { FoodInMealFull } from "@ate-a-falha/database"
-
+import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '@ate-a-falha/shared'
+import { FoodInMealFull } from '@ate-a-falha/database'
 
 export interface IFoodInMealRepository {
 	create(mealId: string, foodId: string, data: CreateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>>

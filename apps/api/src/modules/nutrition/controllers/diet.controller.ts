@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { DietService } from '../services/diet.service.js'
-import { validateData } from "@ate-a-falha/shared"
+import { validateData } from '@ate-a-falha/shared'
 
-import { createDietSchema, updateDietSchema } from "@ate-a-falha/shared"
-
+import { createDietSchema, updateDietSchema } from '@ate-a-falha/shared'
 
 export class DietController {
-	constructor(private dietService: DietService) { }
+	constructor(private dietService: DietService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const validation = validateData(createDietSchema, req.body, 'Invalid Request Body')
