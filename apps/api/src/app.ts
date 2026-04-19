@@ -13,6 +13,8 @@ import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 
 const app = express()
 
+app.use('/assets/exercises', express.static(process.env.ASSETS_EXERCISES_PATH))
+
 // Middleware
 app.use(helmet())
 app.use(cors(corsOptions))

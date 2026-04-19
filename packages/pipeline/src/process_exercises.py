@@ -1,16 +1,9 @@
+import os
 from pathlib import Path
 import json
 
-current_dir = Path(__file__).parent
-project_root = current_dir
-
-while project_root.parent != project_root:
-    if (project_root / "data").exists():
-        break
-    project_root = project_root.parent
-
-entry_path = project_root / "data" / "silver" / "exercises.silver.json"
-exit_path = project_root / "data" / "gold" / "exercises.gold.json"
+entry_path = Path(os.getenv("DATA_SILVER_PATH", "data/silver")) / "exercises.silver.json"
+exit_path = Path(os.getenv("DATA_GOLD_PATH", "data/gold")) / "exercises.gold.json"
 
 with open(entry_path.resolve(), 'r', encoding='utf-8') as file:
     data = json.load(file)

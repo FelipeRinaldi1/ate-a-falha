@@ -4,5 +4,6 @@ declare namespace NodeJS {
 		JWT_EXPIRES_IN: string
 		DATABASE_URL: string
 		NODE_ENV: string
+		ASSETS_EXERCISES_PATH: string
 	}
 }

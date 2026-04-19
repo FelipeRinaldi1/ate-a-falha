@@ -1,16 +1,9 @@
+import os
 from PIL import Image
 from pathlib import Path
 
-current_dir = Path(__file__).parent
-project_root = current_dir
-
-while project_root.parent != project_root:
-    if (project_root / "data").exists():
-        break
-    project_root = project_root.parent
-
-entry_path = project_root / "data" / "exercise-images"
-exit_path = project_root / "packages" / "assets" / 'src' / 'exercise-images'
+entry_path = Path(os.getenv("DATA_RAW_IMAGES_PATH", "data/exercise-images"))
+exit_path = Path(os.getenv("ASSETS_EXERCISES_PATH", "packages/assets/src/exercise-images"))
 
 def convert_to_webp(quality=80):
     if not entry_path.exists():

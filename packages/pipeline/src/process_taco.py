@@ -1,18 +1,10 @@
+import os
 import pandas
 from pathlib import Path
 import json
 
-current_dir = Path(__file__).parent
-
-project_root = current_dir
-
-while project_root.parent != project_root:
-    if(project_root / "data").exists():
-        break
-    project_root = project_root.parent
-
-entry_path = project_root / "data" / "silver" / "taco.silver.csv"
-exit_path = project_root / "data" / "gold" / "taco.gold.json"   
+entry_path = Path(os.getenv("DATA_SILVER_PATH", "data/silver")) / "taco.silver.csv"
+exit_path = Path(os.getenv("DATA_GOLD_PATH", "data/gold")) / "taco.gold.json"
 
 def process_taco():
 

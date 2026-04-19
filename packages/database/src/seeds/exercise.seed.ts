@@ -1,13 +1,13 @@
 import 'dotenv/config'
 import { prisma } from '../client.js'
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import path from 'node:path'
 import { Exercise } from '@/generated/prisma/client.js'
 
 export async function seedExercises() {
 	console.log('Starting exercise seed')
 	try {
-		const goldPath = resolve(process.cwd(), '../../data/gold/exercises.gold.json')
+		const goldPath = path.join(process.env.DATA_GOLD_PATH!, 'exercises.gold.json')
 		const exercises: Exercise[] = JSON.parse(readFileSync(goldPath, 'utf-8'))
 
 		for (const exercise of exercises) {

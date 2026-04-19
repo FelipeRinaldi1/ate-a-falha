@@ -1,17 +1,4 @@
-import {
-	AppShell,
-	Burger,
-	Group,
-	Skeleton,
-	Text,
-	Button,
-	Card,
-	Badge,
-	Stack,
-	SimpleGrid,
-	Title,
-	Container,
-} from '@mantine/core'
+import { AppShell, Burger, Group, Text, Button, Stack, Container } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
 export default function App() {
