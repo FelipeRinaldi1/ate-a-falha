@@ -1,14 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { MantineProvider } from '@mantine/core' // 1. Importa o provedor
-import '@mantine/core/styles.css' // 2. Importa o CSS
-import App from './App.tsx'
+import { App } from './App'
+import { MantineProvider } from '@mantine/core'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './providers/queryClient'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
-		{/* O Provedor DEVE envolver o App inteiro */}
-		<MantineProvider>
-			<App />
-		</MantineProvider>
+		<QueryClientProvider client={queryClient}>
+			<MantineProvider>
+				<App />
+			</MantineProvider>
+		</QueryClientProvider>
 	</React.StrictMode>
 )

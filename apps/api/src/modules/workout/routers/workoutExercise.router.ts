@@ -15,8 +15,8 @@ const workoutExerciseRouter = Router()
 
 workoutExerciseRouter.use(ensureAuthenticated)
 
-workoutExerciseRouter.get('/workouts/:workoutId/exercises', workoutExerciseController.findAll)
 workoutExerciseRouter.post('/workouts/:workoutId/exercises', workoutExerciseController.create)
+workoutExerciseRouter.get('/workouts/:workoutId/exercises', workoutExerciseController.findAll)
 workoutExerciseRouter.get('/workout-exercises/:id', workoutExerciseController.findById)
 workoutExerciseRouter.patch('/workout-exercises/:id', workoutExerciseController.update)
 workoutExerciseRouter.delete('/workout-exercises/:id', workoutExerciseController.delete)

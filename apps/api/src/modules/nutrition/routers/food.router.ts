@@ -13,12 +13,10 @@ const foodRepo = new FoodRepository()
 const foodService = new FoodService(foodRepo, accessServ)
 const foodController = new FoodController(foodService)
 
-foodRoutes.use(ensureAuthenticated)
-
-foodRoutes.post('/', foodController.create)
+foodRoutes.post('/', ensureAuthenticated, foodController.create)
 foodRoutes.get('/:id', foodController.findById)
-foodRoutes.post('/search', foodController.findAll)
-foodRoutes.put('/:id', foodController.update)
-foodRoutes.delete('/:id', foodController.delete)
+foodRoutes.get('/', foodController.findAll)
+foodRoutes.put('/:id', ensureAuthenticated, foodController.update)
+foodRoutes.delete('/:id', ensureAuthenticated, foodController.delete)
 
 export { foodRoutes }

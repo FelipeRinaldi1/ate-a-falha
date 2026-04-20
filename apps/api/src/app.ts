@@ -9,6 +9,15 @@ import { apiRateLimiter } from './middlewares/rateLimiter.js'
 import * as swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './config/swagger.js'
 import { userRouter } from './modules/user/routers/user.router.js'
+import { dietRouter } from './modules/nutrition/routers/diet.router.js'
+import { mealRouter } from './modules/nutrition/routers/meal.router.js'
+import { foodRoutes } from './modules/nutrition/routers/food.router.js'
+import { foodInMealRouter } from './modules/nutrition/routers/foodInMeal.router.js'
+import { planRouter } from './modules/workout/routers/plan.router.js'
+import { workoutRouter } from './modules/workout/routers/workout.router.js'
+import { workoutExerciseRouter } from './modules/workout/routers/workoutExercise.router.js'
+import { setRouter } from './modules/workout/routers/set.router.js'
+import { exerciseRouter } from './modules/workout/routers/exercise.router.js'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 
 const app = express()
@@ -28,6 +37,19 @@ app.use(pinoHttp({ logger }))
 // Routes
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use('/users', userRouter)
+
+// Nutrition Routes
+app.use('/diets', dietRouter)
+app.use('/foods', foodRoutes)
+app.use('/', mealRouter)
+app.use('/', foodInMealRouter)
+
+// Workout Routes
+app.use('/plans', planRouter)
+app.use('/exercises', exerciseRouter)
+app.use('/', setRouter)
+app.use('/', workoutRouter)
+app.use('/', workoutExerciseRouter)
 
 app.get('/', (_req, res) => {
 	res.send('Hello World!')

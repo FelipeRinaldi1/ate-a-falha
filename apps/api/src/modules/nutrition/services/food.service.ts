@@ -40,9 +40,9 @@ export class FoodService {
 		return await this.foodRepository.delete(id, ownerId)
 	}
 
-	async findAll(data: FoodSearchDTO, authUser: authenticatedUser): Promise<Result<FoodFull[]>> {
-		const isAdmin = authUser.role === 'ADMIN'
-		const userId = isAdmin ? undefined : authUser.id
+	async findAll(data: FoodSearchDTO, authUser?: authenticatedUser): Promise<Result<FoodFull[]>> {
+		const isAdmin = authUser?.role === 'ADMIN'
+		const userId = isAdmin ? undefined : authUser?.id
 		const result = await this.foodRepository.findAll(data, userId)
 
 		if (result.isFailure()) {

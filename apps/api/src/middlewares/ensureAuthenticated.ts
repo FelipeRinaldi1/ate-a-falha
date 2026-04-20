@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { AppError } from '@ate-a-falha/shared'
 import { prisma } from '@ate-a-falha/database'
 import { safeCall } from '@ate-a-falha/database'
-import { validateToken } from '@ate-a-falha/shared'
+import { validateToken } from '../utils/validateToken.js'
 
 export const ensureAuthenticated = async (req: Request, _res: Response, next: NextFunction) => {
 	try {
@@ -20,15 +20,11 @@ export const ensureAuthenticated = async (req: Request, _res: Response, next: Ne
 
 		const result = validateToken(token, process.env.JWT_SECRET!)
 
-		if (!result.success) {
-			return next({
-				type: 'UNAUTHORIZED',
-				message: 'Invalid or expired token',
-				details: result.error.issues,
-			} as AppError)
+		if (result.isFailure()) {
+			return next(result.error)
 		}
 
-		const { sub: userId } = result.data
+		const userId = result.value.sub
 
 		const userResult = await safeCall(
 			prisma.user.findUniqueOrThrow({

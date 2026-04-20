@@ -16,10 +16,10 @@ const foodInMealController = new FoodInMealController(foodInMealService)
 
 foodInMealRouter.use(ensureAuthenticated)
 
-foodInMealRouter.post('/meal/:mealId/food/:foodId', foodInMealController.create)
-foodInMealRouter.get('/meal/:mealId', foodInMealController.findAll)
-foodInMealRouter.get('/:id', foodInMealController.findById)
-foodInMealRouter.patch('/:id', foodInMealController.update)
-foodInMealRouter.delete('/:id', foodInMealController.delete)
+foodInMealRouter.post('/meals/:mealId/foods/:foodId', foodInMealController.create)
+foodInMealRouter.get('/meals/:mealId/foods', foodInMealController.findAll)
+foodInMealRouter.get('/food-in-meals/:id', foodInMealController.findById)
+foodInMealRouter.patch('/food-in-meals/:id', foodInMealController.update)
+foodInMealRouter.delete('/food-in-meals/:id', foodInMealController.delete)
 
 export { foodInMealRouter }

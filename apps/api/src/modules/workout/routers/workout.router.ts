@@ -16,9 +16,8 @@ const workoutRouter = Router()
 workoutRouter.use(ensureAuthenticated)
 workoutRouter.post('/plans/:planId/workouts', workoutController.create)
 workoutRouter.get('/plans/:planId/workouts', workoutController.findAll)
-
+workoutRouter.get('/workouts/:id', workoutController.findById)
 workoutRouter.patch('/workouts/:id', workoutController.update)
 workoutRouter.delete('/workouts/:id', workoutController.delete)
-workoutRouter.get('/workouts/:id', workoutController.findById)
 
 export { workoutRouter }

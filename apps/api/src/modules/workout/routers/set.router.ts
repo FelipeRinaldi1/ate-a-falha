@@ -15,10 +15,10 @@ const setController = new SetController(setService)
 
 setRouter.use(ensureAuthenticated)
 
-setRouter.post('/exercise/:workoutExerciseId', setController.create)
-setRouter.get('/exercise/:workoutExerciseId', setController.findAll)
-setRouter.get('/:id', setController.findById)
-setRouter.put('/:id', setController.update)
-setRouter.delete('/:id', setController.delete)
+setRouter.post('/workout-exercises/:workoutExerciseId/sets', setController.create)
+setRouter.get('/workout-exercises/:workoutExerciseId/sets', setController.findAll)
+setRouter.get('/sets/:id', setController.findById)
+setRouter.put('/sets/:id', setController.update)
+setRouter.delete('/sets/:id', setController.delete)
 
 export { setRouter }

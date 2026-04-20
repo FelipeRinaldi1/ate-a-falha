@@ -1,120 +1,93 @@
-import { AppShell, Burger, Group, Text, Button, Stack, Container } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
+import { useForm, schemaResolver } from '@mantine/form'
+import { TextInput, NumberInput, Button, Container, Title, Stack, Text, Paper, Divider } from '@mantine/core'
+import '@mantine/core/styles.css'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from './api/instance.js'
+import { createFoodSchema, type FoodDTO, type CreateFoodDTO } from '@ate-a-falha/shared'
 
-export default function App() {
-	// Controle do menu lateral no mobile
-	const [opened, { toggle }] = useDisclosure()
+export function FoodForm({ onAddFood, isLoading }: { onAddFood: (food: CreateFoodDTO) => void; isLoading: boolean }) {
+	const form = useForm<CreateFoodDTO>({
+		initialValues: {
+			name: '',
+			calories: 0,
+			carbohydrate: 0,
+			protein: 0,
+			lipids: 0,
+			fiber: 0,
+		},
+		validate: schemaResolver(createFoodSchema, { sync: true }),
+	})
 
 	return (
-		<AppShell
-			header={{ height: 60 }}
-			navbar={{
-				width: 300,
-				breakpoint: 'sm',
-				collapsed: { mobile: !opened },
-			}}
-			padding="md"
-		>
-			{/* --- CABEÇALHO --- */}
-			<AppShell.Header>
-				<Group h="100%" px="md" justify="space-between">
-					<Group>
-						<Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-						<Text size="xl" fw={900} variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
-							GYM-NUTRITION
-						</Text>
-					</Group>
-					<Button variant="light" color="red" size="xs">
-						Sair
-					</Button>
-				</Group>
-			</AppShell.Header>
-
-			{/* --- MENU LATERAL --- */}
-			<AppShell.Navbar p="md">
-				<Stack gap="sm">
-					<Button variant="light" justify="flex-start">
-						Painel Geral
-					</Button>
-					<Button variant="subtle" color="gray" justify="flex-start">
-						Meus Treinos
-					</Button>
-					<Button variant="subtle" color="gray" justify="flex-start">
-						Minha Dieta
-					</Button>
-					<Button variant="subtle" color="gray" justify="flex-start">
-						Falar com Nutri
+		<Paper withBorder p="md" radius="md" shadow="xs">
+			<form onSubmit={form.onSubmit((values) => onAddFood(values))}>
+				<Stack>
+					<Title order={3}>Add New Food</Title>
+					<TextInput
+						label="Name"
+						placeholder="e.g. Chicken Breast"
+						required
+						{...form.getInputProps('name')}
+					/>
+					<NumberInput label="Calories (kcal)" required {...form.getInputProps('calories')} />
+					<NumberInput label="Carbohydrates (g)" {...form.getInputProps('carbohydrate')} />
+					<NumberInput label="Protein (g)" {...form.getInputProps('protein')} />
+					<NumberInput label="Lipids (g)" {...form.getInputProps('lipids')} />
+					<NumberInput label="Fiber (g)" {...form.getInputProps('fiber')} />
+					<Button type="submit" loading={isLoading} fullWidth>
+						Save Food
 					</Button>
 				</Stack>
-			</AppShell.Navbar>
+			</form>
+		</Paper>
+	)
+}
 
-			{/* --- CONTEÚDO PRINCIPAL --- */}
-			<AppShell.Main bg="gray.0">
-				<Container size="lg">
-					<Title order={2} mb="xl">
-						Olá, Felipe! 👋
-					</Title>
+export function App() {
+	const queryClient = useQueryClient()
 
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-						{/* CARD DE TREINO */}
-						<Card shadow="sm" padding="lg" radius="md" withBorder>
-							<Group justify="space-between" mb="xs">
-								<Text fw={700}>Próximo Treino</Text>
-								<Badge color="orange">Treino B</Badge>
-							</Group>
-							<Text size="sm" c="dimmed" mb="lg">
-								Costas e Bíceps - Foco em remadas pesadas.
+	const { data: foods, isLoading } = useQuery({
+		queryKey: ['foods'],
+		queryFn: async () => {
+			const { data } = await api.get<FoodDTO[]>('/foods')
+			return data
+		},
+	})
+
+	const mutation = useMutation({
+		mutationFn: (newFood: CreateFoodDTO) => {
+			return api.post('/foods', newFood)
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['foods'] })
+		},
+	})
+
+	if (isLoading) return <Text>Loading dashboard...</Text>
+
+	return (
+		<Container size="sm" py="xl">
+			<Stack gap="xl">
+				<Title order={1} c="blue">
+					Ate a Falha - Dashboard
+				</Title>
+
+				<FoodForm onAddFood={(values) => mutation.mutate(values)} isLoading={mutation.isPending} />
+
+				<Divider label="Your Food Database" labelPosition="center" />
+
+				<Stack gap="xs">
+					{foods?.length === 0 && <Text c="dimmed">No foods found. Start by adding one!</Text>}
+					{foods?.map((food) => (
+						<Paper key={food.id} withBorder p="sm" radius="md">
+							<Text fw={700}>{food.name}</Text>
+							<Text size="sm" c="dimmed">
+								{food.calories} kcal | P: {food.protein}g | C: {food.carbohydrate}g | F: {food.lipids}g
 							</Text>
-							<Button fullWidth color="blue" radius="md">
-								Iniciar Treino
-							</Button>
-						</Card>
-
-						{/* CARD DE DIETA */}
-						<Card shadow="sm" padding="lg" radius="md" withBorder>
-							<Text fw={700} mb="xs">
-								Resumo Nutricional
-							</Text>
-							<Stack gap="xs">
-								<Group justify="space-between">
-									<Text size="sm">Proteína</Text>
-									<Text size="sm" fw={700}>
-										180g / 200g
-									</Text>
-								</Group>
-								{/* Aqui entraria um RingProgress do Mantine depois */}
-								<Text size="xs" c="dimmed">
-									Faltam 20g para bater a meta!
-								</Text>
-							</Stack>
-							<Button fullWidth variant="outline" mt="md" radius="md">
-								Ver Dieta Completa
-							</Button>
-						</Card>
-
-						{/* CARD DE PROFISSIONAL */}
-						<Card shadow="sm" padding="lg" radius="md" withBorder>
-							<Text fw={700} mb="xs">
-								Seu Nutricionista
-							</Text>
-							<Group mt="sm">
-								<Skeleton height={40} circle /> {/* Simula foto do nutri */}
-								<div>
-									<Text size="sm" fw={500}>
-										Dr. Ricardo Silva
-									</Text>
-									<Text size="xs" c="dimmed">
-										Próxima consulta: 25/05
-									</Text>
-								</div>
-							</Group>
-							<Button fullWidth variant="subtle" mt="md">
-								Enviar Mensagem
-							</Button>
-						</Card>
-					</SimpleGrid>
-				</Container>
-			</AppShell.Main>
-		</AppShell>
+						</Paper>
+					))}
+				</Stack>
+			</Stack>
+		</Container>
 	)
 }
