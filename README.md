@@ -32,7 +32,10 @@ O projeto utiliza uma estrutura de **Monorepo** para compartilhamento de dados v
 ├── docs/
 |   ├──ai/            # Arquivos para Desenvolvimento com IA Integrada
 |   ├──arquitetura.md # Documentação da arquitetura
-|   └──
+|   ├──desenvolvimento.md # Documentação para quem contribuir com o projeto
+|   ├──requisitos.md # Documentação dos requisitos do projeto
+|   └──outros-arquivos...
+|
 |
 └── docker-compose.yml
 ```
