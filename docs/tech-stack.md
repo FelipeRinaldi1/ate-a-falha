@@ -4,7 +4,7 @@ Este documento detalha o conjunto de tecnologias utilizado no projeto **Até a F
 
 ## 1. Linguagem Principal: TypeScript
 
-- **Justificativa:** O uso de TypeScript em todo o monorepo garante segurança de tipos de ponta a ponta. Com do pacote `@ate-a-falha/shared`, o frontend e o backend compartilham as mesmas interfaces e schemas de validação, reduzindo drasticamente erros de integração e aumentando a velocidade de desenvolvimento. Alem de que será possivel produzir uma aplicação exclusiva de mobile com React Native, mantendo grande parte da base do codigo.
+- **Justificativa:** O uso de TypeScript em todo o monorepo garante segurança de tipos de ponta a ponta. Com do pacote `@ate-a-falha/shared`, o frontend e o backend compartilham as mesmas interfaces e schemas de validação, reduzindo drasticamente erros de integração e aumentando a velocidade de desenvolvimento. Com a possibilidade de produzir uma aplicação exclusiva de mobile com React Native, mantendo grande parte da base do codigo.
 
 ## 2. Frontend: React + Vite + Mantine
 
@@ -38,4 +38,4 @@ Este documento detalha o conjunto de tecnologias utilizado no projeto **Até a F
 ## 8. Logging e Segurança
 
 - **Pino:** Logger de alta performance que gera logs estruturados, facilitando o monitoramento e a depuração em ambiente de produção.
-- **Helmet:** Middleware para o Express que aumenta a segurança da API configurando diversos cabeçalhos HTTP (XSS, Clickjacking, sniffing).
+- **Helmet:** Middleware para o Express que aumenta a segurança da API.
