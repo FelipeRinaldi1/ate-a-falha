@@ -30,18 +30,18 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 
 | Model        | Descrição                                          |
 | ------------ | -------------------------------------------------- |
-| `User`       | Dados do perfil (nome, data de nascimento, gênero) |
-| `Auth`       | Credenciais de autenticação (email, senha hash)    |
-| `BodyMetric` | Medições corporais (peso, altura, gordura, etc.)   |
+| `User`       | Dados do perfil                                    |
+| `Auth`       | Credenciais de autenticação                        |
+| `BodyMetric` | Medições corporais                                 |
 
 ### Módulo de Nutrição
 
 | Model        | Descrição                                                          | Pai                         |
 | ------------ | ------------------------------------------------------------------ | --------------------------- |
 | `Diet`       | Plano alimentar com metas diárias de macros                        | `User`                      |
-| `Meal`       | Refeição dentro de uma dieta (ex: almoço)                          | `Diet`                      |
+| `Meal`       | Refeição dentro de uma dieta                                       | `Diet`                      |
 | `FoodInMeal` | Tabela associativa: liga um alimento a uma refeição com quantidade | `Meal` + `Food`             |
-| `Food`       | Alimento com informações nutricionais                              | `User?` (nullable = global) |
+| `Food`       | Alimento com informações nutricionais                              | `User?` |
 
 **Observações sobre `Food`:**
 
@@ -52,11 +52,11 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 
 | Model             | Descrição                                        | Pai                    |
 | ----------------- | ------------------------------------------------ | ---------------------- |
-| `Plan`            | Plano de treino (ex: "Hipertrofia 12 semanas")   | `User`                 |
-| `Workout`         | Treino individual dentro de um plano (dia A, B…) | `Plan`                 |
+| `Plan`            | Plano de treino                                  | `User`                 |
+| `Workout`         | Treino individual dentro de um plano             | `Plan`                 |
 | `WorkoutExercise` | Exercício atribuído a um treino com ordem        | `Workout` + `Exercise` |
-| `Set`             | Série de um exercício (reps, peso, descanso)     | `WorkoutExercise`      |
-| `Exercise`        | Biblioteca global de exercícios (sem dono)       | — (global)             |
+| `Set`             | Série de um exercício                            | `WorkoutExercise`      |
+| `Exercise`        | Biblioteca global de exercícios                  | —                      |
 
 **Observações sobre `Exercise`:**
 

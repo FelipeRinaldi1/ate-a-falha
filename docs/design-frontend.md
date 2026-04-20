@@ -10,7 +10,7 @@
 | TanStack React Query | 5      | Gerenciamento de estado servidor |
 | Axios                | 1.x    | Cliente HTTP                     |
 | React Router         | 7      | Roteamento SPA                   |
-| Zod                  | 4      | Validação (via shared)           |
+| Zod                  | 4      | Validação                       |
 
 ## Instância do Axios
 

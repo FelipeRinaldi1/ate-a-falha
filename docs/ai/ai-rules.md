@@ -1,6 +1,6 @@
 # Regras para Assistentes de IA
 
-Este arquivo define as regras e convenções que qualquer assistente de IA (Antigravity, Claude, ChatGPT, Codex, etc.) deve seguir ao programar neste projeto.
+Este arquivo define as regras e convenções que qualquer assistente de IA deve seguir ao programar neste projeto.
 
 ## Regras Gerais
 
@@ -43,7 +43,7 @@ Este arquivo define as regras e convenções que qualquer assistente de IA (Anti
 
 ### Shared (packages/shared)
 
-- **Segurança do Bundle:** Este pacote é consumido pelo frontend (Vite/Browser). NUNCA adicionar dependências exclusivas de Node.js aqui (ex: `jsonwebtoken`, `bcrypt`, `fs`, `crypto`).
+- **Segurança do Bundle:** Este pacote é consumido pelo frontend. NUNCA adicionar dependências exclusivas de Node.js aqui.
 - **Exportações:** Tudo que é público deve ser exportado via `src/index.ts`.
 - **Schemas Zod:** Cada model deve ter ao menos `createSchema`, `updateSchema` e o tipo inferido via `z.infer`.
 
@@ -60,8 +60,8 @@ Para detalhes de componentes específicos, buscar a URL correspondente no índic
 ```
 apps/api/src/modules/<nome-do-modulo>/
 ├── controllers/   # Validação de entrada + chamada ao service
-├── services/      # Lógica de negócio (retorna Result<T>)
-├── repositories/  # Acesso ao banco via Prisma (retorna Result<T>)
+├── services/      # Lógica de negócio
+├── repositories/  # Acesso ao banco via Prisma
 ├── routers/       # Definição de rotas Express
 └── interfaces/    # Interfaces de repositório para inversão de dependência
 ```

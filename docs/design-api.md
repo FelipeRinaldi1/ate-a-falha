@@ -4,8 +4,8 @@
 
 O projeto segue o padrão **"Aninhado para Coleções, Flat para Identidades"**:
 
-- **Criar e listar** recursos filhos → rota aninhada sob o pai (garante contexto).
-- **Ler, atualizar e deletar** um recurso individual → rota flat pelo ID (simplifica o frontend).
+- **Criar e listar** recursos filhos → rota aninhada sob o pai.
+- **Ler, atualizar e deletar** um recurso individual → rota flat pelo ID.
 
 ### Exemplo: Módulo de Nutrição
 
@@ -30,16 +30,16 @@ O projeto segue o padrão **"Aninhado para Coleções, Flat para Identidades"**:
 
 ### Recursos de Biblioteca (Públicos)
 
-Alimentos e Exercícios são bibliotecas globais. As rotas de **consulta** (`GET`) são públicas, enquanto as de alteração de dados exigem autenticação:
+Alimentos e Exercícios são bibliotecas globais. As rotas de **consulta** são públicas, enquanto as de alteração de dados exigem autenticação:
 
 | Rota                 | Público? | Observação                                       |
 | -------------------- | -------- | ------------------------------------------------ |
-| `GET /foods`         | ✅ Sim   | Retorna alimentos globais (+ privados se logado) |
-| `GET /foods/:id`     | ✅ Sim   | Detalhes de um alimento                          |
-| `POST /foods`        | 🔒 Auth  | Criar alimento (requer login)                    |
-| `GET /exercises`     | ✅ Sim   | Biblioteca completa de exercícios                |
-| `GET /exercises/:id` | ✅ Sim   | Detalhes de um exercício                         |
-| `POST /exercises`    | 🔒 Admin | Criar exercício (requer admin)                   |
+| `GET /foods`         | Sim      | Retorna alimentos globais e privados se logado   |
+| `GET /foods/:id`     | Sim      | Detalhes de um alimento                          |
+| `POST /foods`        | Auth     | Criar alimento (requer login)                    |
+| `GET /exercises`     | Sim      | Biblioteca completa de exercícios                |
+| `GET /exercises/:id` | Sim      | Detalhes de um exercício                         |
+| `POST /exercises`    | Admin    | Criar exercício (requer admin)                   |
 
 ## Montagem no `app.ts`
 
@@ -86,7 +86,7 @@ O `globalErrorHandler` converte `AppError.type` em status HTTP:
 
 ## Result Pattern
 
-Toda a camada de Service e Repository utiliza o **Result Pattern** (`Success | Failure`) em vez de lançar exceções:
+Toda a camada de Service e Repository utiliza o **Result Pattern** em vez de lançar exceções:
 
 ```typescript
 // Uso no Controller

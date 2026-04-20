@@ -32,9 +32,9 @@
 
 ### Pipeline de Dados
 
-| Comando                 | Descrição                                   |
-| ----------------------- | ------------------------------------------- |
-| `npm run data:pipeline` | Executa o container de ETL (perfil `tools`) |
+| Comando                 | Descrição                  |
+| ----------------------- | -------------------------- |
+| `npm run data:pipeline` | Executa o container de ETL |
 
 ### Qualidade de Código
 
@@ -46,7 +46,7 @@
 
 ## Fluxo de Trabalho: Adicionar um Novo Campo
 
-Exemplo: adicionar o campo `sodium` (sódio) ao model `Food`.
+Exemplo: adicionar o campo `sodium` ao model `Food`.
 
 ### 1. Alterar o Schema Prisma
 
@@ -114,6 +114,6 @@ Copiar `.env.example` para `.env` e preencher. As principais variáveis são:
 | `DATABASE_URL`          | Connection string do PostgreSQL    | `postgresql://user:pass@db:5432/ate_a_falha_db` |
 | `API_PORT`              | Porta do backend                   | `3333`                                          |
 | `WEB_PORT`              | Porta do frontend                  | `3000`                                          |
-| `JWT_SECRET`            | Chave secreta para tokens JWT      | (string aleatória)                              |
+| `JWT_SECRET`            | Chave secreta para tokens JWT      | jwt_secret_here                                 |
 | `VITE_API_URL`          | URL da API para o frontend         | `http://localhost:3333`                         |
 | `ASSETS_EXERCISES_PATH` | Caminho para imagens de exercícios | `/app/packages/assets/exercises`                |
