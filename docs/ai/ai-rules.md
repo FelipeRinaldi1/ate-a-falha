@@ -8,7 +8,7 @@ Este arquivo define as regras e convenções que qualquer assistente de IA deve 
 2. **Nunca edite código sem antes verificar** o estado atual dos arquivos envolvidos.
 3. **Preserve comentários e docstrings** existentes que não estejam relacionados à sua alteração.
 4. **Nunca crie arquivos sem perguntar** se já existe ou se precisa ser criado.
-5. **Idioma do código:** nomes de variáveis, funções, rotas,comentários e arquivos em **inglês**. Documentação deve ser em **Portugues**
+5. **Idioma do código:** nomes de variáveis, funções, rotas,comentários e arquivos em **inglês**. Documentação, UI, mensagens de erros para o front devem ser em **Português**
 
 ## Stack — Não Altere Sem Permissão
 

@@ -5,6 +5,7 @@ import { pinoHttp } from 'pino-http'
 import { logger } from './config/logger.js'
 import 'dotenv/config'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'
 import * as swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './config/swagger.js'
@@ -30,6 +31,7 @@ app.use(cors(corsOptions))
 app.use(apiRateLimiter)
 
 app.use(express.json())
+app.use(cookieParser())
 
 // Logger
 app.use(pinoHttp({ logger }))

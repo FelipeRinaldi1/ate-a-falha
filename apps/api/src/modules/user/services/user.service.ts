@@ -7,11 +7,10 @@ import {
 	LoginDTO,
 	ChangePasswordDTO,
 	ChangeEmailDTO,
-	AuthResponseDTO,
 	UserResponseDTO,
+	InternalAuthResponse,
 } from '@ate-a-falha/shared'
 import { UserFull, AuthFull } from '@ate-a-falha/database'
-
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
 import { success, failure, Result } from '@ate-a-falha/shared'
@@ -89,7 +88,7 @@ export class UserService {
 
 	// Auth operations ─────────────────────────────────────────────────────────
 
-	async login(data: LoginDTO): Promise<Result<AuthResponseDTO>> {
+	async login(data: LoginDTO): Promise<Result<InternalAuthResponse>> {
 		logger.info({ email: data.email }, 'Attempting login')
 
 		const authResult = await this.authRepository.findByEmail(data.email)
@@ -117,7 +116,7 @@ export class UserService {
 		return success({ user: userResponse.value, token })
 	}
 
-	async register(data: CreateUserWithAuthDTO): Promise<Result<AuthResponseDTO>> {
+	async register(data: CreateUserWithAuthDTO): Promise<Result<InternalAuthResponse>> {
 		const { auth, ...userData } = data
 
 		const passwordHash = await this.hashPassword(auth.password)

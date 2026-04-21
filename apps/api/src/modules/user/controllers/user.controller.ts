@@ -10,6 +10,7 @@ import {
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { validateData } from '@ate-a-falha/shared'
+import { setAuthCookie, clearAuthCookie } from '../../../utils/cookie.js'
 
 export class UserController {
 	constructor(private userService: UserService) {}
@@ -48,8 +49,11 @@ export class UserController {
 		const result = await this.userService.login(bodyValidation.value)
 		if (result.isFailure()) return next(result.error)
 
-		return res.status(HTTP_STATUS.OK).json(result.value)
+		setAuthCookie(res, result.value.token)
+
+		return res.status(HTTP_STATUS.OK).json({ user: result.value.user })
 	}
+
 	register = async (req: Request, res: Response, next: NextFunction) => {
 		const bodyValidation = validateData(createUserWithAuthSchema, req.body, 'Invalid user data')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
@@ -57,7 +61,14 @@ export class UserController {
 		const result = await this.userService.register(bodyValidation.value)
 		if (result.isFailure()) return next(result.error)
 
-		return res.status(HTTP_STATUS.CREATED).json(result.value)
+		setAuthCookie(res, result.value.token)
+
+		return res.status(HTTP_STATUS.CREATED).json({ user: result.value.user })
+	}
+
+	logout = async (_req: Request, res: Response, _next: NextFunction) => {
+		clearAuthCookie(res)
+		return res.status(HTTP_STATUS.OK).json({ message: 'Logged out successfully' })
 	}
 
 	changePassword = async (req: Request, res: Response, next: NextFunction) => {

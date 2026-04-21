@@ -6,16 +6,10 @@ import { validateToken } from '../utils/validateToken.js'
 
 export const ensureAuthenticated = async (req: Request, _res: Response, next: NextFunction) => {
 	try {
-		const authHeader = req.headers.authorization
+		const token = req.cookies?.token || req.headers.authorization?.split(' ')[1]
 
-		if (!authHeader) {
+		if (!token) {
 			return next({ type: 'UNAUTHORIZED', message: 'Token not provided' } as AppError)
-		}
-
-		const [scheme, token] = authHeader.split(' ')
-
-		if (scheme !== 'Bearer' || !token) {
-			return next({ type: 'UNAUTHORIZED', message: 'Token malformatted' } as AppError)
 		}
 
 		const result = validateToken(token, process.env.JWT_SECRET!)

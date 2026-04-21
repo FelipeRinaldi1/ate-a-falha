@@ -20,7 +20,7 @@ export const updateUserSchema = createUserSchema.partial().extend({
 })
 
 export const UserSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	role: ROLE,
 	name: z.string().min(1),
 	birthDate: z.coerce.date(),
@@ -43,6 +43,9 @@ export interface UserResponseDTO {
 }
 
 export interface AuthResponseDTO {
+	user: UserResponseDTO
+}
+export interface InternalAuthResponse {
 	user: UserResponseDTO
 	token: string
 }
