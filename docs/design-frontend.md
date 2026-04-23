@@ -7,6 +7,7 @@
 | React                | 19     | Biblioteca de UI                 |
 | Vite                 | 8      | Bundler e dev server             |
 | Mantine              | 9      | Componentes de UI                |
+| Lucide Icons		   | 1		| Icones de UI 					   |
 | TanStack React Query | 5      | Gerenciamento de estado servidor |
 | Axios                | 1.x    | Cliente HTTP                     |
 | React Router         | 7      | Roteamento SPA                   |
@@ -33,7 +34,7 @@ export const api = axios.create({
 
 ## Padrão de Componente com Dados
 
-### Leitura (useQuery)
+### Leitura 
 
 ```typescript
 import { useQuery } from '@tanstack/react-query'
@@ -90,6 +91,3 @@ const form = useForm<CreateFoodDTO>({
 - Sempre passar `{ sync: true }` para schemas Zod.
 - Os schemas devem vir do `@ate-a-falha/shared`.
 
-## Icones
-
-- Uso da bliblioteca Lucide React para icones.
