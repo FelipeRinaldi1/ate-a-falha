@@ -11,15 +11,12 @@ COPY packages/assets/package.json    ./packages/assets/
 COPY apps/api/package.json           ./apps/api/
 COPY apps/web/package.json           ./apps/web/
 
-# Install from lockfile, clean install
+# Install from lockfile 
 RUN npm ci
 
 COPY . .
 
-RUN npm run db:generate -w @ate-a-falha/database
-
-RUN npm run build -w apps/api
-
 EXPOSE 3333
 
-CMD ["npm", "run", "start", "-w", "apps/api"]
+# Source code is mounted via volume at runtime
+CMD ["sh", "-c", "npm run db:generate -w @ate-a-falha/database && npm run dev -w apps/api"]
