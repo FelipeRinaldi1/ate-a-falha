@@ -12,13 +12,11 @@
 		"start:web": "npm run preview -w apps/web",
 		"lint": "eslint .",
 		"format": "prettier --write .",
-
 		"--- DATABASE ---": "",
 		"db:generate": "npm run db:generate -w @ate-a-falha/database",
 		"db:migrate": "npm run db:migrate -w @ate-a-falha/database",
 		"db:seed": "npm run db:seed -w @ate-a-falha/database",
 		"db:studio": "npm run db:studio -w @ate-a-falha/database",
-
 		"--- DEVELOPMENT ---": "",
 		"dev": "docker compose up",
 		"dev:build": "docker compose build",
@@ -29,7 +27,6 @@
 		"dev:db:migrate:save": "docker compose exec -it api sh -c \"cd packages/database && npx prisma migrate dev\"",
 		"dev:db:seed": "docker compose exec api npm run db:seed -w @ate-a-falha/database",
 		"dev:db:studio": "docker compose exec api npm run db:studio -w @ate-a-falha/database",
-
 		"--- TOOLS ---": "",
 		"data:pipeline": "docker compose run --rm pipeline"
 	},

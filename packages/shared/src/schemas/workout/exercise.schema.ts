@@ -37,4 +37,3 @@ export type ExerciseDTO = z.infer<typeof exerciseSchema>
 export type CreateExerciseDTO = z.infer<typeof createexerciseSchema>
 export type UpdateExerciseDTO = z.infer<typeof updateexerciseSchema>
 export type SearchExerciseDTO = z.infer<typeof searchexerciseSchema>
-

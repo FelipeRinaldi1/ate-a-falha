@@ -28,20 +28,20 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 
 ### Módulo de Usuário
 
-| Model        | Descrição                                          |
-| ------------ | -------------------------------------------------- |
-| `User`       | Dados do perfil                                    |
-| `Auth`       | Credenciais de autenticação                        |
-| `BodyMetric` | Medições corporais                                 |
+| Model        | Descrição                   |
+| ------------ | --------------------------- |
+| `User`       | Dados do perfil             |
+| `Auth`       | Credenciais de autenticação |
+| `BodyMetric` | Medições corporais          |
 
 ### Módulo de Nutrição
 
-| Model        | Descrição                                                          | Pai                         |
-| ------------ | ------------------------------------------------------------------ | --------------------------- |
-| `Diet`       | Plano alimentar com metas diárias de macros                        | `User`                      |
-| `Meal`       | Refeição dentro de uma dieta                                       | `Diet`                      |
-| `FoodInMeal` | Tabela associativa: liga um alimento a uma refeição com quantidade | `Meal` + `Food`             |
-| `Food`       | Alimento com informações nutricionais                              | `User?` |
+| Model        | Descrição                                                          | Pai             |
+| ------------ | ------------------------------------------------------------------ | --------------- |
+| `Diet`       | Plano alimentar com metas diárias de macros                        | `User`          |
+| `Meal`       | Refeição dentro de uma dieta                                       | `Diet`          |
+| `FoodInMeal` | Tabela associativa: liga um alimento a uma refeição com quantidade | `Meal` + `Food` |
+| `Food`       | Alimento com informações nutricionais                              | `User?`         |
 
 **Observações sobre `Food`:**
 
@@ -50,13 +50,13 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 
 ### Módulo de Treino
 
-| Model             | Descrição                                        | Pai                    |
-| ----------------- | ------------------------------------------------ | ---------------------- |
-| `Plan`            | Plano de treino                                  | `User`                 |
-| `Workout`         | Treino individual dentro de um plano             | `Plan`                 |
-| `WorkoutExercise` | Exercício atribuído a um treino com ordem        | `Workout` + `Exercise` |
-| `Set`             | Série de um exercício                            | `WorkoutExercise`      |
-| `Exercise`        | Biblioteca global de exercícios                  | —                      |
+| Model             | Descrição                                 | Pai                    |
+| ----------------- | ----------------------------------------- | ---------------------- |
+| `Plan`            | Plano de treino                           | `User`                 |
+| `Workout`         | Treino individual dentro de um plano      | `Plan`                 |
+| `WorkoutExercise` | Exercício atribuído a um treino com ordem | `Workout` + `Exercise` |
+| `Set`             | Série de um exercício                     | `WorkoutExercise`      |
+| `Exercise`        | Biblioteca global de exercícios           | —                      |
 
 **Observações sobre `Exercise`:**
 

@@ -32,14 +32,14 @@ O projeto segue o padrão **"Aninhado para Coleções, Flat para Identidades"**:
 
 Alimentos e Exercícios são bibliotecas globais. As rotas de **consulta** são públicas, enquanto as de alteração de dados exigem autenticação:
 
-| Rota                 | Público? | Observação                                       |
-| -------------------- | -------- | ------------------------------------------------ |
-| `GET /foods`         | Sim      | Retorna alimentos globais e privados se logado   |
-| `GET /foods/:id`     | Sim      | Detalhes de um alimento                          |
-| `POST /foods`        | Auth     | Criar alimento (requer login)                    |
-| `GET /exercises`     | Sim      | Biblioteca completa de exercícios                |
-| `GET /exercises/:id` | Sim      | Detalhes de um exercício                         |
-| `POST /exercises`    | Admin    | Criar exercício (requer admin)                   |
+| Rota                 | Público? | Observação                                     |
+| -------------------- | -------- | ---------------------------------------------- |
+| `GET /foods`         | Sim      | Retorna alimentos globais e privados se logado |
+| `GET /foods/:id`     | Sim      | Detalhes de um alimento                        |
+| `POST /foods`        | Auth     | Criar alimento (requer login)                  |
+| `GET /exercises`     | Sim      | Biblioteca completa de exercícios              |
+| `GET /exercises/:id` | Sim      | Detalhes de um exercício                       |
+| `POST /exercises`    | Admin    | Criar exercício (requer admin)                 |
 
 ## Montagem no `app.ts`
 
