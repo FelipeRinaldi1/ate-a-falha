@@ -1,4 +1,4 @@
-import { Prisma } from './generated/prisma/client.js'
+import { Prisma } from './generated/prisma/index.js'
 import { Result, success, failure } from '@ate-a-falha/shared'
 export async function safeCall<T>(promise: Promise<T>): Promise<Result<T>> {
 	try {

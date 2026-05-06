@@ -1,4 +1,4 @@
-export { PrismaClient, Prisma } from './generated/prisma/client.js'
+export { PrismaClient, Prisma } from './generated/prisma/index.js'
 export type {
 	User,
 	Auth,
@@ -12,7 +12,7 @@ export type {
 	WorkoutExercise,
 	Set,
 	Exercise,
-} from './generated/prisma/client.js'
+} from './generated/prisma/index.js'
 export * from './generated/prisma/enums.js'
 export { prisma } from './client.js'
 export { safeCall } from './safeCall.js'
