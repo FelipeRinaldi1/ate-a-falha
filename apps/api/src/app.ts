@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import { prisma } from '@ate-a-falha/database'
 import { corsOptions } from './config/cors.js'
 import { pinoHttp } from 'pino-http'
 import { logger } from './config/logger.js'
@@ -32,6 +33,16 @@ app.use(apiRateLimiter)
 
 app.use(express.json())
 app.use(cookieParser())
+
+// Public Health Check
+app.get('/health', async (_req, res) => {
+	try {
+		await prisma.$queryRaw`SELECT 1`
+		res.status(200).json({ status: 'ok', database: 'connected' })
+	} catch (error) {
+		res.status(500).json({ status: 'error', database: 'disconnected' })
+	}
+})
 
 // Logger
 app.use(pinoHttp({ logger }))

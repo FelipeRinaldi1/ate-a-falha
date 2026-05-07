@@ -18,6 +18,7 @@ services:
         build:
             context: .
             dockerfile: apps/api/Dockerfile
+            target: development
         container_name: ate-a-falha-api
         env_file:
             - .env
