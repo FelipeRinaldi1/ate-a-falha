@@ -13,7 +13,7 @@ export type {
 	Set,
 	Exercise,
 } from './generated/prisma/index.js'
-export * from './generated/prisma/enums.js'
+export * from './generated/prisma/index.js'
 export { prisma } from './client.js'
 export { safeCall } from './safeCall.js'
 
