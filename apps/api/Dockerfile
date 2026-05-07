@@ -51,5 +51,5 @@ COPY --from=builder /app/packages/database/src/generated ./packages/database/dis
 
 EXPOSE 3333
 
-# Start the application
-CMD ["node", "apps/api/dist/server.js"]
+# Start the application with migrations
+CMD ["sh", "-c", "npm run db:migrate -w @ate-a-falha/database && node apps/api/dist/server.js"]

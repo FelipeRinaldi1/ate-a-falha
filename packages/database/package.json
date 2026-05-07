@@ -16,12 +16,12 @@
 		"@ate-a-falha/shared": "*",
 		"@prisma/adapter-pg": "^7.6.0",
 		"@prisma/client": "^7.6.0",
-		"pg": "^8.13.0"
+		"pg": "^8.13.0",
+		"prisma": "^7.6.0"
 	},
 	"devDependencies": {
 		"@types/pg": "^8.11.0",
-		"dotenv": "^17.3.1",
-		"prisma": "^7.6.0"
+		"dotenv": "^17.3.1"
 	},
 	"keywords": [],
 	"author": "",
