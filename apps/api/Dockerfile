@@ -48,6 +48,8 @@ RUN npm install --omit=dev
 
 # Since the compiled code in dist/ refers to ./generated, we copy it there
 COPY --from=builder /app/packages/database/src/generated ./packages/database/dist/generated
+COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/database/prisma.config.ts ./packages/database/prisma.config.ts
 
 EXPOSE 3333
 
