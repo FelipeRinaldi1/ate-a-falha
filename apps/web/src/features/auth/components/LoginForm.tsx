@@ -3,8 +3,8 @@ import { TextInput, PasswordInput, Button, Stack, Paper } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../../../api/instance.js'
 import { loginSchema, type LoginDTO } from '@ate-a-falha/shared'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../providers/AuthProvider'
+import { useNavigate } from 'react-router-dom'
 
 export function LoginForm() {
 	const navigate = useNavigate()
