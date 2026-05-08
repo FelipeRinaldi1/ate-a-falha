@@ -14,6 +14,9 @@
 		"moduleDetection": "force",
 		"noEmit": true,
 		"jsx": "react-jsx",
+		"paths": {
+			"@ate-a-falha/shared": ["../../packages/shared/src/index.ts"]
+		},
 
 		/* Linting */
 		"noUnusedLocals": true,
@@ -22,5 +25,6 @@
 		"noFallthroughCasesInSwitch": true,
 		"forceConsistentCasingInFileNames": true
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"references": [{ "path": "../../packages/shared" }]
 }

@@ -7,7 +7,6 @@ import { useAuth } from '../../../providers/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 
 export function LoginForm() {
-	const navigate = useNavigate()
 	const { login } = useAuth()
 
 	const form = useForm<LoginDTO>({
