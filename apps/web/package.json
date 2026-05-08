@@ -10,6 +10,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@ate-a-falha/shared": "*",
 		"@mantine/carousel": "^9.0.2",
 		"@mantine/charts": "^9.0.2",
 		"@mantine/core": "^9.0.2",
