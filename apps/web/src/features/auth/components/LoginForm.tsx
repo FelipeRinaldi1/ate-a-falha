@@ -4,7 +4,6 @@ import { useMutation } from '@tanstack/react-query'
 import { api } from '../../../api/instance.js'
 import { loginSchema, type LoginDTO } from '@ate-a-falha/shared'
 import { useAuth } from '../../../providers/AuthProvider'
-import { useNavigate } from 'react-router-dom'
 
 export function LoginForm() {
 	const { login } = useAuth()
