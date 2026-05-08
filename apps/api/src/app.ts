@@ -26,11 +26,13 @@ const app = express()
 
 app.use('/assets/exercises', express.static(process.env.ASSETS_EXERCISES_PATH))
 
-// Middleware
+// Logger (First to catch everything)
+app.use(pinoHttp({ logger }))
+
+// Security & Infrastructure
 app.use(helmet())
 app.use(cors(corsOptions))
 app.use(apiRateLimiter)
-
 app.use(express.json())
 app.use(cookieParser())
 
@@ -43,9 +45,6 @@ app.get('/health', async (_req, res) => {
 		res.status(500).json({ status: 'error', database: 'disconnected' })
 	}
 })
-
-// Logger
-app.use(pinoHttp({ logger }))
 
 // Routes
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))

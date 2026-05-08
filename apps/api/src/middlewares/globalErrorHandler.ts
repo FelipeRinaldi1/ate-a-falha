@@ -27,7 +27,11 @@ export function globalErrorHandler(err: unknown, req: Request, res: Response, _n
 		})
 	}
 
-	req.log.error(err as any, 'Unhandled unexpected error')
+	if (req.log) {
+		req.log.error(err as any, 'Unhandled unexpected error')
+	} else {
+		console.error('Unhandled unexpected error (logger not available):', err)
+	}
 
 	return res.status(500).json({
 		status: 'error',

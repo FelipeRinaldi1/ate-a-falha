@@ -5,7 +5,7 @@ const allowedOrigins = ENV.CORS_ORIGIN.split(',').map((o) => o.trim())
 
 export const corsOptions: CorsOptions = {
 	origin: (origin, callback) => {
-		if (!origin || allowedOrigins.includes(origin)) {
+		if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
 			callback(null, true)
 		} else {
 			console.warn(`[CORS] Blocked request. Origin not allowed: ${origin}`)
