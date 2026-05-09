@@ -7,7 +7,7 @@
 	"packageManager": "npm@11.10.1",
 	"scripts": {
 		"--- INFRA & DEPLOY ---": "",
-		"build": "npm run db:generate && npm run build -w @ate-a-falha/database && npm run build -w apps/api && npm run build -w apps/web",
+		"build": "npm run build -w @ate-a-falha/shared && npm run db:generate && npm run build -w @ate-a-falha/database && npm run build -w apps/api && npm run build -w apps/web",
 		"start:api": "npm run start -w apps/api",
 		"start:web": "npm run preview -w apps/web",
 		"lint": "eslint .",

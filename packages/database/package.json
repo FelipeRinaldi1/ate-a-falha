@@ -4,7 +4,7 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc -b && shx mkdir -p dist/generated && shx cp -r src/generated/* dist/generated/",
+		"build": "npm run db:generate && tsc -b && shx mkdir -p dist/generated && shx cp -r src/generated/* dist/generated/",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate deploy",
 		"db:migrate:dev": "prisma migrate dev",
