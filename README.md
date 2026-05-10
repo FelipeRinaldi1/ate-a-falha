@@ -56,24 +56,27 @@ Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
 ### 3. Inicialização
 
-Para o primeiro acesso, utilize o comando de setup que prepara os containers, aplica as migrations e popula o banco de dados:
+Para o primeiro acesso (ou para resetar o ambiente), utilize o comando de setup que prepara os containers Docker, aplica as migrations e popula o banco de dados automaticamente:
 
 ```bash
-npm run setup
+npm run dev:setup
 ```
 
-### 4. Comandos de Desenvolvimento
+### 4. Comandos Disponíveis
 
-Após o setup, utilize os comandos abaixo conforme a necessidade:
-
-| Função                | Comando                 |
-| --------------------- | ----------------------- |
-| Setup inicial         | `npm run setup`         |
-| Iniciar tudo          | `npm run dev`           |
-| Build e Iniciar tudo  | `npm run dev:all`       |
-| Banco (Prisma Studio) | `npm run db:studio`     |
-| Executar Pipeline     | `npm run data:pipeline` |
-| Formatar código       | `npm run format`        |
+| Categoria           | Função                     | Comando                 |
+| :------------------ | :------------------------- | :---------------------- |
+| **Infra & Deploy**  | Build Completo             | `npm run build`         |
+|                     | Iniciar API                | `npm run start:api`     |
+|                     | Preview Web                | `npm run start:web`     |
+| **Desenvolvimento** | Iniciar via Docker         | `npm run dev`           |
+|                     | Setup Inicial Completo     | `npm run dev:setup`     |
+|                     | Rebuild dos Containers     | `npm run dev:build`     |
+| **Banco de Dados**  | Prisma Studio              | `npm run db:studio`     |
+|                     | Rodar Migrations           | `npm run db:migrate`    |
+|                     | Popular Banco              | `npm run db:seed`       |
+| **Ferramentas**     | Executar Pipeline de Dados | `npm run data:pipeline` |
+|                     | Formatar Código            | `npm run format`        |
 
 ---
 
