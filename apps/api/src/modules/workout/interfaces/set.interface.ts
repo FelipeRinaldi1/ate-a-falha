@@ -1,7 +1,5 @@
-import { Result } from '@ate-a-falha/shared'
-
-import { CreateSetDTO, UpdateSetDTO } from '@ate-a-falha/shared'
-import { SetFull } from '@ate-a-falha/database'
+import { type Result, type CreateSetDTO, type UpdateSetDTO } from '@ate-a-falha/shared'
+import { type SetFull } from '@ate-a-falha/database'
 
 export interface ISetRepository {
 	create(workoutExerciseId: string, data: CreateSetDTO, userId: string): Promise<Result<SetFull>>

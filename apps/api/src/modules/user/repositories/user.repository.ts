@@ -1,10 +1,6 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
-import { IUserRepository } from '../interfaces/user.interfaces.js'
-import { Result, success, failure } from '@ate-a-falha/shared'
-
-import { CreateUserDTO, UpdateUserDTO } from '@ate-a-falha/shared'
-import { UserFull } from '@ate-a-falha/database'
+import { prisma, safeCall, type UserFull } from '@ate-a-falha/database'
+import type { IUserRepository } from '../interfaces/user.interfaces.js'
+import { type Result, success, failure, type CreateUserDTO, type UpdateUserDTO } from '@ate-a-falha/shared'
 
 export class UserRepository implements IUserRepository {
 	async create(data: CreateUserDTO): Promise<Result<UserFull>> {

@@ -27,7 +27,7 @@ const envSchema = z.object({
 	CORS_ORIGIN: z.string().default('*'),
 
 	SERVER_URL: z
-		.preprocess((val) => (val === '' ? undefined : val), z.string().url({ message: 'URL do servidor inválida' }))
+		.preprocess((val) => (val === '' ? undefined : val), z.url({ message: 'URL do servidor inválida' }))
 		.default('http://localhost:3333'),
 
 	LOG_LEVEL: z.string().default('info'),
@@ -36,7 +36,7 @@ const envSchema = z.object({
 const _env = envSchema.safeParse(process.env)
 
 if (!_env.success) {
-	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, JSON.stringify(_env.error.format(), null, 2))
+	console.error(`${ENV_ERRORS.INVALID_VARIABRLES}:`, z.treeifyError(_env.error))
 
 	throw new Error(ENV_ERRORS.FATAL_ERROR)
 }

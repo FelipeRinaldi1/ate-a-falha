@@ -2,12 +2,10 @@ import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { MealService } from '../services/meal.service.js'
-import { validateData } from '@ate-a-falha/shared'
-
-import { createMealSchema, updateMealSchema } from '@ate-a-falha/shared'
+import { createMealSchema, updateMealSchema, validateData } from '@ate-a-falha/shared'
 
 export class MealController {
-	constructor(private mealService: MealService) {}
+	constructor(private readonly mealService: MealService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const dietIdValidation = validateData(z.uuid(), req.params.dietId, 'Invalid diet ID')

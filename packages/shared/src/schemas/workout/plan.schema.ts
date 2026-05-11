@@ -8,7 +8,7 @@ export const createplanSchema = z.object({
 
 	isActive: z.boolean().optional().default(true),
 
-	userId: z.string().uuid('ID de usuário inválido'),
+	userId: z.uuid('ID de usuário inválido'),
 })
 
 export const updateplanSchema = createplanSchema.partial()

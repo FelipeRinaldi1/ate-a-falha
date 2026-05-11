@@ -1,13 +1,9 @@
-import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from '@ate-a-falha/shared'
-import { BodyMetricFull } from '@ate-a-falha/database'
-
-import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { success, failure, Result } from '@ate-a-falha/shared'
-
-import { authenticatedUser } from '@ate-a-falha/shared'
+import { type CreateBodyMetricDTO, type BodyMetricSearchDTO, type UpdateBodyMetricDTO, type Result, success, failure, type authenticatedUser } from '@ate-a-falha/shared'
+import { type BodyMetricFull } from '@ate-a-falha/database'
+import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 
 export class BodyMetricService {
-	constructor(private bodyMetricRepository: IBodyMetricRepository) {}
+	constructor(private readonly bodyMetricRepository: IBodyMetricRepository) {}
 
 	async create(data: CreateBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
 		const result = await this.bodyMetricRepository.create(data, authUser.id)

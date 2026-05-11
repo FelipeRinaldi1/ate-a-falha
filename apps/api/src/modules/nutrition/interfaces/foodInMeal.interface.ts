@@ -1,7 +1,5 @@
-import { Result } from '@ate-a-falha/shared'
-
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '@ate-a-falha/shared'
-import { FoodInMealFull } from '@ate-a-falha/database'
+import { type CreateFoodInMealDTO, type UpdateFoodInMealDTO, type Result } from '@ate-a-falha/shared'
+import { type FoodInMealFull } from '@ate-a-falha/database/src/types/nutrition.js'
 
 export interface IFoodInMealRepository {
 	create(mealId: string, foodId: string, data: CreateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>>

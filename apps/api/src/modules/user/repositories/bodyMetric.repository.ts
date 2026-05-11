@@ -1,10 +1,9 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
-import { Result, success, failure } from '@ate-a-falha/shared'
+import { prisma, safeCall } from '@ate-a-falha/database'
+import { type Result, success, failure } from '@ate-a-falha/shared'
 
-import { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { CreateBodyMetricDTO, BodyMetricSearchDTO, UpdateBodyMetricDTO } from '@ate-a-falha/shared'
-import { BodyMetricFull } from '@ate-a-falha/database'
+import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
+import { type CreateBodyMetricDTO, type BodyMetricSearchDTO, type UpdateBodyMetricDTO } from '@ate-a-falha/shared'
+import { type BodyMetricFull } from '@ate-a-falha/database'
 
 export class BodyMetricRepository implements IBodyMetricRepository {
 	async create(data: CreateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
@@ -13,7 +12,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 				data: { ...data, userId },
 			})
 		)
-		if (result.isFailure()) return result as any
+		if (result.isFailure()) return failure(result.error)
 
 		return success(result.value)
 	}

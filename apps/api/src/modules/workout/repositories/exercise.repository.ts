@@ -1,10 +1,7 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
-import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '@ate-a-falha/shared'
-import { ExerciseFull } from '@ate-a-falha/database'
+import { prisma, safeCall, type ExerciseFull } from '@ate-a-falha/database'
+import { type CreateExerciseDTO, type UpdateExerciseDTO, type SearchExerciseDTO, failure, type Result, success } from '@ate-a-falha/shared'
 
-import { IExerciseRepository } from '../interfaces/exercise.interface.js'
-import { failure, Result, success } from '@ate-a-falha/shared'
+import type { IExerciseRepository } from '../interfaces/exercise.interface.js'
 
 export class ExerciseRepository implements IExerciseRepository {
 	async create(data: CreateExerciseDTO): Promise<Result<ExerciseFull>> {

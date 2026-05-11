@@ -1,10 +1,6 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
-import { Result, success, failure } from '@ate-a-falha/shared'
-
-import { IMealRepository } from '../interfaces/meal.interface.js'
-import { CreateMealDTO, UpdateMealDTO } from '@ate-a-falha/shared'
-import { MealFull } from '@ate-a-falha/database'
+import { safeCall, prisma, type MealFull } from '@ate-a-falha/database'
+import { type Result, success, failure, type CreateMealDTO, type UpdateMealDTO } from '@ate-a-falha/shared'
+import { type IMealRepository } from '../interfaces/meal.interface.js'
 
 export class MealRepository implements IMealRepository {
 	async create(dietId: string, data: CreateMealDTO, userId: string): Promise<Result<MealFull>> {

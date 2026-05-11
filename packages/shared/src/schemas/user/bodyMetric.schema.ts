@@ -16,13 +16,13 @@ export const bodyMetricSearchSchema = z.object({
 })
 
 export const BodyMetricSchema = z.object({
-	id: z.string().uuid(),
+	id: z.uuid(),
 	weight: z.number().positive(),
 	height: z.number().int().positive(),
 	activityLevel: z.number().int().min(1).max(7),
 	bodyFat: z.number().positive().nullable().optional(),
 	muscleRate: z.number().positive().nullable().optional(),
-	userId: z.string().uuid(),
+	userId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })

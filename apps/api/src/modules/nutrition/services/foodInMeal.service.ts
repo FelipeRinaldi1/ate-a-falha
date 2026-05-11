@@ -1,16 +1,13 @@
-import { authenticatedUser } from '@ate-a-falha/shared'
+import { type authenticatedUser, type CreateFoodInMealDTO, type UpdateFoodInMealDTO, failure, Result } from '@ate-a-falha/shared'
+import { type FoodInMealFull } from '@ate-a-falha/database'
 
-import { CreateFoodInMealDTO, UpdateFoodInMealDTO } from '@ate-a-falha/shared'
-import { FoodInMealFull } from '@ate-a-falha/database'
-
-import { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
+import type { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { failure, Result } from '@ate-a-falha/shared'
 
 export class FoodInMealService {
 	constructor(
-		private foodInMealRepo: IFoodInMealRepository,
-		private accessControl: NutritionAccessControlService
+		private readonly foodInMealRepo: IFoodInMealRepository,
+		private readonly accessControl: NutritionAccessControlService
 	) {}
 
 	async create(

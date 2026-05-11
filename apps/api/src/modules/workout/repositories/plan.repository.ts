@@ -1,11 +1,7 @@
-import { failure, Result, success } from '@ate-a-falha/shared'
+import { failure, type Result, success, type CreatePlanDTO, type UpdatePlanDTO } from '@ate-a-falha/shared'
+import { prisma, safeCall, type PlanFull } from '@ate-a-falha/database'
 
-import { safeCall } from '@ate-a-falha/database'
-import { CreatePlanDTO, UpdatePlanDTO } from '@ate-a-falha/shared'
-import { PlanFull } from '@ate-a-falha/database'
-
-import { IPlanRepository } from '../interfaces/plan.interface.js'
-import { prisma } from '@ate-a-falha/database'
+import type { IPlanRepository } from '../interfaces/plan.interface.js'
 
 export class PlanRepository implements IPlanRepository {
 	async create(data: CreatePlanDTO, userId: string): Promise<Result<PlanFull>> {

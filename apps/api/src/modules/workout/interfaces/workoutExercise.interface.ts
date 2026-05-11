@@ -1,7 +1,5 @@
-import { Result } from '@ate-a-falha/shared'
-
-import { CreateWorkoutExerciseDTO, UpdateWorkoutExerciseDTO } from '@ate-a-falha/shared'
-import { WorkoutExerciseFull } from '@ate-a-falha/database'
+import { type Result, type CreateWorkoutExerciseDTO, type UpdateWorkoutExerciseDTO } from '@ate-a-falha/shared'
+import { type WorkoutExerciseFull } from '@ate-a-falha/database'
 
 export interface IWorkoutExerciseRepository {
 	create(

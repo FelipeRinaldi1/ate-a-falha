@@ -11,7 +11,7 @@ Sistema de gerenciamento de dietas e treinos. Projetado com foco na experiência
 
 ---
 
-## 🏛️ Arquitetura de Pastas
+## Arquitetura de Pastas
 
 O projeto utiliza uma estrutura de **Monorepo** para compartilhamento de dados via packages.
 

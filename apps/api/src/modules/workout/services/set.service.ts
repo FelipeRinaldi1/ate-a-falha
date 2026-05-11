@@ -1,15 +1,12 @@
-import { ISetRepository } from '../interfaces/set.interface.js'
-import { failure, Result } from '@ate-a-falha/shared'
-
-import { CreateSetDTO, UpdateSetDTO } from '@ate-a-falha/shared'
-import { SetFull } from '@ate-a-falha/database'
-
+import type { ISetRepository } from '../interfaces/set.interface.js'
+import { failure, type Result, type CreateSetDTO, type UpdateSetDTO } from '@ate-a-falha/shared'
+import { type SetFull } from '@ate-a-falha/database'
 import { WorkoutAccessControlService } from './accessControl.service.js'
 
 export class SetService {
 	constructor(
-		private setRepository: ISetRepository,
-		private acessControlService: WorkoutAccessControlService
+		private readonly setRepository: ISetRepository,
+		private readonly acessControlService: WorkoutAccessControlService
 	) {}
 
 	async create(data: CreateSetDTO, workoutExerciseId: string, userId: string): Promise<Result<SetFull>> {

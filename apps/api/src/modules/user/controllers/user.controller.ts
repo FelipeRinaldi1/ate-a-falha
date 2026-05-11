@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { UserService } from '../services/user.service.js'
 import {
 	createUserWithAuthSchema,
@@ -6,14 +6,14 @@ import {
 	loginSchema,
 	changeEmailSchema,
 	changePasswordSchema,
+	validateData,
 } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
-import { validateData } from '@ate-a-falha/shared'
 import { setAuthCookie, clearAuthCookie } from '../../../utils/cookie.js'
 
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(private readonly userService: UserService) {}
 
 	// User CRUD  ────────────────────────────────────────────────────────
 

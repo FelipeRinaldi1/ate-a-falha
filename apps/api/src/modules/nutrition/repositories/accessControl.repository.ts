@@ -1,5 +1,4 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
+import { safeCall, prisma } from '@ate-a-falha/database'
 import { failure, Result, success } from '@ate-a-falha/shared'
 
 import { INutritionAccessControlRepository } from '../interfaces/accessControl.interface.js'

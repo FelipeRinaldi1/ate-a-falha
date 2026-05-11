@@ -1,16 +1,12 @@
-import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { Result, failure } from '@ate-a-falha/shared'
-
+import { type authenticatedUser, type CreateMealDTO, type UpdateMealDTO, type Result, failure } from '@ate-a-falha/shared'
+import { type MealFull } from '@ate-a-falha/database'
 import { MealRepository } from '../repositories/meal.repository.js'
-import { CreateMealDTO, UpdateMealDTO } from '@ate-a-falha/shared'
-import { MealFull } from '@ate-a-falha/database'
-
-import { authenticatedUser } from '@ate-a-falha/shared'
+import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 
 export class MealService {
 	constructor(
-		private mealRepo: MealRepository,
-		private accessControl: NutritionAccessControlService
+		private readonly mealRepo: MealRepository,
+		private readonly accessControl: NutritionAccessControlService
 	) {}
 	async create(dietId: string, data: CreateMealDTO, authUser: authenticatedUser): Promise<Result<MealFull>> {
 		const access = await this.accessControl.canAccessDiet(dietId, authUser)

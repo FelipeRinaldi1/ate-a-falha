@@ -1,16 +1,12 @@
-import { IExerciseRepository } from '../interfaces/exercise.interface.js'
+import type { IExerciseRepository } from '../interfaces/exercise.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { CreateExerciseDTO, UpdateExerciseDTO, SearchExerciseDTO } from '@ate-a-falha/shared'
-import { ExerciseFull } from '@ate-a-falha/database'
-
-import { Result, success, failure } from '@ate-a-falha/shared'
-
-import { authenticatedUser } from '@ate-a-falha/shared'
+import { type CreateExerciseDTO, type UpdateExerciseDTO, type SearchExerciseDTO, type Result, success, failure, type authenticatedUser } from '@ate-a-falha/shared'
+import { type ExerciseFull } from '@ate-a-falha/database'
 
 export class ExerciseService {
 	constructor(
-		private exerciseRepo: IExerciseRepository,
-		private accessControlService: WorkoutAccessControlService
+		private readonly exerciseRepo: IExerciseRepository,
+		private readonly accessControlService: WorkoutAccessControlService
 	) {}
 
 	async create(data: CreateExerciseDTO, authUser: authenticatedUser): Promise<Result<ExerciseFull>> {

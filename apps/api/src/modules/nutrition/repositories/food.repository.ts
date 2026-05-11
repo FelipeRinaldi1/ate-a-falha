@@ -1,10 +1,8 @@
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
-import { Result, success, failure } from '@ate-a-falha/shared'
-
+import { prisma, safeCall } from '@ate-a-falha/database'
 import { IFoodRepository } from '../interfaces/food.interfaces.js'
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
-import { FoodFull } from '@ate-a-falha/database'
+import { Result, success, failure } from '@ate-a-falha/shared'
+import type { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
+import type { FoodFull } from '@ate-a-falha/database'
 
 export class FoodRepository implements IFoodRepository {
 	async create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>> {

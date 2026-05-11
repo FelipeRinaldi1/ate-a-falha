@@ -1,16 +1,12 @@
-import { IDietRepository } from '../interfaces/diet.interface.js'
-import { Result, failure } from '@ate-a-falha/shared'
-
-import { CreateDietDTO, UpdateDietDTO } from '@ate-a-falha/shared'
-import { DietFull } from '@ate-a-falha/database'
-
+import { type IDietRepository } from '../interfaces/diet.interface.js'
+import { type Result, failure, type authenticatedUser, type CreateDietDTO, type UpdateDietDTO } from '@ate-a-falha/shared'
+import { type DietFull } from '@ate-a-falha/database'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class DietService {
 	constructor(
-		private dietRepo: IDietRepository,
-		private accessControl: NutritionAccessControlService
+		private readonly dietRepo: IDietRepository,
+		private readonly accessControl: NutritionAccessControlService
 	) {}
 
 	async create(data: CreateDietDTO, authUser: authenticatedUser): Promise<Result<DietFull>> {

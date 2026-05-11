@@ -1,7 +1,5 @@
-import { Result } from '@ate-a-falha/shared'
-
-import { CreateAuthDTO } from '@ate-a-falha/shared'
-import { AuthFull } from '@ate-a-falha/database'
+import { type Result, type CreateAuthDTO } from '@ate-a-falha/shared'
+import { type AuthFull } from '@ate-a-falha/database'
 
 export interface IAuthRepository {
 	create(data: CreateAuthDTO, userId: string): Promise<Result<AuthFull>>

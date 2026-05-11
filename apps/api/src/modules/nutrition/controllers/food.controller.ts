@@ -1,13 +1,12 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { FoodService } from '../services/food.service.js'
-import { createFoodSchema, updateFoodSchema, foodSearchSchema } from '@ate-a-falha/shared'
+import { createFoodSchema, updateFoodSchema, foodSearchSchema, validateData } from '@ate-a-falha/shared'
 
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
-import { validateData } from '@ate-a-falha/shared'
 
 export class FoodController {
-	constructor(private foodService: FoodService) {}
+	constructor(private readonly foodService: FoodService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const bodyValidation = validateData(createFoodSchema, req.body, 'Invalid Request Body')

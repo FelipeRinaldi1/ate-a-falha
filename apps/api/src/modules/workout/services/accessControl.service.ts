@@ -1,12 +1,8 @@
-import { AppError } from '@ate-a-falha/shared'
-
-import { IWorkoutAccessControl } from '../interfaces/accessControl.interface.js'
-import { Result, failure, success } from '@ate-a-falha/shared'
-
-import { authenticatedUser } from '@ate-a-falha/shared'
+import { type AppError, type Result, failure, success, type authenticatedUser } from '@ate-a-falha/shared'
+import type { IWorkoutAccessControl } from '../interfaces/accessControl.interface.js'
 
 export class WorkoutAccessControlService {
-	constructor(private accessControlRepo: IWorkoutAccessControl) {}
+	constructor(private readonly accessControlRepo: IWorkoutAccessControl) {}
 
 	private readonly ForbiddenError: AppError = {
 		type: 'FORBIDDEN',

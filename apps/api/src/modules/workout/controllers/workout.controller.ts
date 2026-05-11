@@ -1,14 +1,12 @@
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import { WorkoutService } from '../services/workout.service.js'
-import { validateData } from '@ate-a-falha/shared'
-
-import { createworkoutSchema, updateworkoutSchema } from '@ate-a-falha/shared'
+import { validateData, createworkoutSchema, updateworkoutSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
 
 export class WorkoutController {
-	constructor(private workoutService: WorkoutService) {}
+	constructor(private readonly workoutService: WorkoutService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
 		const planIdValid = validateData(z.uuid(), req.params.planId, 'Invalid Plan ID')

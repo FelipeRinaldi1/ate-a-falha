@@ -1,4 +1,4 @@
-import { Result } from '@ate-a-falha/shared'
+import { type Result } from '@ate-a-falha/shared'
 
 export interface INutritionAccessControlRepository {
 	canAccessDiet(dietId: string, userId: string): Promise<Result<boolean>>

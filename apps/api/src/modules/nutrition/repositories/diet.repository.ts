@@ -1,12 +1,6 @@
-import { IDietRepository } from '../interfaces/diet.interface.js'
-import { Result, failure, success } from '@ate-a-falha/shared'
-
-import { CreateDietDTO, UpdateDietDTO } from '@ate-a-falha/shared'
-import { DietFull } from '@ate-a-falha/database'
-
-import { safeCall } from '@ate-a-falha/database'
-import { prisma } from '@ate-a-falha/database'
-
+import type { IDietRepository } from '../interfaces/diet.interface.js'
+import { type Result, failure, success, type CreateDietDTO, type UpdateDietDTO } from '@ate-a-falha/shared'
+import { safeCall, prisma, type DietFull } from '@ate-a-falha/database'
 export class DietRepository implements IDietRepository {
 	async create(data: CreateDietDTO, userId: string): Promise<Result<DietFull>> {
 		const result = await safeCall(

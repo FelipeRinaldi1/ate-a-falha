@@ -1,16 +1,14 @@
-import { CreatePlanDTO, UpdatePlanDTO } from '@ate-a-falha/shared'
-import { PlanFull } from '@ate-a-falha/database'
+import { type CreatePlanDTO, type UpdatePlanDTO, failure, type Result, type authenticatedUser } from '@ate-a-falha/shared'
+import { type PlanFull } from '@ate-a-falha/database'
 
-import { IPlanRepository } from '../interfaces/plan.interface.js'
-import { failure, Result } from '@ate-a-falha/shared'
+import type { IPlanRepository } from '../interfaces/plan.interface.js'
 
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { authenticatedUser } from '@ate-a-falha/shared'
 
 export class PlanService {
 	constructor(
-		private planRepo: IPlanRepository,
-		private accessServ: WorkoutAccessControlService
+		private readonly planRepo: IPlanRepository,
+		private readonly accessServ: WorkoutAccessControlService
 	) {}
 
 	async create(data: CreatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanFull>> {

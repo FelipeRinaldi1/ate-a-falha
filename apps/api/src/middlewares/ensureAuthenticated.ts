@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '@ate-a-falha/shared'
-import { prisma } from '@ate-a-falha/database'
-import { safeCall } from '@ate-a-falha/database'
+import { prisma, safeCall } from '@ate-a-falha/database'
 import { validateToken } from '../utils/validateToken.js'
+import { ENV } from '../config/env.js'
 
 export const ensureAuthenticated = async (req: Request, _res: Response, next: NextFunction) => {
 	try {
@@ -12,7 +12,7 @@ export const ensureAuthenticated = async (req: Request, _res: Response, next: Ne
 			return next({ type: 'UNAUTHORIZED', message: 'Token not provided' } as AppError)
 		}
 
-		const result = validateToken(token, process.env.JWT_SECRET!)
+		const result = validateToken(token, ENV.JWT_SECRET)
 
 		if (result.isFailure()) {
 			return next(result.error)

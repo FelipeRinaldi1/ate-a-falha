@@ -1,12 +1,8 @@
-import { Result, success, failure } from '@ate-a-falha/shared'
-
-import { INutritionAccessControlRepository } from '../interfaces/accessControl.interface.js'
-import { authenticatedUser } from '@ate-a-falha/shared'
-
-import { AppError } from '@ate-a-falha/shared'
+import { type Result, success, failure, type authenticatedUser, type AppError } from '@ate-a-falha/shared'
+import type { INutritionAccessControlRepository } from '../interfaces/accessControl.interface.js'
 
 export class NutritionAccessControlService {
-	constructor(private accessRepo: INutritionAccessControlRepository) {}
+	constructor(private readonly accessRepo: INutritionAccessControlRepository) {}
 
 	private readonly ForbiddenError: AppError = {
 		type: 'FORBIDDEN',

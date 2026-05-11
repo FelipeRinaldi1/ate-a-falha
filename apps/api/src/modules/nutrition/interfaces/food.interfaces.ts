@@ -1,7 +1,5 @@
-import { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
-import { FoodFull } from '@ate-a-falha/database'
-
-import { Result } from '@ate-a-falha/shared'
+import { type CreateFoodDTO, type FoodSearchDTO, type UpdateFoodDTO, type Result } from '@ate-a-falha/shared'
+import { type FoodFull } from '@ate-a-falha/database'
 
 export interface IFoodRepository {
 	create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>>

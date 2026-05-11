@@ -2,18 +2,20 @@ import bcrypt from 'bcryptjs'
 import jwt, { type SignOptions } from 'jsonwebtoken'
 
 import {
-	CreateUserWithAuthDTO,
-	UpdateUserDTO,
-	LoginDTO,
-	ChangePasswordDTO,
-	ChangeEmailDTO,
-	UserResponseDTO,
-	InternalAuthResponse,
+	type CreateUserWithAuthDTO,
+	type UpdateUserDTO,
+	type LoginDTO,
+	type ChangePasswordDTO,
+	type ChangeEmailDTO,
+	type UserResponseDTO,
+	type InternalAuthResponse,
+	success,
+	failure,
+	type Result,
 } from '@ate-a-falha/shared'
-import { UserFull, AuthFull } from '@ate-a-falha/database'
+import { type UserFull, type AuthFull } from '@ate-a-falha/database'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
-import { success, failure, Result } from '@ate-a-falha/shared'
 import { ENV } from '../../../config/env.js'
 import { logger } from '../../../config/logger.js'
 
@@ -21,8 +23,8 @@ const BCRYPT_ROUNDS = 10
 
 export class UserService {
 	constructor(
-		private userRepository: IUserRepository,
-		private authRepository: IAuthRepository
+		private readonly userRepository: IUserRepository,
+		private readonly authRepository: IAuthRepository
 	) {}
 
 	// Private helpers ────────────────────────────────────────────────────────
