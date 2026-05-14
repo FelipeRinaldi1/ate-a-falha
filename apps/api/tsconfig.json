@@ -11,5 +11,5 @@
 		}
 	},
 	"references": [{ "path": "../../packages/shared" }, { "path": "../../packages/database" }],
-	"include": ["src/**/*"]
+	"include": ["src/**/*", "tests/sanity.spec.ts"]
 }

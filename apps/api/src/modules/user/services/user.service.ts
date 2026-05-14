@@ -96,14 +96,14 @@ export class UserService {
 		const authResult = await this.authRepository.findByEmail(data.email)
 		if (authResult.isFailure()) {
 			logger.warn({ email: data.email }, 'Login failed: user not found')
-			return failure({ type: 'UNAUTHORIZED', message: 'Invalid credentials.' })
+			return failure({ type: 'NOT_FOUND', message: 'Invalid credentials.' })
 		}
 
 		const auth = authResult.value
 		const isValidPassword = await this.verifyPassword(data.password, auth.password)
 		if (!isValidPassword) {
 			logger.warn({ userId: auth.userId }, 'Login failed: invalid password')
-			return failure({ type: 'UNAUTHORIZED', message: 'Invalid credentials.' })
+			return failure({ type: 'NOT_FOUND', message: 'Invalid credentials.' })
 		}
 
 		const userResult = await this.userRepository.findById(auth.userId)

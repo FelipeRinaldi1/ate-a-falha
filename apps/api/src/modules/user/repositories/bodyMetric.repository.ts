@@ -1,8 +1,14 @@
 import { prisma, safeCall } from '@ate-a-falha/database'
-import { type Result, success, failure } from '@ate-a-falha/shared'
 
 import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
-import { type CreateBodyMetricDTO, type BodyMetricSearchDTO, type UpdateBodyMetricDTO } from '@ate-a-falha/shared'
+import {
+	type CreateBodyMetricDTO,
+	type BodyMetricSearchDTO,
+	type UpdateBodyMetricDTO,
+	type Result,
+	success,
+	failure,
+} from '@ate-a-falha/shared'
 import { type BodyMetricFull } from '@ate-a-falha/database'
 
 export class BodyMetricRepository implements IBodyMetricRepository {
