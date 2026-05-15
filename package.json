@@ -32,7 +32,9 @@
 		"dev:db:migrate:save": "docker compose exec -it api sh -c \"cd packages/database && npx prisma migrate dev\"",
 		"dev:db:seed": "docker compose exec api npm run db:seed -w @ate-a-falha/database",
 		"dev:db:studio": "docker compose exec api npm run db:studio -w @ate-a-falha/database",
-		"dev:test": "docker compose exec api npm test -w apps/api",
+		"dev:test:api": "docker compose exec api npm test -w apps/api",
+		"dev:test:shared": "docker compose exec api npm test -w @ate-a-falha/shared",
+		"dev:coverage": "docker compose exec api npm run test -w apps/api -- --coverage",
 		"dev:test:pipeline": "docker compose run --rm api npm test -w apps/api -- --run & docker compose down",
 		"--- TOOLS ---": "",
 		"data:pipeline": "docker compose run --rm pipeline"

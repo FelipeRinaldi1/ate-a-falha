@@ -1,4 +1,12 @@
-import { type CreateBodyMetricDTO, type BodyMetricSearchDTO, type UpdateBodyMetricDTO, type Result, success, failure, type authenticatedUser } from '@ate-a-falha/shared'
+import {
+	type CreateBodyMetricDTO,
+	type BodyMetricSearchDTO,
+	type UpdateBodyMetricDTO,
+	type Result,
+	success,
+	failure,
+	type authenticatedUser,
+} from '@ate-a-falha/shared'
 import { type BodyMetricFull } from '@ate-a-falha/database'
 import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 

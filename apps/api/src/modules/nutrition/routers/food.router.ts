@@ -6,17 +6,17 @@ import { NutritionAccessControlService } from '../services/nutritionAccessContro
 import { NutritionAccessControlRepository } from '../repositories/accessControl.repository.js'
 import { ensureAuthenticated } from '@/middlewares/ensureAuthenticated.js'
 
-const foodRoutes = Router()
+const foodRouter = Router()
 const accessRepo = new NutritionAccessControlRepository()
 const accessServ = new NutritionAccessControlService(accessRepo)
 const foodRepo = new FoodRepository()
 const foodService = new FoodService(foodRepo, accessServ)
 const foodController = new FoodController(foodService)
 
-foodRoutes.post('/', ensureAuthenticated, foodController.create)
-foodRoutes.get('/:id', foodController.findById)
-foodRoutes.get('/', foodController.findAll)
-foodRoutes.put('/:id', ensureAuthenticated, foodController.update)
-foodRoutes.delete('/:id', ensureAuthenticated, foodController.delete)
+foodRouter.post('/', ensureAuthenticated, foodController.create)
+foodRouter.get('/:id', foodController.findById)
+foodRouter.get('/', foodController.findAll)
+foodRouter.put('/:id', ensureAuthenticated, foodController.update)
+foodRouter.delete('/:id', ensureAuthenticated, foodController.delete)
 
-export { foodRoutes }
+export { foodRouter }

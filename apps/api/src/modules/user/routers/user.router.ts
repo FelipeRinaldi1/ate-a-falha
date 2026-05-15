@@ -22,6 +22,5 @@ userRouter.put('/me', ensureAuthenticated, userController.updateMe)
 userRouter.delete('/me', ensureAuthenticated, userController.deleteMe)
 userRouter.patch('/me/password', ensureAuthenticated, userController.changePassword)
 userRouter.patch('/me/email', ensureAuthenticated, userController.changeEmail)
-userRouter.post('/logout', userController.logout)
 
 export { userRouter }
