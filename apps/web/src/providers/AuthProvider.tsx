@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { api } from '../api/instance'
+import { api } from '../api/axiosInstance'
 import type { UserResponseDTO } from '@ate-a-falha/shared'
 
 interface AuthContextData {
