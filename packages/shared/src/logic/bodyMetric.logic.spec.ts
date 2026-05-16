@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { BodyMetricLogic } from './bodyMetric.js'
+import { BodyMetricLogic } from './bodyMetric.logic.js'
 
 describe('Body Metric Logic tests', () => {
 	describe('BMI tests', () => {
