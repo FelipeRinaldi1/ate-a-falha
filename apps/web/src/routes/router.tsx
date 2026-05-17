@@ -1,20 +1,14 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
 import { HomePage } from '../pages/Home.page'
-import { LoginPage } from '../pages/LoginPage'
-import { RegisterPage } from '../pages/RegisterPage'
-import { Center } from '@mantine/core'
-
-import WaterCard from '../features/nutrition/components/WaterCard'
+import { LoginPage } from '../pages/Login.page'
+import { RegisterPage } from '../pages/Register.page'
+import { BodyMetricRegisterPage } from '../pages/BodyMetricRegister.page'
 
 export const router = createBrowserRouter([
 	{
 		path: '/sandbox',
-		element: (
-			<Center>
-				<WaterCard />
-			</Center>
-		),
+		element: <BodyMetricRegisterPage />,
 	},
 	{
 		path: '/login',

@@ -1,10 +1,9 @@
 import { z } from 'zod'
 
 export const createBodyMetricSchema = z.object({
-	userId: z.uuid(),
 	weight: z.number().positive(),
 	height: z.number().int().positive(),
-	activityLevel: z.number().int().min(1).max(7),
+	activityLevel: z.number().int().min(0).max(4),
 	bodyFat: z.number().positive().min(0).max(50).optional().nullable(),
 	muscleRate: z.number().positive().min(0).max(100).optional().nullable(),
 })

@@ -1,23 +1,14 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { api } from '../api/axiosInstance'
 import type { UserResponseDTO } from '@ate-a-falha/shared'
-
-interface AuthContextData {
-	user: UserResponseDTO | null
-	isAuthenticated: boolean
-	isLoading: boolean
-	login: (user: UserResponseDTO) => void
-	logout: () => Promise<void>
-}
-
-const AuthContext = createContext<AuthContextData>({} as AuthContextData)
+import { AuthContext } from '../features/user/hooks/useAuth'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<UserResponseDTO | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		api.get('/users/me')
+		api.get('/user/me')
 			.then((response) => {
 				setUser(response.data)
 			})
@@ -35,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const logout = async () => {
 		try {
-			await api.post('/users/logout')
+			await api.post('/user/logout')
 		} catch (error) {
 			console.error('Failed to logout in backend', error)
 		} finally {
@@ -48,8 +39,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			{children}
 		</AuthContext.Provider>
 	)
-}
-
-export function useAuth() {
-	return useContext(AuthContext)
 }

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../providers/AuthProvider'
+import { useAuth } from '../features/user/hooks/useAuth'
 
 // Redirect to login if not authenticated
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {

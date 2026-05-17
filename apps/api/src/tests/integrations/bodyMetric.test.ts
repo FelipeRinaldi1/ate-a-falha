@@ -13,7 +13,7 @@ describe('Body Metric Tests', () => {
 
 	beforeEach(async () => {
 		userContext = await setupTestUser()
-		bodyMetricContext = await setupTestBodyMetric(userContext.user.id, userContext.cookie || '')
+		bodyMetricContext = await setupTestBodyMetric(userContext.cookie || '')
 	})
 	afterEach(async () => {
 		if (userContext) {
@@ -26,7 +26,7 @@ describe('Body Metric Tests', () => {
 			const result = await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
 				.set('Cookie', userContext.cookie || '')
-				.send(overrideBodyMetricMock({ userId: userContext.user.id }))
+				.send(overrideBodyMetricMock())
 
 			expect(result.status).toBe(201)
 		})
@@ -38,7 +38,7 @@ describe('Body Metric Tests', () => {
 				bodyFat: -3000,
 				muscleRate: -5000,
 			}
-			const data = overrideBodyMetricMock({ userId: userContext.user.id, ...invalidData })
+			const data = overrideBodyMetricMock({ ...invalidData })
 
 			const result = await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
@@ -74,12 +74,12 @@ describe('Body Metric Tests', () => {
 			await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
 				.set('Cookie', userContext.cookie || '')
-				.send(overrideBodyMetricMock({ userId: userContext.user.id }))
+				.send(overrideBodyMetricMock())
 
 			await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
 				.set('Cookie', userContext.cookie || '')
-				.send(overrideBodyMetricMock({ userId: userContext.user.id }))
+				.send(overrideBodyMetricMock())
 
 			const result = await request(app)
 				.get(`${BASE_API_URL}/user/body-metric`)
@@ -95,12 +95,12 @@ describe('Body Metric Tests', () => {
 			const bodyMetric1 = await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
 				.set('Cookie', userContext.cookie || '')
-				.send(overrideBodyMetricMock({ userId: userContext.user.id }))
+				.send(overrideBodyMetricMock())
 
 			const bodyMetric2 = await request(app)
 				.post(`${BASE_API_URL}/user/body-metric`)
 				.set('Cookie', userContext.cookie || '')
-				.send(overrideBodyMetricMock({ userId: userContext.user.id }))
+				.send(overrideBodyMetricMock())
 
 			const result = await request(app)
 				.get(`${BASE_API_URL}/user/body-metric`)
