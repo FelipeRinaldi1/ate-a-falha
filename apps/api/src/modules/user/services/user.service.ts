@@ -18,13 +18,15 @@ import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import type { IAuthRepository } from '../interfaces/auth.interfaces.js'
 import { ENV } from '../../../config/env.js'
 import { logger } from '../../../config/logger.js'
+import { BodyMetricService } from './bodyMetric.service.js'
 
 const BCRYPT_ROUNDS = 10
 
 export class UserService {
 	constructor(
 		private readonly userRepository: IUserRepository,
-		private readonly authRepository: IAuthRepository
+		private readonly authRepository: IAuthRepository,
+		private readonly bodyMetricService: BodyMetricService
 	) {}
 
 	// Private helpers ────────────────────────────────────────────────────────
@@ -50,8 +52,9 @@ export class UserService {
 		return result
 	}
 
-	private toResponse(user: UserFull): Result<UserResponseDTO> {
+	private toResponse(user: UserFull, hasBodyMetrics: boolean): Result<UserResponseDTO> {
 		if (!user.auth) return failure({ type: 'NOT_FOUND', message: 'Auth record not found.' })
+
 		return success({
 			id: user.id,
 			name: user.name,
@@ -59,6 +62,7 @@ export class UserService {
 			gender: user.gender,
 			birthDate: user.birthDate,
 			email: user.auth.email,
+			hasBodyMetrics,
 		})
 	}
 
@@ -67,19 +71,25 @@ export class UserService {
 	async getMe(id: string): Promise<Result<UserResponseDTO>> {
 		const result = await this.userRepository.findById(id)
 		if (result.isFailure()) return failure(result.error)
-		return this.toResponse(result.value)
+
+		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(id)
+		return this.toResponse(result.value, hasBodyMetrics)
 	}
 
 	async updateMe(id: string, data: UpdateUserDTO): Promise<Result<UserResponseDTO>> {
 		const { auth, ...userData } = data
+
 		const userResult = await this.userRepository.update(id, userData)
 		if (userResult.isFailure()) return failure(userResult.error)
 
-		if (!auth) return this.toResponse(userResult.value)
+		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(id)
+
+		if (!auth) return this.toResponse(userResult.value, hasBodyMetrics)
 
 		const authResult = await this.authRepository.updateEmail(id, auth.email!)
 		if (authResult.isFailure()) return failure(authResult.error)
-		return this.toResponse({ ...userResult.value, auth: authResult.value })
+
+		return this.toResponse({ ...userResult.value, auth: authResult.value }, hasBodyMetrics)
 	}
 
 	async deleteMe(id: string): Promise<Result<void>> {
@@ -112,7 +122,9 @@ export class UserService {
 		const token = this.generateToken(auth.userId, auth.email)
 		logger.info({ userId: auth.userId }, 'Login successful')
 
-		const userResponse = this.toResponse(userResult.value)
+		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(userResult.value.id)
+
+		const userResponse = this.toResponse(userResult.value, hasBodyMetrics)
 		if (userResponse.isFailure()) return failure(userResponse.error)
 
 		return success({ user: userResponse.value, token })
@@ -135,7 +147,7 @@ export class UserService {
 		}
 
 		const fullUser = { ...userResult.value, auth: authResult.value }
-		const userResponse = this.toResponse(fullUser)
+		const userResponse = this.toResponse(fullUser, false)
 		if (userResponse.isFailure()) return failure(userResponse.error)
 
 		const token = this.generateToken(userId, auth.email)

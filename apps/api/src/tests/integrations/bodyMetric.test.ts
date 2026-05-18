@@ -151,6 +151,7 @@ describe('Body Metric Tests', () => {
 			expect(result.status).toBe(200)
 		})
 	})
+
 	describe('DELETE /body-metric/:id', () => {
 		test('Should delete body-metric data', async () => {
 			const result = await request(app)

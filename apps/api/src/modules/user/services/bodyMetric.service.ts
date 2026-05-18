@@ -64,4 +64,14 @@ export class BodyMetricService {
 
 		return success(result.value)
 	}
+
+	async hasBodyMetrics(userId: string): Promise<boolean> {
+		const result = await this.bodyMetricRepository.countBodyMetrics(userId)
+
+		if (result.isFailure()) {
+			throw result.error
+		}
+
+		return result.value > 0
+	}
 }

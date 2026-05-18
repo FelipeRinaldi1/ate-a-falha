@@ -4,11 +4,14 @@ import { AuthRepository } from '../repositories/auth.repository.js'
 import { UserService } from '../services/user.service.js'
 import { UserController } from '../controllers/user.controller.js'
 import { ensureAuthenticated } from '../../../middlewares/ensureAuthenticated.js'
+import { BodyMetricService } from '../services/bodyMetric.service.js'
+import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
 
 const userRouter = Router()
 const userRepo = new UserRepository()
 const authRepo = new AuthRepository()
-const userService = new UserService(userRepo, authRepo)
+const bodyMetricService = new BodyMetricService(new BodyMetricRepository())
+const userService = new UserService(userRepo, authRepo, bodyMetricService)
 const userController = new UserController(userService)
 
 // Public

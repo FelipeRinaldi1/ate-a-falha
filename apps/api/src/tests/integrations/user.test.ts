@@ -5,8 +5,9 @@ import { beforeEach, describe, test, expect, afterEach } from 'vitest'
 import { getCreateUserMock, updateUserMock } from '../mocks/auth.mock.js'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestBodyMetric } from '../helpers/bodyMetric.helper.js'
 
-describe('Authentication Tests', () => {
+describe('user Tests', () => {
 	let userContext: Awaited<ReturnType<typeof setupTestUser>>
 
 	beforeEach(async () => {
@@ -112,6 +113,32 @@ describe('Authentication Tests', () => {
 			const result = await request(app).get(`${BASE_API_URL}/user/me`).set('Cookie', '').send()
 
 			expect(result.status).toBe(HTTP_STATUS.UNAUTHORIZED)
+		})
+
+		test('Should return true in hasBodyMetrics| 200 OK', async () => {
+			const bodyMetric = await setupTestBodyMetric(userContext.cookie || '')
+			const result = await request(app)
+				.get(`${BASE_API_URL}/user/me`)
+				.set('Cookie', userContext.cookie || '')
+				.send()
+
+			expect(result.status).toBe(HTTP_STATUS.OK)
+			expect(result.body.hasBodyMetrics).toBe(true)
+
+			await request(app)
+				.delete(`${BASE_API_URL}/user/body-metric/${bodyMetric.id}`)
+				.set('Cookie', userContext.cookie || '')
+				.send()
+		})
+
+		test('Should return false in hasBodyMetrics| 200 OK', async () => {
+			const result = await request(app)
+				.get(`${BASE_API_URL}/user/me`)
+				.set('Cookie', userContext.cookie || '')
+				.send()
+
+			expect(result.status).toBe(HTTP_STATUS.OK)
+			expect(result.body.hasBodyMetrics).toBe(false)
 		})
 	})
 
