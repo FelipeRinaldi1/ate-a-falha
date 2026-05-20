@@ -34,8 +34,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
+	const refreshUser = async () => {
+		try {
+			const response = await api.get('/user/me')
+			setUser(response.data)
+		} catch (error) {
+			console.log('Failed to refresh user:', error)
+		}
+	}
+
 	return (
-		<AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+		<AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, refreshUser }}>
 			{children}
 		</AuthContext.Provider>
 	)

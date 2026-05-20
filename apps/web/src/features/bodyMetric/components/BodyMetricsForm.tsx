@@ -1,15 +1,17 @@
-import { api } from '../api/axiosInstance'
-import { Button, Center, Container, NumberInput, Paper, Select, Stack, Title } from '@mantine/core'
+import { api } from '../../../api/axiosInstance'
+import { Button, NumberInput, Paper, Select, Stack } from '@mantine/core'
+
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-type bodyMetricFormValues = Omit<CreateBodyMetricDTO, 'userId'>
+import { useAuth } from '../../../features/user/hooks/useAuth'
 
-function BodyMetricRegisterForm() {
+export function BodyMetricRegisterForm() {
 	const navigate = useNavigate()
+	const { refreshUser } = useAuth()
 
-	const form = useForm<bodyMetricFormValues>({
+	const form = useForm<CreateBodyMetricDTO>({
 		initialValues: {
 			weight: 0,
 			height: 0,
@@ -20,10 +22,11 @@ function BodyMetricRegisterForm() {
 		validate: schemaResolver(createBodyMetricSchema, { sync: true }),
 	})
 	const mutation = useMutation({
-		mutationFn: (data: bodyMetricFormValues) => {
+		mutationFn: (data: CreateBodyMetricDTO) => {
 			return api.post('/user/body-metric', data)
 		},
-		onSuccess: (response) => {
+		onSuccess: async (response) => {
+			await refreshUser()
 			console.log('Register body-metrics success:', response.data)
 			navigate('/')
 		},
@@ -31,7 +34,6 @@ function BodyMetricRegisterForm() {
 			console.error('Register body-metrics error:', error)
 		},
 	})
-
 	return (
 		<Paper>
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
@@ -78,16 +80,5 @@ function BodyMetricRegisterForm() {
 				</Stack>
 			</form>
 		</Paper>
-	)
-}
-
-export function BodyMetricRegisterPage() {
-	return (
-		<Center>
-			<Container>
-				<Title>Criar registros corporais</Title>
-				<BodyMetricRegisterForm />
-			</Container>
-		</Center>
 	)
 }
