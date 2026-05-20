@@ -13,10 +13,10 @@ const foodRepo = new FoodRepository()
 const foodService = new FoodService(foodRepo, accessServ)
 const foodController = new FoodController(foodService)
 
-foodRouter.post('/', ensureAuthenticated, foodController.create)
-foodRouter.get('/:id', foodController.findById)
-foodRouter.get('/', foodController.findAll)
-foodRouter.put('/:id', ensureAuthenticated, foodController.update)
-foodRouter.delete('/:id', ensureAuthenticated, foodController.delete)
+foodRouter.post('/food-catalog', ensureAuthenticated, foodController.create)
+foodRouter.get('/food-catalog', foodController.findAll)
+foodRouter.get('/food-catalog/:id', foodController.findById)
+foodRouter.patch('/food-catalog/:id', ensureAuthenticated, foodController.update)
+foodRouter.delete('/food-catalog/:id', ensureAuthenticated, foodController.delete)
 
 export { foodRouter }

@@ -15,14 +15,14 @@ const planController = new PlanController(planService)
 
 planRouter.use(ensureAuthenticated)
 
-planRouter.post('/', planController.create)
+planRouter.post('/plans', planController.create)
 
-planRouter.get('/', planController.findAll)
+planRouter.get('/plans', planController.findAll)
 
-planRouter.get('/:id', planController.findById)
+planRouter.get('/plans/:id', planController.findById)
 
-planRouter.put('/:id', planController.update)
+planRouter.patch('/plans/:id', planController.update)
 
-planRouter.delete('/:id', planController.delete)
+planRouter.delete('/plans/:id', planController.delete)
 
 export { planRouter }

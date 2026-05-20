@@ -6,9 +6,9 @@ import { Router } from 'express'
 
 const nutritionModuleRouter = Router()
 
-nutritionModuleRouter.use('/diet', dietRouter)
-nutritionModuleRouter.use('/meal', mealRouter)
-nutritionModuleRouter.use('/food-in-meal', foodInMealRouter)
-nutritionModuleRouter.use('/food-catalog', foodRouter)
+nutritionModuleRouter.use('/', dietRouter)
+nutritionModuleRouter.use('/', mealRouter)
+nutritionModuleRouter.use('/', foodInMealRouter)
+nutritionModuleRouter.use('/', foodRouter)
 
 export { nutritionModuleRouter }

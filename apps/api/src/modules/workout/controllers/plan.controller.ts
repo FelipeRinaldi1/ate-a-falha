@@ -19,7 +19,7 @@ export class PlanController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -38,7 +38,7 @@ export class PlanController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Exercise Id')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -58,7 +58,7 @@ export class PlanController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.planService.findById(idValid.value, req.user)
