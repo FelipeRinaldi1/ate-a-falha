@@ -1,9 +1,9 @@
 import { useForm, schemaResolver } from '@mantine/form'
 import { TextInput, PasswordInput, Button, Stack, Paper } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
-import { api } from '../../../api/instance.js'
+import { api } from '../../../api/axiosInstance.js'
 import { loginSchema, type LoginDTO } from '@ate-a-falha/shared'
-import { useAuth } from '../../../providers/AuthProvider'
+import { useAuth } from '../hooks/useAuth.js'
 
 export function LoginForm() {
 	const { login } = useAuth()
@@ -18,7 +18,7 @@ export function LoginForm() {
 
 	const mutation = useMutation({
 		mutationFn: (credentials: LoginDTO) => {
-			return api.post('/users/login', credentials)
+			return api.post('/user/login', credentials)
 		},
 		onSuccess: (response) => {
 			console.log('Login success:', response.data)

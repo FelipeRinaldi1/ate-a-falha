@@ -18,9 +18,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 				data: { ...data, userId },
 			})
 		)
-		if (result.isFailure()) return failure(result.error)
-
-		return success(result.value)
+		return result
 	}
 
 	async findAll(data: BodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>> {
@@ -36,9 +34,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 			})
 		)
 
-		if (result.isFailure()) return result as any
-
-		return success(result.value)
+		return result
 	}
 
 	async findById(id: string, userId: string): Promise<Result<BodyMetricFull>> {
@@ -48,9 +44,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 			})
 		)
 
-		if (result.isFailure()) return result as any
-
-		return success(result.value)
+		return result
 	}
 
 	async update(id: string, data: UpdateBodyMetricDTO, userId: string): Promise<Result<BodyMetricFull>> {
@@ -61,9 +55,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 			})
 		)
 
-		if (result.isFailure()) return result as any
-
-		return success(result.value)
+		return result
 	}
 
 	async delete(id: string, userId: string): Promise<Result<void>> {
@@ -78,5 +70,11 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		}
 
 		return success(undefined)
+	}
+
+	async countBodyMetrics(userId: string): Promise<Result<number>> {
+		const result = await safeCall(prisma.bodyMetric.count({ where: { userId } }))
+
+		return result
 	}
 }

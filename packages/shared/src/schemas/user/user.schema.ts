@@ -40,11 +40,9 @@ export interface UserResponseDTO {
 	gender: z.infer<typeof GENDER>
 	birthDate: Date
 	email: string
+	hasBodyMetrics: boolean
 }
 
-export interface AuthResponseDTO {
-	user: UserResponseDTO
-}
 export interface InternalAuthResponse {
 	user: UserResponseDTO
 	token: string

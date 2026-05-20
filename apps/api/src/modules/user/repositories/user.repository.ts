@@ -7,7 +7,7 @@ export class UserRepository implements IUserRepository {
 		const result = await safeCall(
 			prisma.user.create({
 				data,
-				include: { auth: true, bodyMetrics: true },
+				include: { auth: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -24,7 +24,7 @@ export class UserRepository implements IUserRepository {
 					gender: data.gender,
 					role: data.role,
 				},
-				include: { auth: true, bodyMetrics: true },
+				include: { auth: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -38,15 +38,13 @@ export class UserRepository implements IUserRepository {
 	}
 
 	async findById(id: string): Promise<Result<UserFull>> {
-		const result = await safeCall(
-			prisma.user.findUniqueOrThrow({ where: { id }, include: { auth: true, bodyMetrics: true } })
-		)
+		const result = await safeCall(prisma.user.findUniqueOrThrow({ where: { id }, include: { auth: true } }))
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
 	}
 
 	async findAll(): Promise<Result<UserFull[]>> {
-		const result = await safeCall(prisma.user.findMany({ include: { auth: true, bodyMetrics: true } }))
+		const result = await safeCall(prisma.user.findMany({ include: { auth: true } }))
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
 	}

@@ -2,10 +2,10 @@ import { useForm, schemaResolver } from '@mantine/form'
 import { TextInput, PasswordInput, Button, Stack, Paper, Select } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useMutation } from '@tanstack/react-query'
-import { api } from '../../../api/instance.js'
+import { api } from '../../../api/axiosInstance.js'
 import { createUserWithAuthSchema, type CreateUserWithAuthDTO } from '@ate-a-falha/shared'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../../providers/AuthProvider'
+import { useAuth } from '../hooks/useAuth.js'
 
 export function RegisterForm() {
 	const navigate = useNavigate()
@@ -27,7 +27,7 @@ export function RegisterForm() {
 
 	const mutation = useMutation({
 		mutationFn: (data: CreateUserWithAuthDTO) => {
-			return api.post('/users/register', data)
+			return api.post('/user/register', data)
 		},
 		onSuccess: (response) => {
 			console.log('Register success:', response.data)
@@ -43,7 +43,7 @@ export function RegisterForm() {
 		<Paper withBorder shadow="md" p={30} mt={30} radius="md">
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack>
-					<TextInput label="Name" placeholder="Your full name" required {...form.getInputProps('name')} />
+					<TextInput label="Nome" placeholder="Nome completo" required {...form.getInputProps('name')} />
 
 					<TextInput
 						label="Email"
@@ -53,33 +53,32 @@ export function RegisterForm() {
 					/>
 
 					<PasswordInput
-						label="Password"
-						placeholder="Strong password"
+						label="Senha"
+						placeholder="Senha"
 						required
 						{...form.getInputProps('auth.password')}
 					/>
 
 					<DatePickerInput
-						label="Birth Date"
-						placeholder="Pick a date"
+						label="Data de Nascimento"
+						placeholder="Selecione"
 						required
 						{...form.getInputProps('birthDate')}
 					/>
 
 					<Select
-						label="Gender"
-						placeholder="Pick one"
+						label="Gênero"
+						placeholder="Selecione"
 						data={[
-							{ value: 'MALE', label: 'Male' },
-							{ value: 'FEMALE', label: 'Female' },
-							{ value: 'OTHER', label: 'Other' },
+							{ value: 'MALE', label: 'Masculino' },
+							{ value: 'FEMALE', label: 'Feminino' },
 						]}
 						required
 						{...form.getInputProps('gender')}
 					/>
 
 					<Button type="submit" fullWidth mt="xl" loading={mutation.isPending}>
-						Create Account
+						Criar Conta
 					</Button>
 				</Stack>
 			</form>
