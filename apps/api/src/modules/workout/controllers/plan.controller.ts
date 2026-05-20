@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import { PlanService } from '../services/plan.service.js'
-import { validateData, createplanSchema, updateplanSchema } from '@ate-a-falha/shared'
+import { validateData, createPlanSchema, updatePlanSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
@@ -8,7 +8,7 @@ import { z } from 'zod'
 export class PlanController {
 	constructor(private readonly planService: PlanService) {}
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(createplanSchema, req.body, 'Invalid Request Body')
+		const validation = validateData(createPlanSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.planService.create(validation.value, req.user)
@@ -19,11 +19,11 @@ export class PlanController {
 	}
 
 	update = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const validation = validateData(updateplanSchema, req.body, 'Invalid update Body')
+		const validation = validateData(updatePlanSchema, req.body, 'Invalid update Body')
 
 		if (validation.isFailure()) return next(validation.error)
 
@@ -38,7 +38,7 @@ export class PlanController {
 	}
 
 	delete = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Exercise Id')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 
 		if (idValid.isFailure()) return next(idValid.error)
 
@@ -58,7 +58,7 @@ export class PlanController {
 	}
 
 	findById = async (req: Request, res: Response, next: NextFunction) => {
-		const idValid = validateData(z.uuid(), req.params.id, 'Invalid exercise ID')
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Plan ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
 		const result = await this.planService.findById(idValid.value, req.user)

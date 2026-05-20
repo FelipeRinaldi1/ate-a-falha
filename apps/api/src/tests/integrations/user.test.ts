@@ -6,6 +6,7 @@ import { getCreateUserMock, updateUserMock } from '../mocks/auth.mock.js'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
 import { setupTestBodyMetric } from '../helpers/bodyMetric.helper.js'
+import { CreateUserWithAuthDTO } from '@ate-a-falha/shared'
 
 describe('user Tests', () => {
 	let userContext: Awaited<ReturnType<typeof setupTestUser>>
@@ -19,17 +20,17 @@ describe('user Tests', () => {
 		}
 	})
 
-	describe(`POST ${BASE_API_URL}/user/register`, () => {
+	describe(`POST ${BASE_API_URL}/users/register`, () => {
 		test('Should register a user | 201 Created', async () => {
 			const createUser = getCreateUserMock()
 
-			const result = await request(app).post(`${BASE_API_URL}/user/register`).send(createUser)
+			const result = await request(app).post(`${BASE_API_URL}/users/register`).send(createUser)
 
 			expect(result.status).toBe(HTTP_STATUS.CREATED)
 		})
 
 		test('Should fail if email already exists | 409 Conflict', async () => {
-			const data = {
+			const data: CreateUserWithAuthDTO = {
 				name: 'TesteUserFail',
 				birthDate: new Date('2003-01-01'),
 				gender: 'FEMALE',
@@ -40,7 +41,7 @@ describe('user Tests', () => {
 				},
 			}
 
-			const result = await request(app).post(`${BASE_API_URL}/user/register`).send(data)
+			const result = await request(app).post(`${BASE_API_URL}/users/register`).send(data)
 
 			expect(result.status).toBe(HTTP_STATUS.CONFLICT)
 		})
@@ -54,16 +55,16 @@ describe('user Tests', () => {
 				},
 			}
 
-			const result = await request(app).post(`${BASE_API_URL}/user/register`).send(registerUser)
+			const result = await request(app).post(`${BASE_API_URL}/users/register`).send(registerUser)
 
 			expect(result.status).toBe(HTTP_STATUS.BAD_REQUEST)
 		})
 	})
 
-	describe(`POST ${BASE_API_URL}/user/logout`, () => {
+	describe(`POST ${BASE_API_URL}/users/logout`, () => {
 		test('Should log out user | 200 OK', async () => {
 			const result = await request(app)
-				.post(`${BASE_API_URL}/user/logout`)
+				.post(`${BASE_API_URL}/users/logout`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -71,9 +72,9 @@ describe('user Tests', () => {
 		})
 	})
 
-	describe(`Post ${BASE_API_URL}/user`, () => {
+	describe(`Post ${BASE_API_URL}/users`, () => {
 		test('Should login a user | 200 OK', async () => {
-			const result = await request(app).post(`${BASE_API_URL}/user/login`).send(userContext.originalData.auth)
+			const result = await request(app).post(`${BASE_API_URL}/users/login`).send(userContext.originalData.auth)
 
 			expect(result.status).toBe(HTTP_STATUS.OK)
 		})
@@ -83,7 +84,7 @@ describe('user Tests', () => {
 				email: 'fakeemail@gmail.com',
 				password: 'fakepassword',
 			}
-			const result = await request(app).post(`${BASE_API_URL}/user/login`).send(fakeAuth)
+			const result = await request(app).post(`${BASE_API_URL}/users/login`).send(fakeAuth)
 
 			expect(result.status).toBe(HTTP_STATUS.NOT_FOUND)
 		})
@@ -93,7 +94,7 @@ describe('user Tests', () => {
 				email: userContext.originalData.auth.email,
 				password: 'fakepassword',
 			}
-			const result = await request(app).post(`${BASE_API_URL}/user/login`).send(fakeAuth)
+			const result = await request(app).post(`${BASE_API_URL}/users/login`).send(fakeAuth)
 
 			expect(result.status).toBe(HTTP_STATUS.NOT_FOUND)
 		})
@@ -102,7 +103,7 @@ describe('user Tests', () => {
 	describe('GET /me', () => {
 		test('Should return user data | 201', async () => {
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/me`)
+				.get(`${BASE_API_URL}/users/me`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -110,7 +111,7 @@ describe('user Tests', () => {
 		})
 
 		test('Should fail if cookie isnt valid | 401 Unauthorized', async () => {
-			const result = await request(app).get(`${BASE_API_URL}/user/me`).set('Cookie', '').send()
+			const result = await request(app).get(`${BASE_API_URL}/users/me`).set('Cookie', '').send()
 
 			expect(result.status).toBe(HTTP_STATUS.UNAUTHORIZED)
 		})
@@ -118,7 +119,7 @@ describe('user Tests', () => {
 		test('Should return true in hasBodyMetrics| 200 OK', async () => {
 			const bodyMetric = await setupTestBodyMetric(userContext.cookie || '')
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/me`)
+				.get(`${BASE_API_URL}/users/me`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -126,14 +127,14 @@ describe('user Tests', () => {
 			expect(result.body.hasBodyMetrics).toBe(true)
 
 			await request(app)
-				.delete(`${BASE_API_URL}/user/body-metric/${bodyMetric.id}`)
+				.delete(`${BASE_API_URL}/users/body-metrics/${bodyMetric.id}`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 		})
 
 		test('Should return false in hasBodyMetrics| 200 OK', async () => {
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/me`)
+				.get(`${BASE_API_URL}/users/me`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -145,7 +146,7 @@ describe('user Tests', () => {
 	describe('PUT /me', () => {
 		test('Update Me', async () => {
 			const result = await request(app)
-				.put(`${BASE_API_URL}/user/me`)
+				.put(`${BASE_API_URL}/users/me`)
 				.set('Cookie', userContext.cookie || '')
 				.send(updateUserMock)
 
@@ -156,7 +157,7 @@ describe('user Tests', () => {
 	describe('Patch /me/password', () => {
 		test('Change password', async () => {
 			const result = await request(app)
-				.patch(`${BASE_API_URL}/user/me/password`)
+				.patch(`${BASE_API_URL}/users/me/password`)
 				.set('Cookie', userContext.cookie || '')
 				.send({
 					oldPassword: userContext.originalData.auth.password,
@@ -167,7 +168,7 @@ describe('user Tests', () => {
 		})
 		test('Incorrect old Password', async () => {
 			const result = await request(app)
-				.patch(`${BASE_API_URL}/user/me/password`)
+				.patch(`${BASE_API_URL}/users/me/password`)
 				.set('Cookie', userContext.cookie || '')
 				.send({
 					oldPassword: 'IncorrectOldPassword',
@@ -180,7 +181,7 @@ describe('user Tests', () => {
 	describe('PATCH /me/email', () => {
 		test('Change email', async () => {
 			const result = await request(app)
-				.patch(`${BASE_API_URL}/user/me/email`)
+				.patch(`${BASE_API_URL}/users/me/email`)
 				.set('Cookie', userContext.cookie || '')
 				.send({
 					newEmail: 'newEmail@gmail.com',
@@ -191,7 +192,7 @@ describe('user Tests', () => {
 		})
 		test('Incorrect password', async () => {
 			const result = await request(app)
-				.patch(`${BASE_API_URL}/user/me/email`)
+				.patch(`${BASE_API_URL}/users/me/email`)
 				.set('Cookie', userContext.cookie || '')
 				.send({
 					newEmail: 'newEmail@gmail.com',
@@ -205,7 +206,7 @@ describe('user Tests', () => {
 	describe('DELETE /deleteMe', () => {
 		test('/deleteMe', async () => {
 			const result = await request(app)
-				.delete(`${BASE_API_URL}/user/me`)
+				.delete(`${BASE_API_URL}/users/me`)
 				.set('Cookie', userContext.cookie || '')
 				.send(userContext.user.id)
 

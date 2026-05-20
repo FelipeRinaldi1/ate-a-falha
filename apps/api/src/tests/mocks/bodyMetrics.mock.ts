@@ -1,7 +1,6 @@
 import { CreateBodyMetricDTO, UpdateBodyMetricDTO } from '@ate-a-falha/shared'
 
 export const createBodyMetricMocK: CreateBodyMetricDTO = {
-	userId: '',
 	weight: 80,
 	height: 177,
 	activityLevel: 4,

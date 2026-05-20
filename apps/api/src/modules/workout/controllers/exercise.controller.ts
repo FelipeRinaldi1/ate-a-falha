@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import { ExerciseService } from '../services/exercise.service.js'
-import { createexerciseSchema, searchexerciseSchema, updateexerciseSchema, validateData } from '@ate-a-falha/shared'
+import { createExerciseSchema, searchExerciseSchema, updateExerciseSchema, validateData } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
@@ -9,7 +9,7 @@ export class ExerciseController {
 	constructor(private readonly exerciseService: ExerciseService) {}
 
 	create = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(createexerciseSchema, req.body, 'Invalid Request Body')
+		const validation = validateData(createExerciseSchema, req.body, 'Invalid Request Body')
 		if (validation.isFailure()) return next(validation.error)
 
 		const result = await this.exerciseService.create(validation.value, req.user!)
@@ -24,7 +24,7 @@ export class ExerciseController {
 
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const validation = validateData(updateexerciseSchema, req.body, 'Invalid update Body')
+		const validation = validateData(updateExerciseSchema, req.body, 'Invalid update Body')
 
 		if (validation.isFailure()) return next(validation.error)
 
@@ -53,7 +53,7 @@ export class ExerciseController {
 	}
 
 	findAll = async (req: Request, res: Response, next: NextFunction) => {
-		const validation = validateData(searchexerciseSchema, req.query, 'Invalid search Data')
+		const validation = validateData(searchExerciseSchema, req.query, 'Invalid search Data')
 
 		if (validation.isFailure()) return next(validation.error)
 

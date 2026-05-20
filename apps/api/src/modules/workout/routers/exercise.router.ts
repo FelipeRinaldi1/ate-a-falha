@@ -13,11 +13,11 @@ const accessService = new WorkoutAccessControlService(accessRepo)
 const exerciseService = new ExerciseService(exerciseRepo, accessService)
 const exerciseController = new ExerciseController(exerciseService)
 
-exerciseRouter.get('/', exerciseController.findAll)
-exerciseRouter.get('/:id', exerciseController.findById)
+exerciseRouter.get('/exercise-catalog', exerciseController.findAll)
+exerciseRouter.get('/exercise-catalog/:id', exerciseController.findById)
 
-exerciseRouter.post('/', ensureAuthenticated, exerciseController.create)
-exerciseRouter.patch('/:id', ensureAuthenticated, exerciseController.update)
-exerciseRouter.delete('/:id', ensureAuthenticated, exerciseController.delete)
+exerciseRouter.post('/exercise-catalog', ensureAuthenticated, exerciseController.create)
+exerciseRouter.patch('/exercise-catalog/:id', ensureAuthenticated, exerciseController.update)
+exerciseRouter.delete('/exercise-catalog/:id', ensureAuthenticated, exerciseController.delete)
 
 export { exerciseRouter }

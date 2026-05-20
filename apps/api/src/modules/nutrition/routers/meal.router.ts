@@ -19,7 +19,7 @@ mealRouter.use(ensureAuthenticated)
 mealRouter.post('/diets/:dietId/meals', mealController.create)
 mealRouter.get('/diets/:dietId/meals', mealController.findAll)
 mealRouter.get('/meals/:id', mealController.findById)
-mealRouter.put('/meals/:id', mealController.update)
+mealRouter.patch('/meals/:id', mealController.update)
 mealRouter.delete('/meals/:id', mealController.delete)
 
 export { mealRouter }

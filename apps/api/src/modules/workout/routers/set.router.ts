@@ -18,7 +18,7 @@ setRouter.use(ensureAuthenticated)
 setRouter.post('/workout-exercises/:workoutExerciseId/sets', setController.create)
 setRouter.get('/workout-exercises/:workoutExerciseId/sets', setController.findAll)
 setRouter.get('/sets/:id', setController.findById)
-setRouter.put('/sets/:id', setController.update)
+setRouter.patch('/sets/:id', setController.update)
 setRouter.delete('/sets/:id', setController.delete)
 
 export { setRouter }

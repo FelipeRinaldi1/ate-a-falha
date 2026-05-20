@@ -1,25 +1,25 @@
 import { z } from 'zod'
-import { FoodInMealSchema } from './foodInMeal.schema.js'
+import { foodInMealSchema } from './foodInMeal.schema.js'
 
-export const createMealSchema = z.object({
-	name: z.string().min(1, 'Name is required').max(64, 'Name must be at most 64 characters'),
-	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Time must be in HH:mm format'),
-	orderIndex: z.number().int().min(0, 'Order index must be a positive integer'),
-})
-
-export const updateMealSchema = createMealSchema.partial()
-
-export const MealSchema = z.object({
+export const mealSchema = z.object({
 	id: z.uuid(),
-	foodsInMeal: z.array(z.object(FoodInMealSchema.shape)),
+	dietId: z.uuid(),
+	foodsInMeal: z.array(z.object(foodInMealSchema.shape)),
 	name: z.string().min(1).max(64),
 	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
 	orderIndex: z.number().int().min(0),
-	dietId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })
 
+export const createMealSchema = mealSchema.pick({
+	name: true,
+	time: true,
+	orderIndex: true,
+})
+
+export const updateMealSchema = createMealSchema.partial()
+
 export type CreateMealDTO = z.infer<typeof createMealSchema>
 export type UpdateMealDTO = z.infer<typeof updateMealSchema>
-export type MealDTO = z.infer<typeof MealSchema>
+export type MealDTO = z.infer<typeof mealSchema>

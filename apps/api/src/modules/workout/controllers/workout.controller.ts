@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import { WorkoutService } from '../services/workout.service.js'
-import { validateData, createworkoutSchema, updateworkoutSchema } from '@ate-a-falha/shared'
+import { validateData, createWorkoutSchema, updateWorkoutSchema } from '@ate-a-falha/shared'
 
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { z } from 'zod'
@@ -12,7 +12,7 @@ export class WorkoutController {
 		const planIdValid = validateData(z.uuid(), req.params.planId, 'Invalid Plan ID')
 		if (planIdValid.isFailure()) return next(planIdValid.error)
 
-		const bodyValidation = validateData(createworkoutSchema, req.body, 'Invalid Request Body')
+		const bodyValidation = validateData(createWorkoutSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.workoutService.create(planIdValid.value, bodyValidation.value, req.user)
@@ -26,7 +26,7 @@ export class WorkoutController {
 		const idValid = validateData(z.uuid(), req.params.id, 'Invalid workout ID')
 		if (idValid.isFailure()) return next(idValid.error)
 
-		const bodyValidation = validateData(updateworkoutSchema, req.body, 'Invalid update Body')
+		const bodyValidation = validateData(updateWorkoutSchema, req.body, 'Invalid update Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.workoutService.update(idValid.value, bodyValidation.value, req.user)

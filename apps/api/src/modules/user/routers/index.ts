@@ -5,6 +5,6 @@ import { bodyMetricRouter } from './bodyMetric.router.js'
 const userModuleRouter = Router()
 
 userModuleRouter.use('/', userRouter)
-userModuleRouter.use('/body-metric', bodyMetricRouter)
+userModuleRouter.use('/', bodyMetricRouter)
 
 export { userModuleRouter }

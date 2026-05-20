@@ -21,10 +21,10 @@ describe('Body Metric Tests', () => {
 		}
 	})
 
-	describe('POST /body-metric', () => {
+	describe('POST /body-metrics', () => {
 		test('Should create a body metric', async () => {
 			const result = await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock())
 
@@ -41,7 +41,7 @@ describe('Body Metric Tests', () => {
 			const data = overrideBodyMetricMock({ ...invalidData })
 
 			const result = await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock(data))
 
@@ -49,10 +49,10 @@ describe('Body Metric Tests', () => {
 		})
 	})
 
-	describe('GET /body-metric/:id', () => {
+	describe('GET /body-metrics/:id', () => {
 		test('Should get a body metric by ID', async () => {
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/body-metric/${bodyMetricContext.id}`)
+				.get(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -61,7 +61,7 @@ describe('Body Metric Tests', () => {
 		test('Should not get a body metric by a Invalid ID', async () => {
 			const id = 'InvalidID'
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/body-metric/${id}`)
+				.get(`${BASE_API_URL}/users/body-metrics/${id}`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -69,20 +69,20 @@ describe('Body Metric Tests', () => {
 		})
 	})
 
-	describe('GET /body-metric', () => {
+	describe('GET /body-metrics', () => {
 		test('Should return a valid array with the correct amount of metrics', async () => {
 			await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock())
 
 			await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock())
 
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/body-metric`)
+				.get(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -93,17 +93,17 @@ describe('Body Metric Tests', () => {
 
 		test('Should contain the specific created metrics with correct IDs and user ownership', async () => {
 			const bodyMetric1 = await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock())
 
 			const bodyMetric2 = await request(app)
-				.post(`${BASE_API_URL}/user/body-metric`)
+				.post(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send(overrideBodyMetricMock())
 
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/body-metric`)
+				.get(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 
@@ -129,7 +129,7 @@ describe('Body Metric Tests', () => {
 			const cleanUser = await setupTestUser()
 
 			const result = await request(app)
-				.get(`${BASE_API_URL}/user/body-metric`)
+				.get(`${BASE_API_URL}/users/body-metrics`)
 				.set('Cookie', cleanUser.cookie || '')
 				.send()
 
@@ -141,10 +141,10 @@ describe('Body Metric Tests', () => {
 		})
 	})
 
-	describe('PUT /body-metric/:id', () => {
+	describe('PATCH /body-metrics/:id', () => {
 		test('Should update body-metric data', async () => {
 			const result = await request(app)
-				.put(`${BASE_API_URL}/user/body-metric/${bodyMetricContext.id}`)
+				.patch(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
 				.set('Cookie', userContext.cookie || '')
 				.send(updateBodyMetricMocK)
 
@@ -152,10 +152,10 @@ describe('Body Metric Tests', () => {
 		})
 	})
 
-	describe('DELETE /body-metric/:id', () => {
+	describe('DELETE /body-metrics/:id', () => {
 		test('Should delete body-metric data', async () => {
 			const result = await request(app)
-				.delete(`${BASE_API_URL}/user/body-metric/${bodyMetricContext.id}`)
+				.delete(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
 				.set('Cookie', userContext.cookie || '')
 				.send()
 

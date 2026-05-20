@@ -11,10 +11,10 @@ const bodyMetricController = new BodyMetricController(bodyMetricService)
 
 bodyMetricRouter.use(ensureAuthenticated)
 
-bodyMetricRouter.post('/', bodyMetricController.create)
-bodyMetricRouter.get('/:id', bodyMetricController.findById)
-bodyMetricRouter.get('/', bodyMetricController.findAll)
-bodyMetricRouter.put('/:id', bodyMetricController.update)
-bodyMetricRouter.delete('/:id', bodyMetricController.delete)
+bodyMetricRouter.post('/body-metrics', bodyMetricController.create)
+bodyMetricRouter.get('/body-metrics', bodyMetricController.findAll)
+bodyMetricRouter.get('/body-metrics/:id', bodyMetricController.findById)
+bodyMetricRouter.patch('/body-metrics/:id', bodyMetricController.update)
+bodyMetricRouter.delete('/body-metrics/:id', bodyMetricController.delete)
 
 export { bodyMetricRouter }

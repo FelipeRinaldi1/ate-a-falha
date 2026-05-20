@@ -11,15 +11,12 @@ export class FoodInMealController {
 		const mealIdValidation = validateData(z.uuid(), req.params.mealId, 'Invalid meal ID')
 		if (mealIdValidation.isFailure()) return next(mealIdValidation.error)
 
-		const foodIdValidation = validateData(z.uuid(), req.params.foodId, 'Invalid food ID')
-		if (foodIdValidation.isFailure()) return next(foodIdValidation.error)
-
 		const bodyValidation = validateData(createFoodInMealSchema, req.body, 'Invalid Request Body')
 		if (bodyValidation.isFailure()) return next(bodyValidation.error)
 
 		const result = await this.foodInMealService.create(
 			mealIdValidation.value,
-			foodIdValidation.value,
+			bodyValidation.value.foodId,
 			bodyValidation.value,
 			req.user
 		)

@@ -7,10 +7,10 @@ import { planRouter } from './plan.router.js'
 
 const workoutModuleRouter = Router()
 
-workoutModuleRouter.use('/plan', planRouter)
-workoutModuleRouter.use('/workout', workoutRouter)
-workoutModuleRouter.use('/workout-exercise', workoutExerciseRouter)
-workoutModuleRouter.use('/set', setRouter)
-workoutModuleRouter.use('/exercise-catalog', exerciseRouter)
+workoutModuleRouter.use('/', planRouter)
+workoutModuleRouter.use('/', workoutRouter)
+workoutModuleRouter.use('/', workoutExerciseRouter)
+workoutModuleRouter.use('/', setRouter)
+workoutModuleRouter.use('/', exerciseRouter)
 
 export { workoutModuleRouter }

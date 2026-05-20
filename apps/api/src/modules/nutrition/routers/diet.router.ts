@@ -16,10 +16,10 @@ const dietController = new DietController(dietService)
 
 dietRouter.use(ensureAuthenticated)
 
-dietRouter.post('/', dietController.create)
-dietRouter.get('/', dietController.findAll)
-dietRouter.get('/:id', dietController.findById)
-dietRouter.put('/:id', dietController.update)
-dietRouter.delete('/:id', dietController.delete)
+dietRouter.post('/diets', dietController.create)
+dietRouter.get('/diets', dietController.findAll)
+dietRouter.get('/diets/:id', dietController.findById)
+dietRouter.patch('/diets/:id', dietController.update)
+dietRouter.delete('/diets/:id', dietController.delete)
 
 export { dietRouter }

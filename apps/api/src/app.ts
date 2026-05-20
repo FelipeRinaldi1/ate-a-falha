@@ -42,7 +42,7 @@ if (process.env.ASSETS_EXERCISES_PATH) {
 }
 app.use(`${BASE_API_URL}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-app.use(`${BASE_API_URL}/user`, userModuleRouter)
+app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)
 app.use(`${BASE_API_URL}/workout`, workoutModuleRouter)
 

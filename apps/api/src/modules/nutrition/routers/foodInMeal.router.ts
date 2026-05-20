@@ -16,7 +16,7 @@ const foodInMealController = new FoodInMealController(foodInMealService)
 
 foodInMealRouter.use(ensureAuthenticated)
 
-foodInMealRouter.post('/meals/:mealId/foods/:foodId', foodInMealController.create)
+foodInMealRouter.post('/meals/:mealId/foods', foodInMealController.create)
 foodInMealRouter.get('/meals/:mealId/foods', foodInMealController.findAll)
 foodInMealRouter.get('/food-in-meals/:id', foodInMealController.findById)
 foodInMealRouter.patch('/food-in-meals/:id', foodInMealController.update)
