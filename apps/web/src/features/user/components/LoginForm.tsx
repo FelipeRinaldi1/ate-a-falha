@@ -18,7 +18,7 @@ export function LoginForm() {
 
 	const mutation = useMutation({
 		mutationFn: (credentials: LoginDTO) => {
-			return api.post('/user/login', credentials)
+			return api.post('/users/login', credentials)
 		},
 		onSuccess: (response) => {
 			console.log('Login success:', response.data)

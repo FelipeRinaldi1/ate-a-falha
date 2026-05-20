@@ -27,7 +27,7 @@ export function RegisterForm() {
 
 	const mutation = useMutation({
 		mutationFn: (data: CreateUserWithAuthDTO) => {
-			return api.post('/user/register', data)
+			return api.post('/users/register', data)
 		},
 		onSuccess: (response) => {
 			console.log('Register success:', response.data)

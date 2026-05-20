@@ -23,7 +23,7 @@ export function BodyMetricRegisterForm() {
 	})
 	const mutation = useMutation({
 		mutationFn: (data: CreateBodyMetricDTO) => {
-			return api.post('/user/body-metric', data)
+			return api.post('/users/body-metrics', data)
 		},
 		onSuccess: async (response) => {
 			await refreshUser()

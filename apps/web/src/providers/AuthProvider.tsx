@@ -8,7 +8,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		api.get('/user/me')
+		api.get('/users/me')
 			.then((response) => {
 				setUser(response.data)
 			})
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const logout = async () => {
 		try {
-			await api.post('/user/logout')
+			await api.post('/users/logout')
 		} catch (error) {
 			console.error('Failed to logout in backend', error)
 		} finally {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const refreshUser = async () => {
 		try {
-			const response = await api.get('/user/me')
+			const response = await api.get('/users/me')
 			setUser(response.data)
 		} catch (error) {
 			console.log('Failed to refresh user:', error)
