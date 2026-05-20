@@ -1,20 +1,30 @@
 import { z } from 'zod'
+import { exerciseSchema } from './exercise.schema.js'
+import { setSchema } from './set.schema.js'
 
-export const CreateWorkoutexerciseSchema = z.object({
-	orderIndex: z.number().int().nonnegative(),
-	exerciseId: z.uuid(),
-})
-export const UpdateWorkoutexerciseSchema = CreateWorkoutexerciseSchema.partial().omit({ exerciseId: true })
-
-export const WorkoutexerciseSchema = z.object({
+export const workoutexerciseSchema = z.object({
 	id: z.uuid(),
-	orderIndex: z.number().int().nonnegative(),
+
 	workoutId: z.uuid(),
+
 	exerciseId: z.uuid(),
+	exercise: exerciseSchema.optional(),
+
+	set: z.array(setSchema).optional(),
+
+	orderIndex: z.number().int().nonnegative(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })
 
-export type WorkoutExerciseDTO = z.infer<typeof WorkoutexerciseSchema>
-export type CreateWorkoutExerciseDTO = z.infer<typeof CreateWorkoutexerciseSchema>
-export type UpdateWorkoutExerciseDTO = z.infer<typeof UpdateWorkoutexerciseSchema>
+export const createWorkoutExerciseSchema = workoutexerciseSchema.pick({
+	exerciseId: true,
+
+	orderIndex: true,
+})
+
+export const updateWorkoutExerciseSchema = createWorkoutExerciseSchema.partial()
+
+export type WorkoutExerciseDTO = z.infer<typeof workoutexerciseSchema>
+export type CreateWorkoutExerciseDTO = z.infer<typeof createWorkoutExerciseSchema>
+export type UpdateWorkoutExerciseDTO = z.infer<typeof updateWorkoutExerciseSchema>

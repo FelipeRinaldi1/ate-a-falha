@@ -2,9 +2,20 @@ import { z } from 'zod'
 
 const MIN_PASSWORD_LENGTH = 6
 
-export const createAuthSchema = z.object({
+export const authSchema = z.object({
+	id: z.uuid(),
 	email: z.email('Invalid email address'),
 	password: z.string().min(MIN_PASSWORD_LENGTH, 'Password must be at least 6 characters long'),
+	userId: z.uuid(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
+})
+
+export const createAuthSchema = authSchema.omit({
+	id: true,
+	userId: true,
+	createdAt: true,
+	updatedAt: true,
 })
 
 export const updateAuthSchema = createAuthSchema.partial()
@@ -27,15 +38,6 @@ export const changePasswordSchema = z
 export const changeEmailSchema = z.object({
 	newEmail: z.email('Invalid email address'),
 	password: z.string().min(1, 'Password is required'),
-})
-
-export const AuthSchema = z.object({
-	id: z.uuid(),
-	email: z.email('Invalid email address'),
-	password: z.string().min(MIN_PASSWORD_LENGTH),
-	userId: z.uuid(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
 })
 
 export type CreateAuthDTO = z.infer<typeof createAuthSchema>

@@ -6,6 +6,7 @@ import { getCreateUserMock, updateUserMock } from '../mocks/auth.mock.js'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
 import { setupTestBodyMetric } from '../helpers/bodyMetric.helper.js'
+import { CreateUserWithAuthDTO } from '@ate-a-falha/shared'
 
 describe('user Tests', () => {
 	let userContext: Awaited<ReturnType<typeof setupTestUser>>
@@ -29,7 +30,7 @@ describe('user Tests', () => {
 		})
 
 		test('Should fail if email already exists | 409 Conflict', async () => {
-			const data = {
+			const data: CreateUserWithAuthDTO = {
 				name: 'TesteUserFail',
 				birthDate: new Date('2003-01-01'),
 				gender: 'FEMALE',
