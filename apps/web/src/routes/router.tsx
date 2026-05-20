@@ -4,10 +4,16 @@ import { HomePage } from '../pages/Home.page'
 import { LoginPage } from '../pages/Login.page'
 import { RegisterPage } from '../pages/Register.page'
 import { BodyMetricRegisterPage } from '../pages/SetupMetrics.page'
+import { ProfilePage } from '../pages/Profile.page'
 
 export const router = createBrowserRouter([
 	{
 		path: '/sandbox',
+		element: (
+			<ProtectedRoute>
+				<ProfilePage></ProfilePage>
+			</ProtectedRoute>
+		),
 	},
 	{
 		path: '/login',

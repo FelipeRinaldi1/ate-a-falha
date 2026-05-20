@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		plugins: [react(), tsconfigPaths()],
+		envDir: '../../',
 		server: {
 			watch: {
 				usePolling: true,

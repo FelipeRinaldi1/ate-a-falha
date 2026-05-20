@@ -4,7 +4,7 @@ export function MobileNavbar() {
 	return (
 		<Stack p="md" hiddenFrom="sm" h="100%">
 			<Text size="sm" c="dimmed" fw={500}>
-				Configurações (Mobile)
+				Configurações
 			</Text>
 			<Button variant="subtle" justify="left">
 				Minha Conta
