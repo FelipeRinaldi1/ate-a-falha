@@ -3,7 +3,7 @@ import { expand } from 'dotenv-expand'
 import path from 'node:path'
 import { z } from 'zod'
 
-const myEnv = dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
+const myEnv = dotenv.config({ path: path.resolve(process.cwd(), './.env') })
 expand(myEnv)
 
 import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../constants/env/env.constants.js'

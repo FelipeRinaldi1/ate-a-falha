@@ -4,6 +4,7 @@ import json
 
 entry_path = Path(os.getenv("DATA_SILVER_PATH", "data/silver")) / "exercises.silver.json"
 exit_path = Path(os.getenv("DATA_GOLD_PATH", "data/gold")) / "exercises.gold.json"
+db_exit_path = Path(__file__).parent.parent.parent / "packages/database/src/data/exercises.gold.json"
 
 with open(entry_path.resolve(), 'r', encoding='utf-8') as file:
     data = json.load(file)
@@ -30,7 +31,11 @@ def process_exercises():
     with open(exit_path.resolve(),'w',encoding='utf-8') as file:
         json.dump(exercises_gold,file, indent=4, ensure_ascii=False)
 
-    print(f"Processed {len(exercises_gold)} unique exercises and saved to {exit_path.resolve()}")
+    db_exit_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(db_exit_path.resolve(), 'w', encoding='utf-8') as file:
+        json.dump(exercises_gold, file, indent=4, ensure_ascii=False)
+
+    print(f"Processed {len(exercises_gold)} unique exercises and saved to {exit_path.resolve()} and {db_exit_path.resolve()}")
 
 
 

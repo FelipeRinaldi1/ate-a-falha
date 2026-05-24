@@ -7,7 +7,7 @@ import { Exercise } from '@/generated/prisma/client.js'
 export async function seedExercises() {
 	console.log('Starting exercise seed')
 	try {
-		const goldPath = path.join(process.env.DATA_GOLD_PATH!, 'exercises.gold.json')
+		const goldPath = path.join(process.cwd(), 'src/data/exercises.gold.json')
 		const exercises: Exercise[] = JSON.parse(readFileSync(goldPath, 'utf-8'))
 
 		for (const exercise of exercises) {

@@ -1,14 +1,14 @@
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { pinoHttp } from 'pino-http'
 
-import { prisma } from '@/database/index.js'
+import { prisma } from '@ate-a-falha/database'
 import { corsOptions } from './config/cors.js'
 import { logger } from './config/logger.js'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'
@@ -18,6 +18,7 @@ import { userModuleRouter } from './modules/user/routers/index.js'
 import { nutritionModuleRouter } from './modules/nutrition/routers/index.js'
 import { workoutModuleRouter } from './modules/workout/routers/index.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
 app.use(pinoHttp({ logger }))
@@ -36,7 +37,7 @@ app.get('/health', async (_req, res) => {
 	}
 })
 
-app.use(`${BASE_API_URL}/assets/exercises`, express.static(path.resolve(process.cwd(), 'public/exercises')))
+app.use(`${BASE_API_URL}/assets/exercises`, express.static(path.resolve(__dirname, '../public/exercises')))
 
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)

@@ -46,9 +46,6 @@ services:
         ports:
             - '${WEB_PORT:-3000}:${WEB_PORT:-3000}'
 
-        depends_on:
-            - api
-
         restart: always
 
     pipeline:
@@ -62,6 +59,7 @@ services:
             - pipeline/.env
         volumes:
             - ./data:/app/data
+            - ./packages/database:/packages/database
         depends_on:
             db:
                 condition: service_healthy
