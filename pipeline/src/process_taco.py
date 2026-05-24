@@ -5,6 +5,7 @@ import json
 
 entry_path = Path(os.getenv("DATA_SILVER_PATH", "data/silver")) / "taco.silver.csv"
 exit_path = Path(os.getenv("DATA_GOLD_PATH", "data/gold")) / "taco.gold.json"
+db_exit_path = Path(__file__).parent.parent.parent / "packages/database/src/data/taco.gold.json"
 
 def process_taco():
 
@@ -34,4 +35,8 @@ def process_taco():
     with open(exit_path.resolve(), 'w', encoding='utf-8') as file:
         json.dump(seeds, file, indent=4,ensure_ascii=False)
 
-    print(f"Proccessed {len(seeds)} records and saved to {exit_path.resolve()}")
+    db_exit_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(db_exit_path.resolve(), 'w', encoding='utf-8') as file:
+        json.dump(seeds, file, indent=4, ensure_ascii=False)
+
+    print(f"Proccessed {len(seeds)} records and saved to {exit_path.resolve()} and {db_exit_path.resolve()}")

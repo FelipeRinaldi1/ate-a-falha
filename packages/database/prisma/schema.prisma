@@ -40,13 +40,15 @@ model User {
 
   auth Auth?
 
-  Diet        Diet[]
-  Plan Plan[]
+  diets       Diet[]
+  plans       Plan[]
+
+  foods       Food[]
+
   bodyMetrics BodyMetric[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  food      Food[]
 }
 
 model Auth {
@@ -56,8 +58,8 @@ model Auth {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BodyMetric {
@@ -92,10 +94,10 @@ model Diet {
   
   dailyWater       Int
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  Meal Meal[]
+  meals  Meal[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -124,10 +126,10 @@ model FoodInMeal {
   id       String @id @default(uuid())
   quantity Int
 
-  meal   Meal   @relation(fields: [mealId], references: [id])
+  meal   Meal   @relation(fields: [mealId], references: [id], onDelete: Cascade)
   mealId String
 
-  food   Food   @relation(fields: [foodId], references: [id])
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
   foodId String
 
   createdAt DateTime @default(now()) @db.Timestamp(6)
@@ -146,7 +148,7 @@ model Food {
 
   userId String?
 
-  user User? @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @db.Timestamp(6)
   updatedAt DateTime @updatedAt @db.Timestamp(6)
@@ -165,7 +167,7 @@ model Plan {
 
   workouts Workout[]
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
@@ -196,7 +198,7 @@ model WorkoutExercise {
   workout   Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   workoutId String
 
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId String
 
   sets Set[]

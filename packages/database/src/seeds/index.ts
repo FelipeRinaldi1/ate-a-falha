@@ -1,6 +1,6 @@
 import { seedFoods } from './food.seed.js'
 import { seedExercises } from './exercise.seed.js'
-import { prisma } from '../client.js'
+import { prisma } from '@ate-a-falha/database/src/client.js'
 
 try {
 	console.log('Starting seeding...')

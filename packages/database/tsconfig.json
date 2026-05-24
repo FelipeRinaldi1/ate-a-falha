@@ -9,7 +9,8 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@ate-a-falha/shared": ["../shared/src/index.ts"]
-		}
+		},
+		"types": ["node"]
 	},
 	"references": [
 		{

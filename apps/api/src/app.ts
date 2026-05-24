@@ -1,17 +1,16 @@
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import * as swaggerUi from 'swagger-ui-express'
 import { pinoHttp } from 'pino-http'
 
 import { prisma } from '@ate-a-falha/database'
 import { corsOptions } from './config/cors.js'
 import { logger } from './config/logger.js'
-import { swaggerSpec } from './config/swagger.js'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 
@@ -19,6 +18,7 @@ import { userModuleRouter } from './modules/user/routers/index.js'
 import { nutritionModuleRouter } from './modules/nutrition/routers/index.js'
 import { workoutModuleRouter } from './modules/workout/routers/index.js'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
 app.use(pinoHttp({ logger }))
@@ -37,10 +37,7 @@ app.get('/health', async (_req, res) => {
 	}
 })
 
-if (process.env.ASSETS_EXERCISES_PATH) {
-	app.use(`${BASE_API_URL}/assets/exercises`, express.static(process.env.ASSETS_EXERCISES_PATH))
-}
-app.use(`${BASE_API_URL}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use(`${BASE_API_URL}/assets/exercises`, express.static(path.resolve(__dirname, '../public/exercises')))
 
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)

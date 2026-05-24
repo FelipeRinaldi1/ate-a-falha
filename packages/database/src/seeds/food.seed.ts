@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { prisma } from '../client.js'
+import { prisma } from '@ate-a-falha/database/src/client.js'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Food } from '@/generated/prisma/client.js'
@@ -7,7 +7,7 @@ import { Food } from '@/generated/prisma/client.js'
 export async function seedFoods() {
 	console.log('Starting food seed')
 	try {
-		const goldPath = resolve(process.cwd(), '../../data/gold/taco.gold.json')
+		const goldPath = resolve(process.cwd(), 'src/data/taco.gold.json')
 		const fileContent = readFileSync(goldPath, 'utf-8')
 		const foods: Food[] = JSON.parse(fileContent)
 
