@@ -9,7 +9,7 @@ export class DietRepository implements IDietRepository {
 					...data,
 					userId: userId,
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } },
+				include: { meals: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -24,7 +24,7 @@ export class DietRepository implements IDietRepository {
 					uniqueId: { id, userId },
 				},
 				data: data,
-				include: { Meal: { include: { foods: { include: { food: true } } } } },
+				include: { meals: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -51,7 +51,7 @@ export class DietRepository implements IDietRepository {
 				where: {
 					userId: userId,
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } },
+				include: { meals: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -65,7 +65,7 @@ export class DietRepository implements IDietRepository {
 				where: {
 					uniqueId: { id, userId },
 				},
-				include: { Meal: { include: { foods: { include: { food: true } } } } },
+				include: { meals: { include: { foods: { include: { food: true } } } } },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

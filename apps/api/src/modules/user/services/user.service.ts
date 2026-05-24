@@ -131,28 +131,26 @@ export class UserService {
 	}
 
 	async register(data: CreateUserWithAuthDTO): Promise<Result<InternalAuthResponse>> {
-		const { auth, ...userData } = data
+		const passwordHash = await this.hashPassword(data.auth.password)
 
-		const passwordHash = await this.hashPassword(auth.password)
-
-		const userResult = await this.userRepository.create(userData)
-		if (userResult.isFailure()) return failure(userResult.error)
-
-		const userId = userResult.value.id
-
-		const authResult = await this.authRepository.create({ ...auth, password: passwordHash }, userId)
-		if (authResult.isFailure()) {
-			await this.userRepository.delete(userId)
-			return failure(authResult.error)
+		const userWithHashedAuth: CreateUserWithAuthDTO = {
+			...data,
+			auth: {
+				...data.auth,
+				password: passwordHash,
+			},
 		}
 
-		const fullUser = { ...userResult.value, auth: authResult.value }
-		const userResponse = this.toResponse(fullUser, false)
+		const userResult = await this.userRepository.create(userWithHashedAuth)
+		if (userResult.isFailure()) return failure(userResult.error)
+
+		const user = userResult.value
+		const userResponse = this.toResponse(user, false)
 		if (userResponse.isFailure()) return failure(userResponse.error)
 
-		const token = this.generateToken(userId, auth.email)
+		const token = this.generateToken(user.id, user.auth!.email)
 
-		logger.info({ userId }, 'User created successfully')
+		logger.info({ userId: user.id }, 'User created successfully')
 		return success({ user: userResponse.value, token })
 	}
 

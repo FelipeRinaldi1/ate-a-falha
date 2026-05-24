@@ -5,13 +5,11 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import * as swaggerUi from 'swagger-ui-express'
 import { pinoHttp } from 'pino-http'
 
 import { prisma } from '@ate-a-falha/database'
 import { corsOptions } from './config/cors.js'
 import { logger } from './config/logger.js'
-import { swaggerSpec } from './config/swagger.js'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'
 import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 
@@ -40,7 +38,6 @@ app.get('/health', async (_req, res) => {
 if (process.env.ASSETS_EXERCISES_PATH) {
 	app.use(`${BASE_API_URL}/assets/exercises`, express.static(process.env.ASSETS_EXERCISES_PATH))
 }
-app.use(`${BASE_API_URL}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)
