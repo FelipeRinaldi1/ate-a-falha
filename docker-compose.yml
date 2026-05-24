@@ -55,7 +55,7 @@ services:
         profiles:
             - tools
         build:
-            context: ./packages/pipeline
+            context: ./pipeline
             dockerfile: Dockerfile
         container_name: ate-a-falha-pipeline
         env_file:
