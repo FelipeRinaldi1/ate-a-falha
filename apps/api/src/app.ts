@@ -1,4 +1,5 @@
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
+import path from 'node:path'
 
 import 'dotenv/config'
 import express from 'express'
@@ -35,9 +36,7 @@ app.get('/health', async (_req, res) => {
 	}
 })
 
-if (process.env.ASSETS_EXERCISES_PATH) {
-	app.use(`${BASE_API_URL}/assets/exercises`, express.static(process.env.ASSETS_EXERCISES_PATH))
-}
+app.use(`${BASE_API_URL}/assets/exercises`, express.static(path.resolve(process.cwd(), 'public/exercises')))
 
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)
