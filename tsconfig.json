@@ -35,9 +35,6 @@
 			"path": "./packages/shared"
 		},
 		{
-			"path": "./packages/database"
-		},
-		{
 			"path": "./apps/api"
 		}
 	]

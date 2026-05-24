@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { prisma } from '../client.js'
+import { prisma } from '@ate-a-falha/database/src/client.js'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Food } from '@/generated/prisma/client.js'

@@ -8,7 +8,7 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { pinoHttp } from 'pino-http'
 
-import { prisma } from '@ate-a-falha/database'
+import { prisma } from '@/database/index.js'
 import { corsOptions } from './config/cors.js'
 import { logger } from './config/logger.js'
 import { apiRateLimiter } from './middlewares/rateLimiter.js'

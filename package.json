@@ -58,10 +58,7 @@
 	},
 	"homepage": "https://github.com/FelipeRinaldi1/ate-a-falha#readme",
 	"workspaces": [
-		"packages/database",
 		"packages/shared",
-		"packages/pipeline",
-		"packages/assets",
 		"apps/api",
 		"apps/web"
 	],
