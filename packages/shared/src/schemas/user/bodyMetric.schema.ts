@@ -8,6 +8,9 @@ export const bodyMetricSchema = z.object({
 	activityLevel: z.number().int().min(0).max(4),
 	bodyFat: z.number().nonnegative().max(50).optional().nullable().default(null),
 	muscleRate: z.number().nonnegative().max(100).optional().nullable().default(null),
+	bmi: z.number().nonnegative(),
+	bmr: z.number().nonnegative(),
+	tdee: z.number().nonnegative(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })
@@ -15,6 +18,9 @@ export const bodyMetricSchema = z.object({
 export const createBodyMetricSchema = bodyMetricSchema.omit({
 	id: true,
 	userId: true,
+	bmi: true,
+	bmr: true,
+	tdee: true,
 	createdAt: true,
 	updatedAt: true,
 })

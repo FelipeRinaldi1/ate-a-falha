@@ -30,6 +30,24 @@ describe('Body Metric Tests', () => {
 
 			expect(result.status).toBe(201)
 		})
+
+		test('Should calculate and save precise BMI, BMR, and TDEE based on user profile', async () => {
+			const result = await request(app)
+				.post(`${BASE_API_URL}/users/body-metrics`)
+				.set('Cookie', userContext.cookie || '')
+				.send({
+					weight: 80,
+					height: 180,
+					activityLevel: 3,
+					bodyFat: 15,
+					muscleRate: 40,
+				})
+
+			expect(result.status).toBe(201)
+			expect(result.body.bmi).toBe(24.7)
+			expect(result.body.bmr).toBe(1800)
+			expect(result.body.tdee).toBe(3105)
+		})
 		test('Should not create a BodyMetric with invalid data', async () => {
 			const invalidData = {
 				weight: -50,
@@ -149,6 +167,22 @@ describe('Body Metric Tests', () => {
 				.send(updateBodyMetricMocK)
 
 			expect(result.status).toBe(200)
+		})
+
+		test('Should recalculate precise BMI, BMR, and TDEE when values are updated', async () => {
+			const result = await request(app)
+				.patch(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', userContext.cookie || '')
+				.send({
+					weight: 90,
+					height: 185,
+					activityLevel: 2,
+				})
+
+			expect(result.status).toBe(200)
+			expect(result.body.bmi).toBe(26.3)
+			expect(result.body.bmr).toBe(1931)
+			expect(result.body.tdee).toBe(2993)
 		})
 	})
 
