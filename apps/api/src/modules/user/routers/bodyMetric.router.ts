@@ -1,12 +1,14 @@
 import { Router } from 'express'
 import { ensureAuthenticated } from '@/middlewares/ensureAuthenticated.js'
 import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
+import { UserRepository } from '../repositories/user.repository.js'
 import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { BodyMetricController } from '../controllers/bodyMetric.controller.js'
 
 const bodyMetricRouter = Router()
 const bodyMetricRepo = new BodyMetricRepository()
-const bodyMetricService = new BodyMetricService(bodyMetricRepo)
+const userRepo = new UserRepository()
+const bodyMetricService = new BodyMetricService(bodyMetricRepo, userRepo)
 const bodyMetricController = new BodyMetricController(bodyMetricService)
 
 bodyMetricRouter.use(ensureAuthenticated)

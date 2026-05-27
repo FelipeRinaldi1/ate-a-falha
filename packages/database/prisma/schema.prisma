@@ -68,10 +68,14 @@ model BodyMetric {
   weight Float
   height Int
 
-  activityLevel Int // 1 to 7
+  activityLevel Int 
 
   bodyFat    Float?
   muscleRate Float?
+
+  bmi  Float @default(0)
+  bmr  Float @default(0)
+  tdee Float @default(0)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String

@@ -20,3 +20,7 @@ export * from './schemas/workout/plan.schema.js'
 export * from './schemas/workout/set.schema.js'
 export * from './schemas/workout/workout.schema.js'
 export * from './schemas/workout/workoutExercise.schema.js'
+
+// Logic
+export { BodyMetricLogic } from './logic/bodyMetric.logic.js'
+

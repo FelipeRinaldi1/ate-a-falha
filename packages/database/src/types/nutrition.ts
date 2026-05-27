@@ -1,4 +1,4 @@
-import { Prisma } from '../generated/prisma/client.js'
+import { Prisma } from '../generated/prisma/index.js'
 
 export type DietFull = Prisma.DietGetPayload<{
 	include: { meals: { include: { foods: { include: { food: true } } } } }

@@ -10,7 +10,7 @@ import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
 const userRouter = Router()
 const userRepo = new UserRepository()
 const authRepo = new AuthRepository()
-const bodyMetricService = new BodyMetricService(new BodyMetricRepository())
+const bodyMetricService = new BodyMetricService(new BodyMetricRepository(), userRepo)
 const userService = new UserService(userRepo, authRepo, bodyMetricService)
 const userController = new UserController(userService)
 
