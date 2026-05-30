@@ -1,10 +1,10 @@
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestFood } from '../helpers/food.helper.js'
 import { overrideFoodMock, updateFoodMock, createFoodMock } from '../mocks/food.mock.js'
 import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { prisma } from '@ate-a-falha/database'
 
 describe('Food Catalog Integration Tests', () => {
@@ -70,9 +70,7 @@ describe('Food Catalog Integration Tests', () => {
 		})
 
 		test('Should fail if not authenticated', async () => {
-			const result = await request(app)
-				.post(`${BASE_API_URL}/nutrition/food-catalog`)
-				.send(createFoodMock)
+			const result = await request(app).post(`${BASE_API_URL}/nutrition/food-catalog`).send(createFoodMock)
 
 			expect(result.status).toBe(401)
 		})
@@ -99,10 +97,10 @@ describe('Food Catalog Integration Tests', () => {
 			globalFoodIdsToCleanup.push(adminFood.id)
 
 			// 2. Create custom food for User 1
-			const user1Food = await setupTestFood(user1Context.cookie || '', { name: '0_User 1 Pear' })
+			await setupTestFood(user1Context.cookie || '', { name: '0_User 1 Pear' })
 
 			// 3. Create custom food for User 2
-			const user2Food = await setupTestFood(user2Context.cookie || '', { name: '0_User 2 Grape' })
+			await setupTestFood(user2Context.cookie || '', { name: '0_User 2 Grape' })
 
 			// 4. Request list as User 1
 			const result = await request(app)
@@ -120,9 +118,7 @@ describe('Food Catalog Integration Tests', () => {
 		})
 
 		test('Should fail to list foods if unauthenticated', async () => {
-			const result = await request(app)
-				.get(`${BASE_API_URL}/nutrition/food-catalog`)
-				.send()
+			const result = await request(app).get(`${BASE_API_URL}/nutrition/food-catalog`).send()
 
 			expect(result.status).toBe(401)
 		})
@@ -301,7 +297,7 @@ describe('Food Catalog Integration Tests', () => {
 		test('Should allow Admin to delete a global food item', async () => {
 			const globalFood = await setupTestFood(adminContext.cookie || '', { name: 'Global Cheese' })
 			// No need to cleanup in afterEach if successfully deleted here
-			globalFoodIdsToCleanup = globalFoodIdsToCleanup.filter(id => id !== globalFood.id)
+			globalFoodIdsToCleanup = globalFoodIdsToCleanup.filter((id) => id !== globalFood.id)
 
 			const result = await request(app)
 				.delete(`${BASE_API_URL}/nutrition/food-catalog/${globalFood.id}`)
@@ -314,7 +310,7 @@ describe('Food Catalog Integration Tests', () => {
 			expect(dbFood).toBeNull()
 		})
 
-		test('Should allow Admin to delete a normal user\'s food item', async () => {
+		test("Should allow Admin to delete a normal user's food item", async () => {
 			const userFood = await setupTestFood(user1Context.cookie || '', { name: 'User private food' })
 
 			const result = await request(app)

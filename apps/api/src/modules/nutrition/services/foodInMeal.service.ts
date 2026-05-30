@@ -18,7 +18,6 @@ export class FoodInMealService {
 		private readonly accessControl: NutritionAccessControlService
 	) {}
 
-	// FoodInMeal Plan CRUD
 	async create(
 		mealId: string,
 		foodId: string,
@@ -69,7 +68,7 @@ export class FoodInMealService {
 		return await this.foodInMealRepo.findById(id, authUser.id)
 	}
 
-	// FoodLog Real Consumption CRUD
+	// FoodLog
 	async createLog(
 		mealLogId: string,
 		foodId: string,

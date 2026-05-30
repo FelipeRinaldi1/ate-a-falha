@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { CreateFoodDTO } from '@ate-a-falha/shared'
 import { overrideFoodMock } from '../mocks/food.mock.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'

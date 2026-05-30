@@ -1,10 +1,10 @@
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 import request from 'supertest'
 import { beforeEach, describe, test, expect, afterEach } from 'vitest'
-import { getCreateUserMock, updateUserMock } from '../mocks/auth.mock.js'
+import { getCreateUserMock, updateUserMock } from '../../../../tests/auth.mock.js'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestBodyMetric } from '../helpers/bodyMetric.helper.js'
 import { CreateUserWithAuthDTO } from '@ate-a-falha/shared'
 

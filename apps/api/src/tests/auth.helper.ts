@@ -1,6 +1,6 @@
-import { getCreateUserMock } from '../mocks/auth.mock.js'
+import { getCreateUserMock } from './auth.mock.js'
 import request from 'supertest'
-import app from '../../app.js'
+import app from '../app.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 
 export const setupTestUser = async () => {
@@ -9,7 +9,7 @@ export const setupTestUser = async () => {
 	const register = await request(app).post(`${BASE_API_URL}/users/register`).send(userToRegister)
 
 	if (register.status !== 201) {
-		console.error("setupTestUser registration failed! Status:", register.status, "Body:", register.body)
+		console.error('setupTestUser registration failed! Status:', register.status, 'Body:', register.body)
 	}
 
 	return {

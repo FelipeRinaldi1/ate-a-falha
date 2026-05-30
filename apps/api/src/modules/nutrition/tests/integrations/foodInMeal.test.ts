@@ -1,9 +1,9 @@
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestStandardContext, cleanupTestStandardContext } from '../helpers/nutrition.helper.js'
 import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { prisma } from '@ate-a-falha/database'
 
 describe('FoodInMeal Integration Tests', () => {
@@ -66,7 +66,7 @@ describe('FoodInMeal Integration Tests', () => {
 			expect(result.status).toBe(400)
 		})
 
-		test('Should fail if adding food to another user\'s meal template', async () => {
+		test("Should fail if adding food to another user's meal template", async () => {
 			const result = await request(app)
 				.post(`${BASE_API_URL}/nutrition/meals/${nutrition2Context.meal.id}/foods`)
 				.set('Cookie', user1Context.cookie || '') // User 1 tries to add to User 2's meal
@@ -78,7 +78,7 @@ describe('FoodInMeal Integration Tests', () => {
 			expect(result.status).toBe(403)
 		})
 
-		test('Should fail if adding another user\'s private food item to own meal template', async () => {
+		test("Should fail if adding another user's private food item to own meal template", async () => {
 			const result = await request(app)
 				.post(`${BASE_API_URL}/nutrition/meals/${nutrition1Context.meal.id}/foods`)
 				.set('Cookie', user1Context.cookie || '')
@@ -112,7 +112,7 @@ describe('FoodInMeal Integration Tests', () => {
 			expect(result.body[0].quantity).toBe(120)
 		})
 
-		test('Should forbid listing foods in another user\'s meal template', async () => {
+		test("Should forbid listing foods in another user's meal template", async () => {
 			const result = await request(app)
 				.get(`${BASE_API_URL}/nutrition/meals/${nutrition2Context.meal.id}/foods`)
 				.set('Cookie', user1Context.cookie || '') // User 1 tries to list User 2's meal foods

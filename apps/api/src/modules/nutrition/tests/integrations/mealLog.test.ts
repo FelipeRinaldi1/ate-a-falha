@@ -1,9 +1,9 @@
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestNutritionContext, cleanupTestNutritionContext } from '../helpers/nutrition.helper.js'
 import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { prisma } from '@ate-a-falha/database'
 
 describe('MealLog Integration Tests', () => {
@@ -48,7 +48,7 @@ describe('MealLog Integration Tests', () => {
 			expect(result.body.dietLogId).toBe(nutrition1Context.dietLog.id)
 		})
 
-		test('Should fail if creating meal log inside another user\'s diet log', async () => {
+		test("Should fail if creating meal log inside another user's diet log", async () => {
 			const result = await request(app)
 				.post(`${BASE_API_URL}/nutrition/diet-logs/${nutrition2Context.dietLog.id}/meals`)
 				.set('Cookie', user1Context.cookie || '') // User 1 tries to add to User 2's diet log
@@ -88,7 +88,7 @@ describe('MealLog Integration Tests', () => {
 			expect(result.body[0].name).toBe('Almoço')
 		})
 
-		test('Should forbid retrieving another user\'s meal log list', async () => {
+		test("Should forbid retrieving another user's meal log list", async () => {
 			const result = await request(app)
 				.get(`${BASE_API_URL}/nutrition/diet-logs/${nutrition2Context.dietLog.id}/meals`)
 				.set('Cookie', user1Context.cookie || '')

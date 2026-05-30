@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { CreateBodyMetricDTO } from '@ate-a-falha/shared'
 import { overrideBodyMetricMock } from '../mocks/bodyMetrics.mock.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'

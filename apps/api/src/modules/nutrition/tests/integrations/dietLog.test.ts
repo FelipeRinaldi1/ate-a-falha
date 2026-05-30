@@ -1,9 +1,9 @@
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestNutritionContext, cleanupTestNutritionContext } from '../helpers/nutrition.helper.js'
 import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { prisma } from '@ate-a-falha/database'
 
 describe('DietLog Integration Tests', () => {
