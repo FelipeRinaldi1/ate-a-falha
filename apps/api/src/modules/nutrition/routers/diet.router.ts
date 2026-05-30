@@ -22,4 +22,11 @@ dietRouter.get('/diets/:id', dietController.findById)
 dietRouter.patch('/diets/:id', dietController.update)
 dietRouter.delete('/diets/:id', dietController.delete)
 
+// DietLog routes
+dietRouter.post('/diet-logs', dietController.createLog)
+dietRouter.get('/diet-logs', dietController.findAllLogs)
+dietRouter.get('/diet-logs/:id', dietController.findLogById)
+dietRouter.patch('/diet-logs/:id', dietController.updateLog)
+dietRouter.delete('/diet-logs/:id', dietController.deleteLog)
+
 export { dietRouter }

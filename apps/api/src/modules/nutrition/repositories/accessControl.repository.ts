@@ -61,4 +61,49 @@ export class NutritionAccessControlRepository implements INutritionAccessControl
 
 		return success(true)
 	}
+
+	async canAccessMealLog(mealLogId: string, userId: string): Promise<Result<boolean>> {
+		const result = await safeCall(
+			prisma.mealLog.findFirstOrThrow({
+				where: {
+					id: mealLogId,
+					dietLog: { userId: userId },
+				},
+				select: { id: true },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+
+		return success(true)
+	}
+
+	async canAccessFoodLog(foodLogId: string, userId: string): Promise<Result<boolean>> {
+		const result = await safeCall(
+			prisma.foodLog.findFirstOrThrow({
+				where: {
+					id: foodLogId,
+					mealLog: { dietLog: { userId: userId } },
+				},
+				select: { id: true },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+
+		return success(true)
+	}
+
+	async canAccessDietLog(dietLogId: string, userId: string): Promise<Result<boolean>> {
+		const result = await safeCall(
+			prisma.dietLog.findFirstOrThrow({
+				where: {
+					id: dietLogId,
+					userId: userId,
+				},
+				select: { id: true },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+
+		return success(true)
+	}
 }

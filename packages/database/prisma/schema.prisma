@@ -46,7 +46,7 @@ model User {
   foods       Food[]
 
   bodyMetrics BodyMetric[]
-  dailyLogs   DailyLog[]
+  dietLogs    DietLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -164,7 +164,7 @@ model Food {
   @@unique([id, userId])
 }
 
-model DailyLog {
+model DietLog {
   id        String    @id @default(uuid())
   userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -184,8 +184,8 @@ model MealLog {
   time       String
   orderIndex Int
 
-  dailyLog   DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
-  dailyLogId String
+  dietLog    DietLog @relation(fields: [dietLogId], references: [id], onDelete: Cascade)
+  dietLogId  String
 
   foods      FoodLog[]
 

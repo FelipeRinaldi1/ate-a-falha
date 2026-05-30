@@ -3,7 +3,7 @@ import { foodLogSchema } from './foodLog.schema.js'
 
 export const mealLogSchema = z.object({
 	id: z.uuid(),
-	dailyLogId: z.uuid(),
+	dietLogId: z.uuid(),
 	foods: z.array(z.object(foodLogSchema.shape)),
 	name: z.string().min(1).max(64),
 	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),

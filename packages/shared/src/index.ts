@@ -13,7 +13,7 @@ export * from './schemas/nutrition/diet.schema.js'
 export * from './schemas/nutrition/food.schema.js'
 export * from './schemas/nutrition/foodInMeal.schema.js'
 export * from './schemas/nutrition/meal.schema.js'
-export * from './schemas/nutrition/dailyLog.schema.js'
+export * from './schemas/nutrition/dietLog.schema.js'
 export * from './schemas/nutrition/mealLog.schema.js'
 export * from './schemas/nutrition/foodLog.schema.js'
 

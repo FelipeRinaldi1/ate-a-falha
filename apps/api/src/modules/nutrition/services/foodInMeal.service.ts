@@ -1,15 +1,24 @@
-import { type authenticatedUser, type CreateFoodInMealDTO, type UpdateFoodInMealDTO, failure, Result } from '@ate-a-falha/shared'
-import { type FoodInMealFull } from '@ate-a-falha/database'
+import {
+	type authenticatedUser,
+	type CreateFoodInMealDTO,
+	type UpdateFoodInMealDTO,
+	type CreateFoodLogDTO,
+	type UpdateFoodLogDTO,
+	failure,
+	Result,
+} from '@ate-a-falha/shared'
+import { type FoodInMealFull, type FoodLogFull } from '@ate-a-falha/database'
 
-import type { IFoodInMealRepository } from '../interfaces/foodInMeal.interface.js'
+import type { IFoodInMealRepository, IFoodLogRepository } from '../interfaces/foodInMeal.interface.js'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
 
 export class FoodInMealService {
 	constructor(
-		private readonly foodInMealRepo: IFoodInMealRepository,
+		private readonly foodInMealRepo: IFoodInMealRepository & IFoodLogRepository,
 		private readonly accessControl: NutritionAccessControlService
 	) {}
 
+	// FoodInMeal Plan CRUD
 	async create(
 		mealId: string,
 		foodId: string,
@@ -58,5 +67,56 @@ export class FoodInMealService {
 		if (access.isFailure()) return failure(access.error)
 
 		return await this.foodInMealRepo.findById(id, authUser.id)
+	}
+
+	// FoodLog Real Consumption CRUD
+	async createLog(
+		mealLogId: string,
+		foodId: string,
+		data: CreateFoodLogDTO,
+		authUser: authenticatedUser
+	): Promise<Result<FoodLogFull>> {
+		const validation = await Promise.all([
+			this.accessControl.canAccessMealLog(mealLogId, authUser),
+			this.accessControl.canAccessFood(foodId, authUser),
+		])
+
+		const access = Result.combine(validation)
+
+		if (access.isFailure()) return failure(access.error)
+
+		const result = await this.foodInMealRepo.createLog(mealLogId, foodId, data, authUser.id)
+
+		if (result.isFailure()) return failure(result.error)
+
+		return result
+	}
+
+	async updateLog(id: string, data: UpdateFoodLogDTO, authUser: authenticatedUser): Promise<Result<FoodLogFull>> {
+		const access = await this.accessControl.canAccessFoodLog(id, authUser)
+		if (access.isFailure()) return failure(access.error)
+
+		return await this.foodInMealRepo.updateLog(id, data, authUser.id)
+	}
+
+	async deleteLog(id: string, authUser: authenticatedUser): Promise<Result<void>> {
+		const access = await this.accessControl.canAccessFoodLog(id, authUser)
+		if (access.isFailure()) return failure(access.error)
+
+		return await this.foodInMealRepo.deleteLog(id, authUser.id)
+	}
+
+	async findAllLogs(mealLogId: string, authUser: authenticatedUser): Promise<Result<FoodLogFull[]>> {
+		const access = await this.accessControl.canAccessMealLog(mealLogId, authUser)
+		if (access.isFailure()) return failure(access.error)
+
+		return await this.foodInMealRepo.findAllLogs(mealLogId, authUser.id)
+	}
+
+	async findLogById(id: string, authUser: authenticatedUser): Promise<Result<FoodLogFull>> {
+		const access = await this.accessControl.canAccessFoodLog(id, authUser)
+		if (access.isFailure()) return failure(access.error)
+
+		return await this.foodInMealRepo.findLogById(id, authUser.id)
 	}
 }
