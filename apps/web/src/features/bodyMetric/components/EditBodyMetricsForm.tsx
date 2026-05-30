@@ -72,6 +72,22 @@ export function EditBodyMetricsForm() {
 		},
 	})
 
+	const deleteMutation = useMutation({
+		mutationFn: () => {
+			if (!metricId) return Promise.reject(new Error('Nenhum registro para excluir'))
+			return api.delete(`/users/body-metrics/${metricId}`)
+		},
+		onSuccess: async () => {
+			await refreshUser()
+			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
+			console.log('Delete body-metrics success')
+			navigate('/profile')
+		},
+		onError: (error) => {
+			console.error('Delete body-metrics error:', error)
+		},
+	})
+
 	if (isLoading) {
 		return (
 			<Center style={{ height: '30vh' }}>
@@ -131,6 +147,22 @@ export function EditBodyMetricsForm() {
 					<Button type="submit" loading={mutation.isPending} fullWidth mt="md">
 						Salvar Alterações
 					</Button>
+
+					{metricId && (
+						<Button
+							variant="outline"
+							color="red"
+							onClick={() => {
+								if (window.confirm('Deseja realmente excluir este registro de métrica corporal?')) {
+									deleteMutation.mutate()
+								}
+							}}
+							loading={deleteMutation.isPending}
+							fullWidth
+						>
+							Excluir Métricas
+						</Button>
+					)}
 				</Stack>
 			</form>
 		</Paper>
