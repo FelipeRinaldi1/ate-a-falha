@@ -4,6 +4,7 @@ import { HTTP_STATUS } from '../constants/global/httpCodesConstants.js'
 export const apiRateLimiter = rateLimit({
 	windowMs: 15 * 6 * 1000, // 15min
 	max: 100,
+	skip: () => process.env.NODE_ENV === 'test' || process.env.VITEST === 'true',
 	standardHeaders: true,
 	legacyHeaders: false,
 	message: {

@@ -45,6 +45,7 @@ export class NutritionAccessControlService {
 	}
 
 	async canAccessFood(foodId: string, user: authenticatedUser): Promise<Result<boolean>> {
+		if (user.role === 'ADMIN') return success(true)
 		const result = await this.accessRepo.canAccessFood(foodId, user.id)
 		return this.handleAccessResult(result)
 	}

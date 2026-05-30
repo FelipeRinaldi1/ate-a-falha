@@ -8,6 +8,10 @@ export const setupTestUser = async () => {
 
 	const register = await request(app).post(`${BASE_API_URL}/users/register`).send(userToRegister)
 
+	if (register.status !== 201) {
+		console.error("setupTestUser registration failed! Status:", register.status, "Body:", register.body)
+	}
+
 	return {
 		cookie: register.header['set-cookie' as string],
 		user: register.body.user,
