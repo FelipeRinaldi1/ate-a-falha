@@ -1,6 +1,6 @@
 import { Center, Container, Title } from '@mantine/core'
 
-import { BodyMetricRegisterForm } from '../features/bodyMetric/components/BodyMetricsForm'
+import { BodyMetricRegisterForm } from '../components/BodyMetricsForm'
 
 export function BodyMetricRegisterPage() {
 	return (

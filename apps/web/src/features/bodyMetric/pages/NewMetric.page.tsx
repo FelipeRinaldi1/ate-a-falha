@@ -1,6 +1,6 @@
 import { Center, Container, Title, Button, Stack, Group } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
-import { NewBodyMetricForm } from '../features/bodyMetric/components/NewBodyMetricForm'
+import { NewBodyMetricForm } from '../components/NewBodyMetricForm'
 import { useNavigate } from 'react-router-dom'
 
 export function NewMetricPage() {
