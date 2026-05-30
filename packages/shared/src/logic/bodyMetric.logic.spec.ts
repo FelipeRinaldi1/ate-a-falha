@@ -37,6 +37,10 @@ describe('Body Metric Logic tests', () => {
 			const result = BodyMetricLogic.calculateBMR('MALE', 70, 175, 0)
 			expect(result).toBe(0)
 		})
+		test('Should return 0 for invalid gender', () => {
+			const result = BodyMetricLogic.calculateBMR('OTHER' as any, 70, 175, 25)
+			expect(result).toBe(0)
+		})
 	})
 	describe('TDEE tests', () => {
 		test('Should calculate TDEE correctly (level 0 activty)', () => {

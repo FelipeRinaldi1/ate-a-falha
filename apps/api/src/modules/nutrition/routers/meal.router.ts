@@ -22,4 +22,11 @@ mealRouter.get('/meals/:id', mealController.findById)
 mealRouter.patch('/meals/:id', mealController.update)
 mealRouter.delete('/meals/:id', mealController.delete)
 
+// MealLog routes
+mealRouter.post('/diet-logs/:dietLogId/meals', mealController.createLog)
+mealRouter.get('/diet-logs/:dietLogId/meals', mealController.findAllLogs)
+mealRouter.get('/meal-logs/:id', mealController.findLogById)
+mealRouter.patch('/meal-logs/:id', mealController.updateLog)
+mealRouter.delete('/meal-logs/:id', mealController.deleteLog)
+
 export { mealRouter }

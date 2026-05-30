@@ -45,7 +45,23 @@ export class NutritionAccessControlService {
 	}
 
 	async canAccessFood(foodId: string, user: authenticatedUser): Promise<Result<boolean>> {
+		if (user.role === 'ADMIN') return success(true)
 		const result = await this.accessRepo.canAccessFood(foodId, user.id)
+		return this.handleAccessResult(result)
+	}
+
+	async canAccessMealLog(mealLogId: string, user: authenticatedUser): Promise<Result<boolean>> {
+		const result = await this.accessRepo.canAccessMealLog(mealLogId, user.id)
+		return this.handleAccessResult(result)
+	}
+
+	async canAccessFoodLog(foodLogId: string, user: authenticatedUser): Promise<Result<boolean>> {
+		const result = await this.accessRepo.canAccessFoodLog(foodLogId, user.id)
+		return this.handleAccessResult(result)
+	}
+
+	async canAccessDietLog(dietLogId: string, user: authenticatedUser): Promise<Result<boolean>> {
+		const result = await this.accessRepo.canAccessDietLog(dietLogId, user.id)
 		return this.handleAccessResult(result)
 	}
 }

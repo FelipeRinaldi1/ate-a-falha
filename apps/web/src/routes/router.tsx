@@ -11,6 +11,10 @@ import { MetricsEvolutionPage } from '../pages/MetricsEvolution.page'
 
 export const router = createBrowserRouter([
 	{
+		path: '/sandbox',
+		element: <ProtectedRoute>a</ProtectedRoute>,
+	},
+	{
 		path: '/profile',
 		element: (
 			<ProtectedRoute>

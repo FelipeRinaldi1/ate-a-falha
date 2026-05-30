@@ -1,10 +1,10 @@
-import { setupTestUser, cleanupTestUser } from '../helpers/auth.helper.js'
+import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { overrideBodyMetricMock, updateBodyMetricMocK } from '../mocks/bodyMetrics.mock.js'
 import { setupTestBodyMetric } from '../helpers/bodyMetric.helper.js'
 import { describe, test, beforeEach, afterEach, expect } from 'vitest'
 import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
-import app from '../../app.js'
+import app from '../../../../app.js'
 import { BodyMetricDTO } from '@ate-a-falha/shared'
 
 describe('Body Metric Tests', () => {
