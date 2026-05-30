@@ -13,6 +13,9 @@ export * from './schemas/nutrition/diet.schema.js'
 export * from './schemas/nutrition/food.schema.js'
 export * from './schemas/nutrition/foodInMeal.schema.js'
 export * from './schemas/nutrition/meal.schema.js'
+export * from './schemas/nutrition/dailyLog.schema.js'
+export * from './schemas/nutrition/mealLog.schema.js'
+export * from './schemas/nutrition/foodLog.schema.js'
 
 // Workout Schemas
 export * from './schemas/workout/exercise.schema.js'
@@ -23,4 +26,5 @@ export * from './schemas/workout/workoutExercise.schema.js'
 
 // Logic
 export { BodyMetricLogic } from './logic/bodyMetric.logic.js'
+export { NutritionLogic } from './logic/nutrition.logic.js'
 

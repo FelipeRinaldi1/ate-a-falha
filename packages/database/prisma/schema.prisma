@@ -46,6 +46,7 @@ model User {
   foods       Food[]
 
   bodyMetrics BodyMetric[]
+  dailyLogs   DailyLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -158,8 +159,52 @@ model Food {
   updatedAt DateTime @updatedAt @db.Timestamp(6)
 
   foodInMeals FoodInMeal[]
+  foodLogs    FoodLog[]
 
   @@unique([id, userId])
+}
+
+model DailyLog {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime  @db.Date
+  
+  meals     MealLog[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, date])
+}
+
+model MealLog {
+  id         String   @id @default(uuid())
+  name       String   @db.VarChar(64)
+  time       String
+  orderIndex Int
+
+  dailyLog   DailyLog @relation(fields: [dailyLogId], references: [id], onDelete: Cascade)
+  dailyLogId String
+
+  foods      FoodLog[]
+
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @updatedAt @db.Timestamp(6)
+}
+
+model FoodLog {
+  id        String   @id @default(uuid())
+  quantity  Int
+
+  mealLog   MealLog  @relation(fields: [mealLogId], references: [id], onDelete: Cascade)
+  mealLogId String
+
+  food      Food     @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  foodId    String
+
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 //Workout Related
