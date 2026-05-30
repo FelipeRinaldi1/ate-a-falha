@@ -1,7 +1,6 @@
 import { prisma } from '@ate-a-falha/database'
 
 export const setupTestNutritionContext = async (userId: string) => {
-	// 1. Create a dummy food in the database
 	const food = await prisma.food.create({
 		data: {
 			name: 'Test Chicken Breast',
@@ -10,11 +9,10 @@ export const setupTestNutritionContext = async (userId: string) => {
 			protein: 31,
 			lipids: 3.6,
 			fiber: 0,
-			userId: userId, // Optional, can be associated with user
+			userId: userId,
 		},
 	})
 
-	// 2. Create a DietLog for today
 	const today = new Date()
 	today.setUTCHours(0, 0, 0, 0)
 
@@ -25,7 +23,6 @@ export const setupTestNutritionContext = async (userId: string) => {
 		},
 	})
 
-	// 3. Create a MealLog under that DietLog
 	const mealLog = await prisma.mealLog.create({
 		data: {
 			dietLogId: dietLog.id,
@@ -42,16 +39,72 @@ export const setupTestNutritionContext = async (userId: string) => {
 	}
 }
 
-export const cleanupTestNutritionContext = async (
-	dietLogId: string,
-	foodId: string
-) => {
-	// Cascading deletes on DietLog will delete MealLog and FoodLogs automatically
-	await prisma.dietLog.delete({
-		where: { id: dietLogId },
-	}).catch(() => {})
+export const cleanupTestNutritionContext = async (dietLogId: string, foodId: string) => {
+	await prisma.dietLog
+		.delete({
+			where: { id: dietLogId },
+		})
+		.catch(() => {})
 
-	await prisma.food.delete({
-		where: { id: foodId },
-	}).catch(() => {})
+	await prisma.food
+		.delete({
+			where: { id: foodId },
+		})
+		.catch(() => {})
+}
+
+export const setupTestStandardContext = async (userId: string) => {
+	const food = await prisma.food.create({
+		data: {
+			name: 'Test Chicken Breast',
+			calories: 165,
+			carbohydrate: 0,
+			protein: 31,
+			lipids: 3.6,
+			fiber: 0,
+			userId: userId,
+		},
+	})
+
+	const diet = await prisma.diet.create({
+		data: {
+			userId: userId,
+			name: 'Cutting Plan',
+			dailyKcalGoal: 2000,
+			dailyProteinGoal: 150,
+			dailyCarbGoal: 200,
+			dailyFatGoal: 60,
+			dailyWaterGoal: 3000,
+			dailyWater: 0,
+		},
+	})
+
+	const meal = await prisma.meal.create({
+		data: {
+			dietId: diet.id,
+			name: 'Breakfast',
+			time: '08:00',
+			orderIndex: 0,
+		},
+	})
+
+	return {
+		food,
+		diet,
+		meal,
+	}
+}
+
+export const cleanupTestStandardContext = async (dietId: string, foodId: string) => {
+	await prisma.diet
+		.delete({
+			where: { id: dietId },
+		})
+		.catch(() => {})
+
+	await prisma.food
+		.delete({
+			where: { id: foodId },
+		})
+		.catch(() => {})
 }
