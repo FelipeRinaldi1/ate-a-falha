@@ -1,6 +1,6 @@
 import { Container, Title, Text, Anchor, Center } from '@mantine/core'
 import { Link } from 'react-router-dom'
-import { RegisterForm } from '../features/user/components/RegisterForm'
+import { RegisterForm } from '../components/RegisterForm'
 
 export function RegisterPage() {
 	return (

@@ -1,13 +1,13 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
 import { HomePage } from '../pages/Home.page'
-import { LoginPage } from '../pages/Login.page'
-import { RegisterPage } from '../pages/Register.page'
-import { BodyMetricRegisterPage } from '../pages/SetupMetrics.page'
-import { ProfilePage } from '../pages/Profile.page'
-import { EditMetricsPage } from '../pages/EditMetrics.page'
-import { NewMetricPage } from '../pages/NewMetric.page'
-import { MetricsEvolutionPage } from '../pages/MetricsEvolution.page'
+import { LoginPage } from '../features/user/pages/Login.page'
+import { RegisterPage } from '../features/user/pages/Register.page'
+import { BodyMetricRegisterPage } from '../features/bodyMetric/pages/SetupMetrics.page'
+import { ProfilePage } from '../features/user/pages/Profile.page'
+import { EditMetricsPage } from '../features/bodyMetric/pages/EditMetrics.page'
+import { NewMetricPage } from '../features/bodyMetric/pages/NewMetric.page'
+import { MetricsEvolutionPage } from '../features/bodyMetric/pages/MetricsEvolution.page'
 
 export const router = createBrowserRouter([
 	{

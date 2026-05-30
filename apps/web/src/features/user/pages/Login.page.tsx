@@ -1,6 +1,6 @@
 import { Container, Title, Text, Anchor, Center } from '@mantine/core'
 import { Link } from 'react-router-dom'
-import { LoginForm } from '../features/user/components/LoginForm'
+import { LoginForm } from '../components/LoginForm'
 
 export function LoginPage() {
 	return (

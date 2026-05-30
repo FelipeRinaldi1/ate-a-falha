@@ -1,6 +1,6 @@
 import { Center, Container, Title, Button, Stack, Group } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
-import { EditBodyMetricsForm } from '../features/bodyMetric/components/EditBodyMetricsForm'
+import { EditBodyMetricsForm } from '../components/EditBodyMetricsForm'
 import { useNavigate } from 'react-router-dom'
 
 export function EditMetricsPage() {
