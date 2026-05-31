@@ -6,23 +6,29 @@ import type { IPlanRepository } from '../interfaces/plan.interface.js'
 export class PlanRepository implements IPlanRepository {
 	async create(data: CreatePlanDTO, userId: string): Promise<Result<PlanFull>> {
 		const result = await safeCall(
-			prisma.plan.create({
-				data: {
-					...data,
-					userId: userId,
-				},
-				include: {
-					workouts: {
-						include: {
-							workoutExercises: {
-								include: {
-									sets: true,
-									exercise: true,
+			prisma.$transaction(async (tx) => {
+				const existingCount = await tx.plan.count({
+					where: { userId: userId },
+				})
+				return tx.plan.create({
+					data: {
+						...data,
+						userId: userId,
+						isActive: existingCount === 0,
+					},
+					include: {
+						workouts: {
+							include: {
+								workoutExercises: {
+									include: {
+										sets: true,
+										exercise: true,
+									},
 								},
 							},
 						},
 					},
-				},
+				})
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -31,24 +37,37 @@ export class PlanRepository implements IPlanRepository {
 	}
 	async update(id: string, data: UpdatePlanDTO, userId: string): Promise<Result<PlanFull>> {
 		const result = await safeCall(
-			prisma.plan.update({
-				where: {
-					id: id,
-					userId: userId,
-				},
-				data: data,
-				include: {
-					workouts: {
-						include: {
-							workoutExercises: {
-								include: {
-									sets: true,
-									exercise: true,
+			prisma.$transaction(async (tx) => {
+				if (data.isActive === true) {
+					await tx.plan.updateMany({
+						where: {
+							userId: userId,
+							NOT: { id: id },
+						},
+						data: {
+							isActive: false,
+						},
+					})
+				}
+				return tx.plan.update({
+					where: {
+						id: id,
+						userId: userId,
+					},
+					data: data,
+					include: {
+						workouts: {
+							include: {
+								workoutExercises: {
+									include: {
+										sets: true,
+										exercise: true,
+									},
 								},
 							},
 						},
 					},
-				},
+				})
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

@@ -214,7 +214,8 @@ model FoodLog {
 model Plan {
   id       String  @id @default(uuid())
   name     String
-  isActive Boolean @default(true)
+  isActive Boolean @default(false)
+  goal     String  @default("hipertrofia")
 
   workouts Workout[]
 
@@ -228,9 +229,10 @@ model Plan {
 }
 
 model Workout {
-  id   String      @id @default(uuid())
-  name String?
-  day  WORKOUT_DAY
+  id      String      @id @default(uuid())
+  name    String?
+  day     WORKOUT_DAY
+  weekDay String?
 
   plan   Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
   planId String

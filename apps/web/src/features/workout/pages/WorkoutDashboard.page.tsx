@@ -46,6 +46,16 @@ export function WorkoutDashboardPage() {
 
 	const activePlan = plans.find((p) => p.isActive) || plans[0]
 
+	const scheduledWorkouts: Record<string, string> = {}
+	activePlan?.workouts?.forEach((w: any) => {
+		if (w.weekDay) {
+			scheduledWorkouts[w.weekDay] = w.day
+		}
+	})
+
+	const selectedWeekDayStr = selectedDate.getDay().toString()
+	const todaysWorkout = activePlan?.workouts?.find((w: any) => w.weekDay === selectedWeekDayStr)
+
 	// Generate surrounding 7 days
 	const getWeekDays = () => {
 		const days = []
@@ -92,6 +102,7 @@ export function WorkoutDashboardPage() {
 						selectedDateStr={selectedDateStr}
 						onSelectDate={setSelectedDate}
 						formatDateString={formatDateString}
+						scheduledWorkouts={scheduledWorkouts}
 					/>
 
 					{/* Ficha de Treino Principal */}
@@ -101,7 +112,7 @@ export function WorkoutDashboardPage() {
 								<Text fw={700} size="md">
 									Ficha de Treino Principal
 								</Text>
-								<UnstyledButton onClick={() => activePlan && navigate(`/workout/plans/${activePlan.id}`)}>
+								<UnstyledButton onClick={() => activePlan && navigate(`/workout/plans/${activePlan.id}/edit`)}>
 									<Group gap={4} c="blue">
 										<Text size="xs" fw={700}>Ver todos</Text>
 										<ArrowRight size={14} />
@@ -125,6 +136,19 @@ export function WorkoutDashboardPage() {
 												Ficha Ativa
 											</Badge>
 										</Group>
+
+										{todaysWorkout && (
+											<Button
+												size="sm"
+												color="blue"
+												variant="light"
+												mt="sm"
+												fullWidth
+												onClick={() => navigate(`/workout/active/${activePlan.id}/select`)}
+											>
+												Começar Treino Diário ({todaysWorkout.day})
+											</Button>
+										)}
 									</Stack>
 								</Card>
 							) : (
@@ -134,7 +158,7 @@ export function WorkoutDashboardPage() {
 										<Text size="sm" c="dimmed">
 											Nenhuma ficha de treino cadastrada.
 										</Text>
-										<Button size="xs" variant="light" onClick={() => navigate('/workout/create-plan')}>
+										<Button size="xs" variant="light" onClick={() => navigate('/workout/plans')}>
 											Criar Ficha de Treino
 										</Button>
 									</Stack>

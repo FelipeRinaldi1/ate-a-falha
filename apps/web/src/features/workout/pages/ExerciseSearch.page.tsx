@@ -41,14 +41,32 @@ export function ExerciseSearchPage() {
 	})
 
 	// Dynamic extraction of muscles and categories, fully synchronized with the API
+	const LOCALIZED_LABELS: Record<string, string> = {
+		pescoco: 'Pescoço',
+		antebraco: 'Antebraço',
+		biceps: 'Bíceps',
+		triceps: 'Tríceps',
+		gluteos: 'Glúteos',
+		trapezio: 'Trapézio',
+		quadriceps: 'Quadríceps',
+		forca: 'Força',
+		alongamento: 'Alongamento',
+	}
+
 	const allMuscles = Array.from(new Set(allCatalogExercises.flatMap((e) => e.primaryMuscles)))
 		.filter((m) => m && m !== 'admin-to-delete' && m !== 'chest')
-		.map((m) => ({ label: m.charAt(0).toUpperCase() + m.slice(1), value: m }))
+		.map((m) => ({
+			label: LOCALIZED_LABELS[m.toLowerCase()] || (m.charAt(0).toUpperCase() + m.slice(1)),
+			value: m
+		}))
 		.sort((a, b) => a.label.localeCompare(b.label))
 
 	const allCategories = Array.from(new Set(allCatalogExercises.map((e) => e.category)))
 		.filter((c) => c && c !== 'admin-to-delete' && c !== 'streghnt')
-		.map((c) => ({ label: c.charAt(0).toUpperCase() + c.slice(1), value: c }))
+		.map((c) => ({
+			label: LOCALIZED_LABELS[c.toLowerCase()] || (c.charAt(0).toUpperCase() + c.slice(1)),
+			value: c
+		}))
 		.sort((a, b) => a.label.localeCompare(b.label))
 
 	// Infinite Query: Fetches 10 exercises per page from the backend database with active filters

@@ -3,6 +3,9 @@ import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
 import { WorkoutDashboardPage } from '../features/workout/pages/WorkoutDashboard.page'
 import { ExerciseSearchPage } from '../features/workout/pages/ExerciseSearch.page'
 import { ExerciseDetailsPage } from '../features/workout/pages/ExerciseDetails.page'
+import { WorkoutPlansPage } from '../features/workout/pages/WorkoutPlans.page'
+import { EditPlanPage } from '../features/workout/pages/EditPlan.page'
+import { SelectActiveWorkoutPage } from '../features/workout/pages/SelectActiveWorkout.page'
 import { LoginPage } from '../features/user/pages/Login.page'
 import { RegisterPage } from '../features/user/pages/Register.page'
 import { BodyMetricRegisterPage } from '../features/user/bodyMetric/pages/SetupMetrics.page'
@@ -23,6 +26,30 @@ export const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<WorkoutDashboardPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/plans',
+		element: (
+			<ProtectedRoute>
+				<WorkoutPlansPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/plans/:id/edit',
+		element: (
+			<ProtectedRoute>
+				<EditPlanPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/active/:id/select',
+		element: (
+			<ProtectedRoute>
+				<SelectActiveWorkoutPage />
 			</ProtectedRoute>
 		),
 	},
