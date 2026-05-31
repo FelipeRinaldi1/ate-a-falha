@@ -62,7 +62,7 @@ export function CreateFoodPage() {
 	})
 
 	return (
-		<MainLayout showSearch={false} onBack={() => navigate(-1)}>
+		<MainLayout onBack={() => navigate(-1)}>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					<Paper withBorder p="md" shadow="sm" radius="md">

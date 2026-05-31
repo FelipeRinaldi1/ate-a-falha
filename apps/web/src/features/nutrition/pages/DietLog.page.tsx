@@ -11,8 +11,9 @@ import {
 	Paper,
 	Text,
 	NumberInput,
+	ActionIcon,
 } from '@mantine/core'
-import { PlusCircle, Trash2 } from 'lucide-react'
+import { PlusCircle, Trash2, Search } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDisclosure } from '@mantine/hooks'
 import { MainLayout } from '../../../components/layout/MainLayout'
@@ -260,7 +261,7 @@ export function DietLogPage() {
 
 	if (isLoadingDiets || isLoadingLogs) {
 		return (
-			<MainLayout showSearch={false}>
+			<MainLayout title="Dieta">
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -269,7 +270,14 @@ export function DietLogPage() {
 	}
 
 	return (
-		<MainLayout showSearch={false}>
+		<MainLayout
+			title="Dieta"
+			actions={
+				<ActionIcon variant="subtle" color="gray" onClick={() => navigate('/nutrition/search')}>
+					<Search size={20} />
+				</ActionIcon>
+			}
+		>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					{/* Calendar Day Selector */}

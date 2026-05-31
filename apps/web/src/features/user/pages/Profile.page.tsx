@@ -41,7 +41,7 @@ export function ProfilePage() {
 
 	if (!user || isLoading) {
 		return (
-			<MainLayout showSearch={false}>
+			<MainLayout>
 				<Center style={{ height: '50vh' }}>
 					<Loader size="xl" />
 				</Center>
@@ -81,7 +81,7 @@ export function ProfilePage() {
 	const muscleRate = latestMetric?.muscleRate ?? null
 
 	return (
-		<MainLayout showSearch={false}>
+		<MainLayout>
 			<Paper withBorder={true} p="xl" w="100%" maw={600} mx="auto" shadow={'xl'} style={{ borderRadius: '16px' }}>
 				<Stack align="stretch" justify="flex-start" gap="lg">
 					<Center style={{ position: 'relative' }}>

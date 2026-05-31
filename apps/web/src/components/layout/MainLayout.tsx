@@ -8,13 +8,12 @@ import { Footer } from './Footer.js'
 
 interface MainLayoutProps {
 	children?: ReactNode
-	showSearch?: boolean
 	actions?: ReactNode
 	onBack?: () => void
 	title?: string
 }
 
-export function MainLayout({ children, showSearch = true, actions, onBack, title }: MainLayoutProps) {
+export function MainLayout({ children, actions, onBack, title }: MainLayoutProps) {
 	const [opened, { toggle, close }] = useDisclosure()
 
 	return (
@@ -27,7 +26,6 @@ export function MainLayout({ children, showSearch = true, actions, onBack, title
 			<Header
 				opened={opened}
 				onToggle={toggle}
-				showSearch={showSearch}
 				actions={actions}
 				onBack={onBack}
 				title={title}

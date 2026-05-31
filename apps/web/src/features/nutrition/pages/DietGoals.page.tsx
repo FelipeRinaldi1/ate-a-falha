@@ -111,7 +111,7 @@ export function DietGoalsPage() {
 
 	if (isLoadingDiets || isLoadingMetrics) {
 		return (
-			<MainLayout showSearch={false} title="Meta Diária" onBack={() => navigate('/nutrition')}>
+			<MainLayout title="Meta Diária" onBack={() => navigate('/nutrition')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -135,7 +135,7 @@ export function DietGoalsPage() {
 	const fatGoalPercent = totalCalGoal > 0 ? Math.round((fCalGoal / totalCalGoal) * 100) : 0
 
 	return (
-		<MainLayout showSearch={false} title="Meta Diária" onBack={() => navigate('/nutrition')}>
+		<MainLayout title="Meta Diária" onBack={() => navigate('/nutrition')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					{weight === 0 ? (
