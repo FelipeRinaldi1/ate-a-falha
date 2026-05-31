@@ -57,6 +57,16 @@ export class ExerciseRepository implements IExerciseRepository {
 									name: { contains: data.name, mode: 'insensitive' },
 								}
 							: {},
+						data.category
+							? {
+									category: { equals: data.category, mode: 'insensitive' },
+								}
+							: {},
+						data.primaryMuscles
+							? {
+									primaryMuscles: { has: data.primaryMuscles.toLowerCase() },
+								}
+							: {},
 					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],

@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
-import { HomePage } from '../pages/Home.page'
+import { WorkoutDashboardPage } from '../features/workout/pages/WorkoutDashboard.page'
+import { ExerciseSearchPage } from '../features/workout/pages/ExerciseSearch.page'
+import { ExerciseDetailsPage } from '../features/workout/pages/ExerciseDetails.page'
 import { LoginPage } from '../features/user/pages/Login.page'
 import { RegisterPage } from '../features/user/pages/Register.page'
 import { BodyMetricRegisterPage } from '../features/user/bodyMetric/pages/SetupMetrics.page'
@@ -16,6 +18,30 @@ import { FoodSearchPage } from '../features/nutrition/pages/FoodSearch.page'
 import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
 
 export const router = createBrowserRouter([
+	{
+		path: '/workout',
+		element: (
+			<ProtectedRoute>
+				<WorkoutDashboardPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/exercises',
+		element: (
+			<ProtectedRoute>
+				<ExerciseSearchPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/exercises/:id',
+		element: (
+			<ProtectedRoute>
+				<ExerciseDetailsPage />
+			</ProtectedRoute>
+		),
+	},
 	{
 		path: '/profile',
 		element: (
@@ -122,11 +148,7 @@ export const router = createBrowserRouter([
 	},
 	{
 		path: '/',
-		element: (
-			<ProtectedRoute>
-				<HomePage />
-			</ProtectedRoute>
-		),
+		element: <Navigate to="/workout" replace />,
 	},
 
 	{

@@ -8,7 +8,7 @@ export function Footer() {
 	return (
 		<AppShell.Footer hiddenFrom="sm">
 			<Group grow h="100%" gap={0}>
-				<UnstyledButton h="100%" onClick={() => navigate('/')}>
+				<UnstyledButton h="100%" onClick={() => navigate('/workout')}>
 					<Stack h="100%" justify="center" align="center" gap={4}>
 						<Dumbbell size="24" />
 						<Text size="xs" lh={1}>

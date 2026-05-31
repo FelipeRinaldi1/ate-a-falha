@@ -11,7 +11,7 @@ export function DesktopNavbar() {
 			<Text size="sm" c="dimmed" fw={500}>
 				Navegação
 			</Text>
-			<Button variant="subtle" justify="left" onClick={() => navigate('/')}>
+			<Button variant="subtle" justify="left" onClick={() => navigate('/workout')}>
 				Treino
 			</Button>
 			<Button variant="subtle" justify="left" onClick={() => navigate('/profile')}>
