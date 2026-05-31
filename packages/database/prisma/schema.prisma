@@ -95,6 +95,7 @@ model Diet {
   dailyProteinGoal Int
   dailyCarbGoal    Int
   dailyFatGoal     Int
+  dailyFiberGoal   Int    @default(25)
   dailyWaterGoal   Int
   
   dailyWater       Int
@@ -169,6 +170,7 @@ model DietLog {
   userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime  @db.Date
+  waterIntake Int     @default(0)
   
   meals     MealLog[]
 

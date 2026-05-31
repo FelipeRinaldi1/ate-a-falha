@@ -362,37 +362,21 @@ export function FoodSearchPage() {
 								</Center>
 								<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											P
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											C
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											G
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											F
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
+									<Text size="xs" c="dimmed">P</Text>
+									<Text size="xs" fw={700} c="red.6">{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">C</Text>
+									<Text size="xs" fw={700} c="yellow.5">{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">G</Text>
+									<Text size="xs" fw={700} c="green.6">{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">F</Text>
+									<Text size="xs" fw={700} c="teal.5">{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
 								</SimpleGrid>
 							</Stack>
 						</Paper>

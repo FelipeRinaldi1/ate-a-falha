@@ -6,6 +6,7 @@ export const dietSchema = z.object({
 	dailyProteinGoal: z.number().nonnegative('Protein goal cannot be negative'),
 	dailyCarbGoal: z.number().nonnegative('Carb goal cannot be negative'),
 	dailyFatGoal: z.number().nonnegative('Fat goal cannot be negative'),
+	dailyFiberGoal: z.number().nonnegative('Fiber goal cannot be negative'),
 	dailyWaterGoal: z.number().positive('Water goal must be a positive number'),
 	dailyWater: z.number().nonnegative('Water must be a nonnegative number'),
 	userId: z.uuid('Invalid User ID format'),
@@ -19,6 +20,7 @@ export const createDietSchema = dietSchema.pick({
 	dailyProteinGoal: true,
 	dailyCarbGoal: true,
 	dailyFatGoal: true,
+	dailyFiberGoal: true,
 	dailyWaterGoal: true,
 	dailyWater: true,
 })

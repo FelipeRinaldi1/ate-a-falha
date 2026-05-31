@@ -1,6 +1,6 @@
 import { Paper, Stack, Group, Title, Text, SimpleGrid } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
-import { NutritionLogic, type MealLogDTO, type FoodLogDTO } from '@ate-a-falha/shared'
+import { NutritionLogic, type MealLogDTO } from '@ate-a-falha/shared'
 
 interface MealCardProps {
 	meal: MealLogDTO
@@ -10,15 +10,7 @@ export function MealCard({ meal }: MealCardProps) {
 	const navigate = useNavigate()
 	const mealFoods = meal.foods || []
 	const mealTotals = NutritionLogic.calculateMealMacros(
-		mealFoods.map((f: FoodLogDTO) => ({
-			id: f.id,
-			foodId: f.foodId,
-			food: f.food,
-			quantity: f.quantity,
-			mealId: f.mealLogId,
-			createdAt: f.createdAt,
-			updatedAt: f.updatedAt,
-		}))
+		mealFoods as unknown as Parameters<typeof NutritionLogic.calculateMealMacros>[0]
 	)
 
 	return (

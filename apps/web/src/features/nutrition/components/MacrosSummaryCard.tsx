@@ -64,7 +64,7 @@ export function MacrosSummaryCard({
 						<Text size="xs" fw={700} c="dimmed">
 							Prot
 						</Text>
-						<Text size="sm" fw={700}>
+						<Text size="sm" fw={700} c="red.6">
 							{protein.toFixed(0)}g
 						</Text>
 						<Progress value={(protein / proteinTarget) * 100} color="red" size="xs" mt={4} />
@@ -73,7 +73,7 @@ export function MacrosSummaryCard({
 						<Text size="xs" fw={700} c="dimmed">
 							Carb
 						</Text>
-						<Text size="sm" fw={700}>
+						<Text size="sm" fw={700} c="yellow.5">
 							{carb.toFixed(0)}g
 						</Text>
 						<Progress value={(carb / carbTarget) * 100} color="yellow" size="xs" mt={4} />
@@ -82,7 +82,7 @@ export function MacrosSummaryCard({
 						<Text size="xs" fw={700} c="dimmed">
 							Gord
 						</Text>
-						<Text size="sm" fw={700}>
+						<Text size="sm" fw={700} c="green.6">
 							{fat.toFixed(0)}g
 						</Text>
 						<Progress value={(fat / fatTarget) * 100} color="green" size="xs" mt={4} />
@@ -91,7 +91,7 @@ export function MacrosSummaryCard({
 						<Text size="xs" fw={700} c="dimmed">
 							Fibr
 						</Text>
-						<Text size="sm" fw={700}>
+						<Text size="sm" fw={700} c="teal.5">
 							{fiber.toFixed(0)}g
 						</Text>
 						<Progress value={(fiber / fiberTarget) * 100} color="teal" size="xs" mt={4} />

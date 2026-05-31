@@ -62,16 +62,19 @@ export function DietGoalsPage() {
 	const [proteinGPerKg, setProteinGPerKg] = useState<number>(2.0)
 	const [fatGPerKg, setFatGPerKg] = useState<number>(1.0)
 	const [carbGPerKg, setCarbGPerKg] = useState<number>(5.0)
+	const [fiberGoal, setFiberGoal] = useState<number>(25)
 
 	const handleOpenEditModal = () => {
 		if (activeDiet && weight > 0) {
 			setProteinGPerKg(Number((activeDiet.dailyProteinGoal / weight).toFixed(1)))
 			setFatGPerKg(Number((activeDiet.dailyFatGoal / weight).toFixed(1)))
 			setCarbGPerKg(Number((activeDiet.dailyCarbGoal / weight).toFixed(1)))
+			setFiberGoal(activeDiet.dailyFiberGoal || 25)
 		} else {
 			setProteinGPerKg(2.0)
 			setFatGPerKg(1.0)
 			setCarbGPerKg(5.0)
+			setFiberGoal(25)
 		}
 		setOpened(true)
 	}
@@ -91,6 +94,7 @@ export function DietGoalsPage() {
 				dailyProteinGoal: calculatedProtein,
 				dailyCarbGoal: calculatedCarb,
 				dailyFatGoal: calculatedFat,
+				dailyFiberGoal: fiberGoal,
 				dailyWaterGoal: activeDiet?.dailyWaterGoal || 3000,
 				dailyWater: activeDiet?.dailyWater || 0,
 			}
@@ -124,6 +128,7 @@ export function DietGoalsPage() {
 	const targetProtein = activeDiet?.dailyProteinGoal || 150
 	const targetFat = activeDiet?.dailyFatGoal || 60
 	const targetCarb = activeDiet?.dailyCarbGoal || 200
+	const targetFiber = activeDiet?.dailyFiberGoal || 25
 
 	const pCalGoal = targetProtein * 4
 	const cCalGoal = targetCarb * 4
@@ -251,6 +256,27 @@ export function DietGoalsPage() {
 												</Stack>
 											</Group>
 										</Card>
+
+										<Card withBorder p="sm" radius="md">
+											<Group justify="space-between" align="center">
+												<Stack gap={0}>
+													<Text fw={700} size="sm">
+														Fibras
+													</Text>
+													<Text size="xs" c="dimmed">
+														{targetFiber.toFixed(0)}g
+													</Text>
+												</Stack>
+												<Stack gap={0} style={{ textAlign: 'right' }}>
+													<Text fw={700} size="sm">
+														Meta diária
+													</Text>
+													<Text size="xs" c="dimmed">
+														Sem valor calórico direto
+													</Text>
+												</Stack>
+											</Group>
+										</Card>
 									</Stack>
 								</Stack>
 							</Paper>
@@ -364,6 +390,16 @@ export function DietGoalsPage() {
 						onChange={(val) => setCarbGPerKg(Number(val) || 0)}
 					/>
 
+					<NumberInput
+						label="Fibras (g)"
+						placeholder="Ex: 25"
+						min={1}
+						step={1}
+						required
+						value={fiberGoal}
+						onChange={(val) => setFiberGoal(Number(val) || 0)}
+					/>
+
 					<Paper withBorder p="sm" radius="md" style={{ backgroundColor: 'var(--mantine-color-dark-6)' }}>
 						<Stack gap="xs">
 							<Text size="xs" fw={700} c="dimmed">
@@ -385,6 +421,12 @@ export function DietGoalsPage() {
 								<Text size="xs">Carboidratos:</Text>
 								<Text size="xs" fw={700}>
 									{calculatedCarb}g ({calculatedCarb * 4} Kal)
+								</Text>
+							</Group>
+							<Group justify="space-between">
+								<Text size="xs">Fibras:</Text>
+								<Text size="xs" fw={700}>
+									{fiberGoal}g
 								</Text>
 							</Group>
 							<Group

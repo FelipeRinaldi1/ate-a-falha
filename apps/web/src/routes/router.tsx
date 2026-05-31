@@ -17,10 +17,6 @@ import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
 
 export const router = createBrowserRouter([
 	{
-		path: '/sandbox',
-		element: <ProtectedRoute>a</ProtectedRoute>,
-	},
-	{
 		path: '/profile',
 		element: (
 			<ProtectedRoute>

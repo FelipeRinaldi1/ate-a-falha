@@ -93,6 +93,17 @@ export function DietLogPage() {
 		},
 	})
 
+	// Mutation: Update active diet log (e.g. waterIntake)
+	const updateDietLogMutation = useMutation({
+		mutationFn: async ({ id, data }: { id: string; data: { waterIntake: number } }) => {
+			const res = await api.patch(`/nutrition/diet-logs/${id}`, data)
+			return res.data
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+		},
+	})
+
 	// Mutation: Add a Meal Log to a Diet Log
 	const addMealLogMutation = useMutation({
 		mutationFn: async ({ dietLogId, name, time }: { dietLogId: string; name: string; time: string }) => {
@@ -131,10 +142,22 @@ export function DietLogPage() {
 		}
 	}
 
-	const handleUpdateWater = (amount: number) => {
-		if (!activeDiet) return
-		const newWater = Math.max(0, activeDiet.dailyWater + amount)
-		updateDietMutation.mutate({ id: activeDiet.id, data: { dailyWater: newWater } })
+	const handleUpdateWater = async (amount: number) => {
+		const currentWater = activeLog?.waterIntake || 0
+		const newWater = Math.max(0, currentWater + amount)
+
+		if (activeLog) {
+			updateDietLogMutation.mutate({
+				id: activeLog.id,
+				data: { waterIntake: newWater },
+			})
+		} else {
+			const newLog = await createDietLogMutation.mutateAsync(selectedDateStr)
+			updateDietLogMutation.mutate({
+				id: newLog.id,
+				data: { waterIntake: newWater },
+			})
+		}
 	}
 
 	const handleOpenWaterGoalModal = () => {
@@ -149,6 +172,7 @@ export function DietLogPage() {
 			dailyProteinGoal: targets.protein,
 			dailyCarbGoal: targets.carb,
 			dailyFatGoal: targets.fat,
+			dailyFiberGoal: targets.fiber,
 			dailyWaterGoal: newWaterGoal,
 			dailyWater: targets.waterCurrent,
 		}
@@ -195,8 +219,9 @@ export function DietLogPage() {
 		protein: activeDiet?.dailyProteinGoal || 150,
 		carb: activeDiet?.dailyCarbGoal || 200,
 		fat: activeDiet?.dailyFatGoal || 60,
+		fiber: activeDiet?.dailyFiberGoal || 25,
 		water: activeDiet?.dailyWaterGoal || 4000,
-		waterCurrent: activeDiet?.dailyWater || 0,
+		waterCurrent: activeLog?.waterIntake || 0,
 	}
 
 	if (isLoadingDiets || isLoadingLogs) {
@@ -233,7 +258,7 @@ export function DietLogPage() {
 						waterCurrent={targets.waterCurrent}
 						waterTarget={targets.water}
 						onUpdateWater={handleUpdateWater}
-						isPending={updateDietMutation.isPending}
+						isPending={updateDietLogMutation.isPending || createDietLogMutation.isPending}
 						onEditTargetClick={handleOpenWaterGoalModal}
 					/>
 
@@ -248,13 +273,13 @@ export function DietLogPage() {
 						fat={dietTotals.fats}
 						fatTarget={targets.fat}
 						fiber={dietTotals.fiber}
-						fiberTarget={25}
+						fiberTarget={targets.fiber}
 						onEditClick={() => navigate('/nutrition/goals')}
 					/>
 
 					{/* Meal Logs List */}
 					{loggedMeals.length > 0 ? (
-						loggedMeals.map((meal: MealLogDTO, idx: number) => <MealCard key={idx} meal={meal} />)
+						loggedMeals.map((meal: MealLogDTO) => <MealCard key={meal.id} meal={meal} />)
 					) : (
 						<Paper withBorder p="xl" radius="md" shadow="sm" style={{ textAlign: 'center' }}>
 							<Text c="dimmed" size="sm">
