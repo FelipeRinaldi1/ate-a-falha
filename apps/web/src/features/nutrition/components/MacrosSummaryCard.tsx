@@ -28,11 +28,23 @@ export function MacrosSummaryCard({
 	fiberTarget,
 	onEditClick,
 }: MacrosSummaryCardProps) {
+	const isExceeded = calories > kcalTarget
+
+	// Calorie contributions per macro
+	const proteinKcal = protein * 4
+	const carbKcal = carb * 4
+	const fatKcal = fat * 9
+
+	// Percentages relative to the daily kcal target
+	const proteinPercent = (proteinKcal / kcalTarget) * 100
+	const carbPercent = (carbKcal / kcalTarget) * 100
+	const fatPercent = (fatKcal / kcalTarget) * 100
+
 	return (
 		<Paper withBorder p="md" radius="md" shadow="sm">
 			<Stack gap="md">
 				<Group justify="space-between" align="center">
-					<Text fw={700} size="md">
+					<Text fw={700} size="md" c={isExceeded ? 'red.6' : undefined}>
 						{calories.toFixed(0)} / {kcalTarget} Kal
 					</Text>
 					{onEditClick && (
@@ -41,7 +53,11 @@ export function MacrosSummaryCard({
 						</ActionIcon>
 					)}
 				</Group>
-				<Progress value={(calories / kcalTarget) * 100} color="teal" size="xl" radius="xl" />
+				<Progress.Root size="xl" radius="xl">
+					<Progress.Section value={proteinPercent} color="red" />
+					<Progress.Section value={carbPercent} color="yellow" />
+					<Progress.Section value={fatPercent} color="green" />
+				</Progress.Root>
 
 				<SimpleGrid cols={4} spacing="xs">
 					<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
@@ -51,7 +67,7 @@ export function MacrosSummaryCard({
 						<Text size="sm" fw={700}>
 							{protein.toFixed(0)}g
 						</Text>
-						<Progress value={(protein / proteinTarget) * 100} color="orange" size="xs" mt={4} />
+						<Progress value={(protein / proteinTarget) * 100} color="red" size="xs" mt={4} />
 					</Card>
 					<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
 						<Text size="xs" fw={700} c="dimmed">
@@ -69,7 +85,7 @@ export function MacrosSummaryCard({
 						<Text size="sm" fw={700}>
 							{fat.toFixed(0)}g
 						</Text>
-						<Progress value={(fat / fatTarget) * 100} color="red" size="xs" mt={4} />
+						<Progress value={(fat / fatTarget) * 100} color="green" size="xs" mt={4} />
 					</Card>
 					<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
 						<Text size="xs" fw={700} c="dimmed">
@@ -78,7 +94,7 @@ export function MacrosSummaryCard({
 						<Text size="sm" fw={700}>
 							{fiber.toFixed(0)}g
 						</Text>
-						<Progress value={(fiber / fiberTarget) * 100} color="green" size="xs" mt={4} />
+						<Progress value={(fiber / fiberTarget) * 100} color="teal" size="xs" mt={4} />
 					</Card>
 				</SimpleGrid>
 			</Stack>

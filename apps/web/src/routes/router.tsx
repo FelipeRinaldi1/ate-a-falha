@@ -11,6 +11,9 @@ import { MetricsEvolutionPage } from '../features/user/bodyMetric/pages/MetricsE
 import { CreateFoodPage } from '../features/nutrition/pages/CreateFood.page'
 import { DietLogPage } from '../features/nutrition/pages/DietLog.page'
 import { DietGoalsPage } from '../features/nutrition/pages/DietGoals.page'
+import { MealDetailsPage } from '../features/nutrition/pages/MealDetails.page'
+import { FoodSearchPage } from '../features/nutrition/pages/FoodSearch.page'
+import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
 
 export const router = createBrowserRouter([
 	{
@@ -86,6 +89,30 @@ export const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<CreateFoodPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/nutrition/search',
+		element: (
+			<ProtectedRoute>
+				<FoodSearchPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/nutrition/food-catalog/:id',
+		element: (
+			<ProtectedRoute>
+				<FoodDetailsPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/nutrition/meals/:id',
+		element: (
+			<ProtectedRoute>
+				<MealDetailsPage />
 			</ProtectedRoute>
 		),
 	},

@@ -23,13 +23,7 @@ export function MainLayout({ children, actions, onBack, title }: MainLayoutProps
 			navbar={{ width: { base: '70vw', sm: 200, lg: 300 }, breakpoint: 'sm', collapsed: { mobile: true } }}
 			footer={{ height: { base: 60, sm: 0 } }}
 		>
-			<Header
-				opened={opened}
-				onToggle={toggle}
-				actions={actions}
-				onBack={onBack}
-				title={title}
-			/>
+			<Header opened={opened} onToggle={toggle} actions={actions} onBack={onBack} title={title} />
 
 			<AppShell.Navbar>
 				<DesktopNavbar />

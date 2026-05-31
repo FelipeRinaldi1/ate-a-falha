@@ -1,4 +1,4 @@
-import { Center, Paper, Stack, Group, Text, Title, Avatar, Button, Loader, RingProgress } from '@mantine/core'
+import { Center, Container, Paper, Stack, Group, Text, Title, Avatar, Button, Loader, RingProgress } from '@mantine/core'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
@@ -41,7 +41,7 @@ export function ProfilePage() {
 
 	if (!user || isLoading) {
 		return (
-			<MainLayout>
+			<MainLayout title="Perfil">
 				<Center style={{ height: '50vh' }}>
 					<Loader size="xl" />
 				</Center>
@@ -81,54 +81,40 @@ export function ProfilePage() {
 	const muscleRate = latestMetric?.muscleRate ?? null
 
 	return (
-		<MainLayout>
-			<Paper withBorder={true} p="xl" w="100%" maw={600} mx="auto" shadow={'xl'} style={{ borderRadius: '16px' }}>
-				<Stack align="stretch" justify="flex-start" gap="lg">
-					<Center style={{ position: 'relative' }}>
-						<Avatar
-							size={128}
-							alt={user.name}
-							color="blue"
-							radius="xl"
-							style={{
-								fontSize: '48px',
-								fontWeight: 'bold',
-								boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-								border: '4px solid #fff',
-							}}
-						>
-							{user.name.substring(0, 2).toUpperCase()}
-						</Avatar>
-					</Center>
-
-					<Stack align="center" gap={4}>
-						<Title order={1} style={{ letterSpacing: '-0.5px' }}>
-							{user.name}
-						</Title>
-						<Text size="sm" c="dimmed">
-							{user.email}
-						</Text>
-					</Stack>
+		<MainLayout title="Perfil">
+			<Container size="xs" px={0}>
+				<Stack gap="md">
+					{/* User identity card */}
+					<Paper withBorder p="md" radius="md" shadow="sm">
+						<Stack align="center" gap="sm">
+							<Avatar
+								size={96}
+								alt={user.name}
+								color="blue"
+								radius="xl"
+								style={{ fontSize: '36px', fontWeight: 'bold' }}
+							>
+								{user.name.substring(0, 2).toUpperCase()}
+							</Avatar>
+							<Stack align="center" gap={2}>
+								<Title order={2} size="h3" style={{ letterSpacing: '-0.5px' }}>
+									{user.name}
+								</Title>
+								<Text size="sm" c="dimmed">
+									{user.email}
+								</Text>
+							</Stack>
+						</Stack>
+					</Paper>
 
 					{!latestMetric ? (
-						<Paper
-							withBorder={true}
-							w="100%"
-							p="xl"
-							shadow="md"
-							style={{
-								borderRadius: '12px',
-								background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-								border: 'none',
-								textAlign: 'center',
-							}}
-						>
+						<Paper withBorder p="xl" radius="md" shadow="sm" style={{ textAlign: 'center' }}>
 							<Stack align="center" gap="md">
 								<Info size={40} color="#4A5568" />
-								<Title order={3} c="dark">
+								<Title order={3} size="h4">
 									Nenhuma métrica cadastrada
 								</Title>
-								<Text size="sm" c="gray.7" style={{ maxWidth: '400px' }}>
+								<Text size="sm" c="dimmed" style={{ maxWidth: '320px' }}>
 									Cadastre suas métricas corporais agora para calcular seu IMC, Gasto Metabólico Basal
 									(BMR), e Gasto Metabólico Diário (TDEE).
 								</Text>
@@ -144,14 +130,15 @@ export function ProfilePage() {
 						</Paper>
 					) : (
 						<>
-							<Group gap="sm" justify="center">
+							{/* Action buttons */}
+							<Group gap="sm" grow>
 								<Button
-									variant="outline"
+									variant="default"
 									leftSection={<TrendingUp size={16} />}
 									onClick={() => navigate('/profile/evolution')}
 									radius="md"
 								>
-									Gráficos de Evolução
+									Evolução
 								</Button>
 								<Button
 									variant="filled"
@@ -163,14 +150,15 @@ export function ProfilePage() {
 								</Button>
 							</Group>
 
-							<Paper withBorder={true} w="100%" p="lg" shadow="sm" style={{ borderRadius: '12px' }}>
-								<Stack align="stretch" justify="flex-start" gap="md">
-									<Group justify="space-between">
-										<Title order={3} size={'h4'}>
+							{/* Body metrics card */}
+							<Paper withBorder p="md" radius="md" shadow="sm">
+								<Stack gap="md">
+									<Group justify="space-between" align="center">
+										<Title order={3} size="h5" fw={700}>
 											Métricas Corporais
 										</Title>
 										<Button
-											variant="light"
+											variant="subtle"
 											leftSection={<Edit size={14} />}
 											size="xs"
 											radius="md"
@@ -180,48 +168,48 @@ export function ProfilePage() {
 										</Button>
 									</Group>
 
-									<Group grow gap="md">
-										<Paper withBorder p="sm" style={{ borderRadius: '8px', textAlign: 'center' }}>
+									<Group grow gap="sm">
+										<Paper withBorder p="sm" radius="md" style={{ textAlign: 'center' }}>
 											<Stack align="center" gap={4}>
-												<Ruler size={24} color="#228BE6" />
+												<Ruler size={20} color="#228BE6" />
 												<Text size="xs" c="dimmed">
 													Altura
 												</Text>
-												<Text size="lg" fw={700}>
+												<Text size="md" fw={700}>
 													{latestMetric.height} cm
 												</Text>
 											</Stack>
 										</Paper>
 
-										<Paper withBorder p="sm" style={{ borderRadius: '8px', textAlign: 'center' }}>
+										<Paper withBorder p="sm" radius="md" style={{ textAlign: 'center' }}>
 											<Stack align="center" gap={4}>
-												<Weight size={24} color="#12B886" />
+												<Weight size={20} color="#12B886" />
 												<Text size="xs" c="dimmed">
 													Peso
 												</Text>
-												<Text size="lg" fw={700}>
+												<Text size="md" fw={700}>
 													{latestMetric.weight} kg
 												</Text>
 											</Stack>
 										</Paper>
 
-										<Paper withBorder p="sm" style={{ borderRadius: '8px', textAlign: 'center' }}>
+										<Paper withBorder p="sm" radius="md" style={{ textAlign: 'center' }}>
 											<Stack align="center" gap={4}>
-												<Scale size={24} color="#FD7E14" />
+												<Scale size={20} color="#FD7E14" />
 												<Text size="xs" c="dimmed">
 													IMC
 												</Text>
-												<Text size="lg" fw={700}>
+												<Text size="md" fw={700} c={bmiInfo.color}>
 													{bmi}
 												</Text>
 											</Stack>
 										</Paper>
 									</Group>
 
-									<Group justify="center" mt="xs">
-										<Text size="sm" fw={500} c="dimmed">
-											Classificação do IMC:{' '}
-											<Text component="span" fw={700} color={bmiInfo.color}>
+									<Group justify="center">
+										<Text size="xs" fw={500} c="dimmed">
+											Classificação:{' '}
+											<Text component="span" fw={700} c={bmiInfo.color}>
 												{bmiInfo.label}
 											</Text>
 										</Text>
@@ -229,18 +217,23 @@ export function ProfilePage() {
 								</Stack>
 							</Paper>
 
-							<Paper withBorder={true} w="100%" p="lg" shadow="sm" style={{ borderRadius: '12px' }}>
-								<Stack align="stretch" justify="flex-start" gap="md">
-									<Title order={3} size={'h4'}>
+							{/* Caloric expenditure card */}
+							<Paper withBorder p="md" radius="md" shadow="sm">
+								<Stack gap="md">
+									<Title order={3} size="h5" fw={700}>
 										Gasto Calórico
 									</Title>
 
 									<Stack gap="xs">
-										<Group justify="space-between">
+										<Group
+											justify="space-between"
+											p="xs"
+											style={{ borderBottom: '1px solid var(--mantine-color-dark-6)' }}
+										>
 											<Group gap="xs">
-												<Flame size={20} color="#E03131" />
+												<Flame size={16} color="#E03131" />
 												<Text size="sm" fw={500}>
-													Nível de atividade física
+													Nível de atividade
 												</Text>
 											</Group>
 											<Text size="sm" fw={600}>
@@ -248,11 +241,15 @@ export function ProfilePage() {
 											</Text>
 										</Group>
 
-										<Group justify="space-between">
+										<Group
+											justify="space-between"
+											p="xs"
+											style={{ borderBottom: '1px solid var(--mantine-color-dark-6)' }}
+										>
 											<Group gap="xs">
-												<Flame size={20} color="#FA5252" />
+												<Flame size={16} color="#FA5252" />
 												<Text size="sm" fw={500}>
-													Gasto Metabólico Basal (BMR)
+													BMR
 												</Text>
 											</Group>
 											<Text size="sm" fw={700}>
@@ -260,14 +257,14 @@ export function ProfilePage() {
 											</Text>
 										</Group>
 
-										<Group justify="space-between">
+										<Group justify="space-between" p="xs">
 											<Group gap="xs">
-												<Flame size={20} color="#FF8787" />
+												<Flame size={16} color="#FF8787" />
 												<Text size="sm" fw={500}>
-													Gasto Metabólico Total (TDEE)
+													TDEE
 												</Text>
 											</Group>
-											<Text fw={700} c="red" size="md">
+											<Text size="sm" fw={700} c="red.6">
 												{tdee} kcal
 											</Text>
 										</Group>
@@ -275,67 +272,64 @@ export function ProfilePage() {
 								</Stack>
 							</Paper>
 
-							<Paper withBorder={true} w="100%" p="lg" shadow="sm" style={{ borderRadius: '12px' }}>
-								<Stack align="stretch" justify="flex-start" gap="md">
-									<Title order={3} size={'h4'}>
-										Métricas Avançadas
-									</Title>
+							{/* Advanced metrics card */}
+							{(bodyFat !== null || muscleRate !== null) && (
+								<Paper withBorder p="md" radius="md" shadow="sm">
+									<Stack gap="md">
+										<Title order={3} size="h5" fw={700}>
+											Métricas Avançadas
+										</Title>
 
-									<Group justify="space-around" wrap="wrap">
-										{bodyFat !== null && (
-											<Stack align="center" gap={4}>
-												<RingProgress
-													size={80}
-													roundCaps
-													thickness={8}
-													sections={[{ value: bodyFat, color: 'red' }]}
-													label={
-														<Center>
-															<Text size="xs" fw={700}>
-																{bodyFat}%
-															</Text>
-														</Center>
-													}
-												/>
-												<Text size="xs" fw={500} c="dimmed">
-													Gordura Corporal
-												</Text>
-											</Stack>
-										)}
+										<Group justify="space-around" wrap="wrap">
+											{bodyFat !== null && (
+												<Stack align="center" gap={4}>
+													<RingProgress
+														size={80}
+														roundCaps
+														thickness={8}
+														sections={[{ value: bodyFat, color: 'red' }]}
+														label={
+															<Center>
+																<Text size="xs" fw={700}>
+																	{bodyFat}%
+																</Text>
+															</Center>
+														}
+													/>
+													<Text size="xs" fw={500} c="dimmed">
+														Gordura Corporal
+													</Text>
+												</Stack>
+											)}
 
-										{muscleRate !== null && (
-											<Stack align="center" gap={4}>
-												<RingProgress
-													size={80}
-													roundCaps
-													thickness={8}
-													sections={[{ value: muscleRate, color: 'blue' }]}
-													label={
-														<Center>
-															<Text size="xs" fw={700}>
-																{muscleRate}%
-															</Text>
-														</Center>
-													}
-												/>
-												<Text size="xs" fw={500} c="dimmed">
-													Massa Muscular
-												</Text>
-											</Stack>
-										)}
-
-										{bodyFat === null && muscleRate === null && (
-											<Text size="sm" c="dimmed" style={{ textAlign: 'center', width: '100%' }}>
-												Nenhuma métrica avançada (% de gordura ou músculo) registrada.
-											</Text>
-										)}
-									</Group>
-								</Stack>
-							</Paper>
+											{muscleRate !== null && (
+												<Stack align="center" gap={4}>
+													<RingProgress
+														size={80}
+														roundCaps
+														thickness={8}
+														sections={[{ value: muscleRate, color: 'blue' }]}
+														label={
+															<Center>
+																<Text size="xs" fw={700}>
+																	{muscleRate}%
+																</Text>
+															</Center>
+														}
+													/>
+													<Text size="xs" fw={500} c="dimmed">
+														Massa Muscular
+													</Text>
+												</Stack>
+											)}
+										</Group>
+									</Stack>
+								</Paper>
+							)}
 						</>
 					)}
 				</Stack>
-			</Paper>
+			</Container>
 		</MainLayout>
 	)
 }

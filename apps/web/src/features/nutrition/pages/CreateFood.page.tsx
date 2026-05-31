@@ -42,15 +42,15 @@ export function CreateFoodPage() {
 
 	const mutation = useMutation({
 		mutationFn: async (values: FoodFormValues) => {
-			const normalizedData: CreateFoodDTO = NutritionLogic.normalizeMacros(
-				values.name,
-				values.quantity,
-				values.protein || 0,
-				values.carbohydrate || 0,
-				values.lipids || 0,
-				values.fiber || 0
-			)
-			return api.post('/nutrition/food-catalog', normalizedData)
+			const foodData: CreateFoodDTO = {
+				name: values.name,
+				protein: values.protein || 0,
+				carbohydrate: values.carbohydrate || 0,
+				lipids: values.lipids || 0,
+				fiber: values.fiber || 0,
+				calories: calculatedCalories,
+			}
+			return api.post('/nutrition/food-catalog', foodData)
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
@@ -86,11 +86,11 @@ export function CreateFoodPage() {
 									/>
 
 									<NumberInput
-										label="Quantidade (g)"
-										placeholder="100"
+										label="Quantidade de Referência (g)"
 										required
-										min={1}
-										{...form.getInputProps('quantity')}
+										value={100}
+										disabled
+										description="Os valores nutricionais abaixo devem ser informados para cada 100g do alimento."
 									/>
 
 									<Group grow>

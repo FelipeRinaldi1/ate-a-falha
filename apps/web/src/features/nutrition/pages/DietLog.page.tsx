@@ -7,13 +7,12 @@ import {
 	TextInput,
 	Center,
 	Loader,
-	Group,
 	Paper,
 	Text,
 	NumberInput,
 	ActionIcon,
 } from '@mantine/core'
-import { PlusCircle, Trash2, Search } from 'lucide-react'
+import { PlusCircle, Search } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDisclosure } from '@mantine/hooks'
 import { MainLayout } from '../../../components/layout/MainLayout'
@@ -23,7 +22,6 @@ import { CalendarSelector } from '../../../components/CalendarSelector'
 import { WaterCard } from '../components/WaterCard'
 import { MacrosSummaryCard } from '../components/MacrosSummaryCard'
 import { MealCard } from '../components/MealCard'
-import { modals } from '@mantine/modals'
 import { useNavigate } from 'react-router-dom'
 
 export function DietLogPage() {
@@ -35,11 +33,6 @@ export function DietLogPage() {
 	const [mealTime, setMealTime] = useState('12:00')
 	const [waterGoalOpened, { open: openWaterGoal, close: closeWaterGoal }] = useDisclosure(false)
 	const [newWaterGoal, setNewWaterGoal] = useState(3000)
-
-	// States for editing a meal
-	const [editingMeal, setEditingMeal] = useState<MealLogDTO | null>(null)
-	const [editMealName, setEditMealName] = useState('')
-	const [editMealTime, setEditMealTime] = useState('12:00')
 
 	// Format date to local YYYY-MM-DD
 	const formatDateString = (d: Date) => {
@@ -118,30 +111,6 @@ export function DietLogPage() {
 		},
 	})
 
-	// Mutation: Update a Meal Log
-	const updateMealLogMutation = useMutation({
-		mutationFn: async ({ id, name, time }: { id: string; name: string; time: string }) => {
-			const res = await api.patch(`/nutrition/meal-logs/${id}`, { name, time })
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-			setEditingMeal(null)
-		},
-	})
-
-	// Mutation: Delete a Meal Log
-	const deleteMealLogMutation = useMutation({
-		mutationFn: async (id: string) => {
-			const res = await api.delete(`/nutrition/meal-logs/${id}`)
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-			setEditingMeal(null)
-		},
-	})
-
 	const handleAddMeal = async () => {
 		if (!mealName.trim()) return
 
@@ -160,35 +129,6 @@ export function DietLogPage() {
 				time: mealTime,
 			})
 		}
-	}
-
-	const handleOpenEditModal = (meal: MealLogDTO) => {
-		setEditingMeal(meal)
-		setEditMealName(meal.name)
-		setEditMealTime(meal.time)
-	}
-
-	const handleUpdateMeal = () => {
-		if (!editingMeal || !editMealName.trim()) return
-		updateMealLogMutation.mutate({
-			id: editingMeal.id,
-			name: editMealName,
-			time: editMealTime,
-		})
-	}
-
-	const handleDeleteMeal = () => {
-		if (!editingMeal) return
-		modals.openConfirmModal({
-			title: 'Excluir Refeição',
-			centered: true,
-			children: (
-				<Text size="sm">Tem certeza que deseja excluir esta refeição? Esta ação não pode ser desfeita.</Text>
-			),
-			labels: { confirm: 'Excluir', cancel: 'Cancelar' },
-			confirmProps: { color: 'red' },
-			onConfirm: () => deleteMealLogMutation.mutate(editingMeal.id),
-		})
 	}
 
 	const handleUpdateWater = (amount: number) => {
@@ -241,7 +181,7 @@ export function DietLogPage() {
 	const weekDays = getWeekDays()
 
 	// Calculate current daily macro totals from logged meals
-	const loggedMeals = activeLog?.meals || []
+	const loggedMeals = [...(activeLog?.meals || [])].sort((a, b) => a.time.localeCompare(b.time))
 	const dietTotals = NutritionLogic.calculateDietMacros(
 		loggedMeals.map((meal: MealLogDTO) => ({
 			...meal,
@@ -314,9 +254,7 @@ export function DietLogPage() {
 
 					{/* Meal Logs List */}
 					{loggedMeals.length > 0 ? (
-						loggedMeals.map((meal: MealLogDTO, idx: number) => (
-							<MealCard key={idx} meal={meal} onEditClick={handleOpenEditModal} />
-						))
+						loggedMeals.map((meal: MealLogDTO, idx: number) => <MealCard key={idx} meal={meal} />)
 					) : (
 						<Paper withBorder p="xl" radius="md" shadow="sm" style={{ textAlign: 'center' }}>
 							<Text c="dimmed" size="sm">
@@ -364,46 +302,6 @@ export function DietLogPage() {
 					>
 						Adicionar
 					</Button>
-				</Stack>
-			</Modal>
-
-			{/* Modal to Edit/Delete Meal Log */}
-			<Modal
-				opened={editingMeal !== null}
-				onClose={() => setEditingMeal(null)}
-				title="Editar Refeição"
-				centered
-				radius="md"
-			>
-				<Stack gap="md">
-					<TextInput
-						label="Nome da Refeição"
-						placeholder="Ex: Café da Manhã, Almoço"
-						required
-						value={editMealName}
-						onChange={(e) => setEditMealName(e.currentTarget.value)}
-					/>
-					<TextInput
-						label="Horário"
-						placeholder="Ex: 08:00, 12:00"
-						required
-						value={editMealTime}
-						onChange={(e) => setEditMealTime(e.currentTarget.value)}
-					/>
-					<Group grow gap="sm" mt="xs">
-						<Button
-							color="red"
-							variant="outline"
-							leftSection={<Trash2 size={16} />}
-							onClick={handleDeleteMeal}
-							loading={deleteMealLogMutation.isPending}
-						>
-							Excluir
-						</Button>
-						<Button onClick={handleUpdateMeal} loading={updateMealLogMutation.isPending}>
-							Salvar
-						</Button>
-					</Group>
 				</Stack>
 			</Modal>
 

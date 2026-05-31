@@ -1,13 +1,13 @@
-import { Paper, Stack, Group, Title, ActionIcon, Text, SimpleGrid } from '@mantine/core'
-import { Pencil } from 'lucide-react'
+import { Paper, Stack, Group, Title, Text, SimpleGrid } from '@mantine/core'
+import { useNavigate } from 'react-router-dom'
 import { NutritionLogic, type MealLogDTO, type FoodLogDTO } from '@ate-a-falha/shared'
 
 interface MealCardProps {
 	meal: MealLogDTO
-	onEditClick: (meal: MealLogDTO) => void
 }
 
-export function MealCard({ meal, onEditClick }: MealCardProps) {
+export function MealCard({ meal }: MealCardProps) {
+	const navigate = useNavigate()
 	const mealFoods = meal.foods || []
 	const mealTotals = NutritionLogic.calculateMealMacros(
 		mealFoods.map((f: FoodLogDTO) => ({
@@ -22,16 +22,23 @@ export function MealCard({ meal, onEditClick }: MealCardProps) {
 	)
 
 	return (
-		<Paper withBorder p="md" radius="md" shadow="sm">
+		<Paper
+			withBorder
+			p="md"
+			radius="md"
+			shadow="sm"
+			style={{ cursor: 'pointer' }}
+			onClick={() => navigate(`/nutrition/meals/${meal.id}`)}
+		>
 			<Stack gap="xs">
 				<Group justify="space-between" align="center">
-					<Group gap="xs">
+					<Group gap="xs" align="center">
 						<Title order={4} size="h5">
 							{meal.name}
 						</Title>
-						<ActionIcon variant="subtle" size="xs" color="gray" onClick={() => onEditClick(meal)}>
-							<Pencil size={12} />
-						</ActionIcon>
+						<Text size="xs" c="dimmed" fw={500} style={{ alignSelf: 'center', marginTop: '2px' }}>
+							({meal.time})
+						</Text>
 					</Group>
 					<Text fw={700} size="sm" c="dimmed">
 						{mealTotals.calories.toFixed(0)} Kal
@@ -42,7 +49,7 @@ export function MealCard({ meal, onEditClick }: MealCardProps) {
 						<Text size="xs" c="dimmed">
 							Prot
 						</Text>
-						<Text size="xs" fw={700}>
+						<Text size="xs" fw={700} c="red.6">
 							{mealTotals.proteins.toFixed(0)}g
 						</Text>
 					</Stack>
@@ -50,7 +57,7 @@ export function MealCard({ meal, onEditClick }: MealCardProps) {
 						<Text size="xs" c="dimmed">
 							Carb
 						</Text>
-						<Text size="xs" fw={700}>
+						<Text size="xs" fw={700} c="yellow.5">
 							{mealTotals.carbohydrates.toFixed(0)}g
 						</Text>
 					</Stack>
@@ -58,7 +65,7 @@ export function MealCard({ meal, onEditClick }: MealCardProps) {
 						<Text size="xs" c="dimmed">
 							Gord
 						</Text>
-						<Text size="xs" fw={700}>
+						<Text size="xs" fw={700} c="green.6">
 							{mealTotals.fats.toFixed(0)}g
 						</Text>
 					</Stack>
@@ -66,7 +73,7 @@ export function MealCard({ meal, onEditClick }: MealCardProps) {
 						<Text size="xs" c="dimmed">
 							Fibr
 						</Text>
-						<Text size="xs" fw={700}>
+						<Text size="xs" fw={700} c="teal.5">
 							{mealTotals.fiber.toFixed(0)}g
 						</Text>
 					</Stack>
