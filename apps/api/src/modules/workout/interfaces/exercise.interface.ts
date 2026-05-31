@@ -1,4 +1,9 @@
-import { type CreateExerciseDTO, type UpdateExerciseDTO, type SearchExerciseDTO, type Result } from '@ate-a-falha/shared'
+import {
+	type CreateExerciseDTO,
+	type UpdateExerciseDTO,
+	type SearchExerciseDTO,
+	type Result,
+} from '@ate-a-falha/shared'
 import { type ExerciseFull } from '@ate-a-falha/database'
 
 export interface IExerciseRepository {

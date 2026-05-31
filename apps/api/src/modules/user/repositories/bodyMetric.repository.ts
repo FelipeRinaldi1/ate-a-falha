@@ -12,7 +12,10 @@ import {
 import { type BodyMetricFull } from '@ate-a-falha/database'
 
 export class BodyMetricRepository implements IBodyMetricRepository {
-	async create(data: CreateBodyMetricDTO & { bmi: number; bmr: number; tdee: number }, userId: string): Promise<Result<BodyMetricFull>> {
+	async create(
+		data: CreateBodyMetricDTO & { bmi: number; bmr: number; tdee: number },
+		userId: string
+	): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.create({
 				data: { ...data, userId },
@@ -47,7 +50,11 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		return result
 	}
 
-	async update(id: string, data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number }, userId: string): Promise<Result<BodyMetricFull>> {
+	async update(
+		id: string,
+		data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number },
+		userId: string
+	): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.update({
 				where: { id, userId },

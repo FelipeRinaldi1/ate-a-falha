@@ -8,7 +8,7 @@ export class FoodRepository implements IFoodRepository {
 	async create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>> {
 		const result = await safeCall(
 			prisma.food.create({
-				data: { ...data, userId },
+				data: { ...data, calories: data.calories as number, userId: userId ?? null },
 				include: { foodInMeals: true },
 			})
 		)

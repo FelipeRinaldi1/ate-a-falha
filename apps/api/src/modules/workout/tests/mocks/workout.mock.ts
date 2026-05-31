@@ -1,4 +1,10 @@
-import type { CreatePlanDTO, CreateWorkoutDTO, CreateWorkoutExerciseDTO, CreateSetDTO, CreateExerciseDTO } from '@ate-a-falha/shared'
+import type {
+	CreatePlanDTO,
+	CreateWorkoutDTO,
+	CreateWorkoutExerciseDTO,
+	CreateSetDTO,
+	CreateExerciseDTO,
+} from '@ate-a-falha/shared'
 
 export const getCreatePlanMock = (overrides?: Partial<CreatePlanDTO>): CreatePlanDTO => {
 	return {
@@ -15,7 +21,10 @@ export const getCreateWorkoutMock = (overrides?: Partial<CreateWorkoutDTO>): Cre
 	}
 }
 
-export const getCreateWorkoutExerciseMock = (exerciseId: string, overrides?: Partial<CreateWorkoutExerciseDTO>): CreateWorkoutExerciseDTO & { exerciseId: string } => {
+export const getCreateWorkoutExerciseMock = (
+	exerciseId: string,
+	overrides?: Partial<CreateWorkoutExerciseDTO>
+): CreateWorkoutExerciseDTO & { exerciseId: string } => {
 	return {
 		exerciseId,
 		orderIndex: 0,
@@ -40,7 +49,12 @@ export const getCreateExerciseMock = (overrides?: Partial<CreateExerciseDTO>): C
 		externalId: `barbell-bench-press-${rand}`,
 		primaryMuscles: ['chest'],
 		secondaryMuscles: ['triceps', 'front-deltoids'],
-		instructions: ['Lie on a flat bench', 'Unrack the barbell', 'Lower the barbell to your chest', 'Push it back up'],
+		instructions: [
+			'Lie on a flat bench',
+			'Unrack the barbell',
+			'Lower the barbell to your chest',
+			'Push it back up',
+		],
 		category: 'strength',
 		images: [],
 		...overrides,

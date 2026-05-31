@@ -43,7 +43,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			}
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			expect(result).toEqual({
 				calories: 165,
 				carbohydrates: 0,
@@ -64,7 +64,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			}
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			// Expected for Sweet Potato (150g):
 			// calories: 86 * 1.5 = 129
 			// carbohydrate: 20.1 * 1.5 = 30.15
@@ -100,7 +100,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			}
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			// Factor: 0.33
 			// calories: 100 * 0.33 = 33 -> 33
 			// carbohydrate: 10.333 * 0.33 = 3.40989 -> 3.41
@@ -127,7 +127,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			}
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			expect(result).toEqual({
 				calories: 0,
 				carbohydrates: 0,
@@ -148,7 +148,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			}
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			expect(result).toEqual({
 				calories: 0,
 				carbohydrates: 0,
@@ -168,7 +168,7 @@ describe('Nutrition Logic tests', () => {
 				updatedAt: new Date(),
 			} as unknown as FoodInMealDTO
 
-			const result = NutritionLogic.calculateMacros(foodInMeal)
+			const result = NutritionLogic.calculateFoodInMealMacros(foodInMeal)
 			expect(result).toEqual({
 				calories: 0,
 				carbohydrates: 0,
@@ -404,6 +404,75 @@ describe('Nutrition Logic tests', () => {
 				proteins: 0,
 				fats: 0,
 				fiber: 0,
+			})
+		})
+	})
+
+	describe('calculateCalories', () => {
+		test('Should calculate calories correctly using TACO Atwater formula (excluding fiber)', () => {
+			// protein * 4 + carb * 4 + lipids * 9
+			// 10 * 4 + 20 * 4 + 5 * 9 = 40 + 80 + 45 = 165
+			const result = NutritionLogic.calculateCalories(10, 20, 5, 4)
+			expect(result).toBe(165)
+		})
+
+		test('Should handle zero values correctly', () => {
+			const result = NutritionLogic.calculateCalories(0, 0, 0, 0)
+			expect(result).toBe(0)
+		})
+	})
+
+	describe('calculateMacros', () => {
+		test('Should calculate macros object with TACO calories correctly', () => {
+			const result = NutritionLogic.calculateMacros(20, 10, 5)
+			expect(result).toEqual({
+				calories: 165,
+			})
+		})
+	})
+
+	describe('normalizeMacrosTo100g', () => {
+		test('Should scale macros correctly to 100g base', () => {
+			const mockFood = {
+				name: 'Chicken Rice',
+				protein: 15,
+				carbohydrate: 30,
+				lipids: 6,
+				fiber: 2,
+			}
+			// factor = 100 / 150 = 0.66667
+			// protein = 15 * 0.66667 = 10
+			// carbohydrate = 30 * 0.66667 = 20
+			// lipids = 6 * 0.66667 = 4
+			// fiber = 2 * 0.66667 = 1.33
+			const result = NutritionLogic.normalizeMacrosTo100g(mockFood as any, 150)
+			expect(result).toEqual({
+				name: 'Chicken Rice',
+				protein: 10,
+				carbohydrate: 20,
+				lipids: 4,
+				fiber: 1.33,
+			})
+		})
+	})
+
+	describe('normalizeMacros', () => {
+		test('Should scale macros and calculate calories under TACO rules', () => {
+			// quantity: 150g
+			// factor: 0.66667
+			// protein: 15 -> 10
+			// carbohydrate: 30 -> 20
+			// lipids: 6 -> 4
+			// fiber: 2 -> 1.33
+			// calories: 10 * 4 + 20 * 4 + 4 * 9 = 40 + 80 + 36 = 156
+			const result = NutritionLogic.normalizeMacros('Chicken Rice', 150, 15, 30, 6, 2)
+			expect(result).toEqual({
+				name: 'Chicken Rice',
+				protein: 10,
+				carbohydrate: 20,
+				lipids: 4,
+				fiber: 1.33,
+				calories: 156,
 			})
 		})
 	})

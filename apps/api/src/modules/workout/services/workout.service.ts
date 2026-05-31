@@ -1,4 +1,10 @@
-import { type Result, failure, type CreateWorkoutDTO, type UpdateWorkoutDTO, type authenticatedUser } from '@ate-a-falha/shared'
+import {
+	type Result,
+	failure,
+	type CreateWorkoutDTO,
+	type UpdateWorkoutDTO,
+	type authenticatedUser,
+} from '@ate-a-falha/shared'
 
 import type { IWorkoutRepository } from '../interfaces/workout.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'

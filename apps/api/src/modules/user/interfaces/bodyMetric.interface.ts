@@ -7,10 +7,17 @@ import {
 import { type BodyMetricFull } from '@ate-a-falha/database'
 
 export interface IBodyMetricRepository {
-	create(data: CreateBodyMetricDTO & { bmi: number; bmr: number; tdee: number }, userId: string): Promise<Result<BodyMetricFull>>
+	create(
+		data: CreateBodyMetricDTO & { bmi: number; bmr: number; tdee: number },
+		userId: string
+	): Promise<Result<BodyMetricFull>>
 	findAll(data: BodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>>
 	findById(id: string, userId: string): Promise<Result<BodyMetricFull>>
-	update(id: string, data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number }, userId: string): Promise<Result<BodyMetricFull>>
+	update(
+		id: string,
+		data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number },
+		userId: string
+	): Promise<Result<BodyMetricFull>>
 	delete(id: string, userId: string): Promise<Result<void>>
 	countBodyMetrics(userId: string): Promise<Result<number>>
 }

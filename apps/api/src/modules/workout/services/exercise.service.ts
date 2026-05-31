@@ -1,6 +1,14 @@
 import type { IExerciseRepository } from '../interfaces/exercise.interface.js'
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import { type CreateExerciseDTO, type UpdateExerciseDTO, type SearchExerciseDTO, type Result, success, failure, type authenticatedUser } from '@ate-a-falha/shared'
+import {
+	type CreateExerciseDTO,
+	type UpdateExerciseDTO,
+	type SearchExerciseDTO,
+	type Result,
+	success,
+	failure,
+	type authenticatedUser,
+} from '@ate-a-falha/shared'
 import { type ExerciseFull } from '@ate-a-falha/database'
 
 export class ExerciseService {

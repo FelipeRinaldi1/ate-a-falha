@@ -27,4 +27,3 @@ export * from './schemas/workout/workoutExercise.schema.js'
 // Logic
 export { BodyMetricLogic } from './logic/bodyMetric.logic.js'
 export { NutritionLogic } from './logic/nutrition.logic.js'
-

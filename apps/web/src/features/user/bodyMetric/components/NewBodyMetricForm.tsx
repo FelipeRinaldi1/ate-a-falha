@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import { api } from '../../../api/axiosInstance'
+import { api } from '../../../../api/axiosInstance'
 import { Button, NumberInput, Paper, Select, Stack, Loader, Center } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../../features/user/hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 interface BodyMetric {
 	id: string
@@ -17,11 +16,10 @@ interface BodyMetric {
 	createdAt: string
 }
 
-export function EditBodyMetricsForm() {
+export function NewBodyMetricForm() {
 	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
-	const [metricId, setMetricId] = useState<string | null>(null)
 
 	const form = useForm<CreateBodyMetricDTO>({
 		initialValues: {
@@ -40,9 +38,8 @@ export function EditBodyMetricsForm() {
 			const response = await api.get('/users/body-metrics')
 			const latest = response.data[0]
 			if (latest) {
-				setMetricId(latest.id)
 				form.setValues({
-					weight: latest.weight,
+					weight: 0, // Force user to enter new weight
 					height: latest.height,
 					activityLevel: latest.activityLevel,
 					bodyFat: latest.bodyFat ?? 0,
@@ -55,36 +52,16 @@ export function EditBodyMetricsForm() {
 
 	const mutation = useMutation({
 		mutationFn: (data: CreateBodyMetricDTO) => {
-			if (!metricId) {
-				// If no metric exists, fall back to POST
-				return api.post('/users/body-metrics', data)
-			}
-			return api.patch(`/users/body-metrics/${metricId}`, data)
+			return api.post('/users/body-metrics', data)
 		},
-		onSuccess: async (response) => {
+		onSuccess: async (response: any) => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			console.log('Update body-metrics success:', response.data)
+			console.log('Register new body-metric success:', response.data)
 			navigate('/profile')
 		},
 		onError: (error) => {
-			console.error('Update body-metrics error:', error)
-		},
-	})
-
-	const deleteMutation = useMutation({
-		mutationFn: () => {
-			if (!metricId) return Promise.reject(new Error('Nenhum registro para excluir'))
-			return api.delete(`/users/body-metrics/${metricId}`)
-		},
-		onSuccess: async () => {
-			await refreshUser()
-			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			console.log('Delete body-metrics success')
-			navigate('/profile')
-		},
-		onError: (error) => {
-			console.error('Delete body-metrics error:', error)
+			console.error('Register new body-metric error:', error)
 		},
 	})
 
@@ -101,21 +78,21 @@ export function EditBodyMetricsForm() {
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack gap="md">
 					<NumberInput
-						label="Altura (cm)"
+						label="Peso Atual (kg)"
+						placeholder="Digite seu peso"
+						required
+						min={1}
+						{...form.getInputProps('weight')}
+					></NumberInput>
+					<NumberInput
+						label="Altura (cm) - Prefixado"
 						placeholder="175cm"
 						required
 						min={1}
 						{...form.getInputProps('height')}
 					></NumberInput>
-					<NumberInput
-						label="Peso (kg)"
-						placeholder="60kg"
-						required
-						min={1}
-						{...form.getInputProps('weight')}
-					></NumberInput>
 					<Select
-						label="Nível de atividade"
+						label="Nível de atividade - Prefixado"
 						placeholder="Selecione"
 						data={[
 							{ value: '0', label: 'Sedentário' },
@@ -130,14 +107,14 @@ export function EditBodyMetricsForm() {
 						onChange={(val) => form.setFieldValue('activityLevel', Number(val))}
 					></Select>
 					<NumberInput
-						label="% de Gordura Corporal"
+						label="% de Gordura Corporal (Opcional)"
 						placeholder="15"
 						min={0}
 						max={50}
 						{...form.getInputProps('bodyFat')}
 					></NumberInput>
 					<NumberInput
-						label="% de Massa Muscular"
+						label="% de Massa Muscular (Opcional)"
 						placeholder="37"
 						min={0}
 						max={100}
@@ -145,24 +122,8 @@ export function EditBodyMetricsForm() {
 					></NumberInput>
 
 					<Button type="submit" loading={mutation.isPending} fullWidth mt="md">
-						Salvar Alterações
+						Registrar Pesagem
 					</Button>
-
-					{metricId && (
-						<Button
-							variant="outline"
-							color="red"
-							onClick={() => {
-								if (window.confirm('Deseja realmente excluir este registro de métrica corporal?')) {
-									deleteMutation.mutate()
-								}
-							}}
-							loading={deleteMutation.isPending}
-							fullWidth
-						>
-							Excluir Métricas
-						</Button>
-					)}
 				</Stack>
 			</form>
 		</Paper>

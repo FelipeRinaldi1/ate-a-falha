@@ -1,5 +1,11 @@
 import { prisma, safeCall, type WorkoutExerciseFull } from '@ate-a-falha/database'
-import { type Result, failure, success, type CreateWorkoutExerciseDTO, type UpdateWorkoutExerciseDTO } from '@ate-a-falha/shared'
+import {
+	type Result,
+	failure,
+	success,
+	type CreateWorkoutExerciseDTO,
+	type UpdateWorkoutExerciseDTO,
+} from '@ate-a-falha/shared'
 
 import type { IWorkoutExerciseRepository } from '../interfaces/workoutExercise.interface.js'
 

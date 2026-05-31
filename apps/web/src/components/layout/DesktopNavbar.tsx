@@ -17,7 +17,7 @@ export function DesktopNavbar() {
 			<Button variant="subtle" justify="left" onClick={() => navigate('/profile')}>
 				Perfil
 			</Button>
-			<Button variant="subtle" justify="left">
+			<Button variant="subtle" justify="left" onClick={() => navigate('/nutrition')}>
 				Dieta
 			</Button>
 
@@ -35,4 +35,3 @@ export function DesktopNavbar() {
 		</Stack>
 	)
 }
-

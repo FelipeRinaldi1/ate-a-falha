@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [react()],
 		resolve: {
-			tsconfigPaths: true
+			tsconfigPaths: true,
 		},
 		server: {
 			watch: {
