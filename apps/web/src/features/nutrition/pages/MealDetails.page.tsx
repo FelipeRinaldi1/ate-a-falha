@@ -174,14 +174,12 @@ export function MealDetailsPage() {
 		>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
-					{/* Subtitle / Name and Time of the meal centered */}
 					<Center>
 						<Title order={2} size="h3" fw={700} c="bright" style={{ letterSpacing: '-0.5px' }}>
 							{meal.name} ({meal.time})
 						</Title>
 					</Center>
 
-					{/* 1. Meal totals summary card */}
 					<Paper withBorder p="md" shadow="sm" radius="md" bg="var(--mantine-color-dark-8)">
 						<Stack gap="xs">
 							<Center>
@@ -238,7 +236,6 @@ export function MealDetailsPage() {
 								return (
 									<Paper key={item.id} withBorder p="md" radius="md" shadow="xs">
 										<Stack gap="xs">
-											{/* Header row: name+portion left, kcal+actions right */}
 											<Group justify="space-between" align="flex-start" wrap="nowrap">
 												<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
 													<Text fw={700} size="sm" style={{ wordBreak: 'break-word' }}>
