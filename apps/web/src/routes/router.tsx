@@ -9,6 +9,8 @@ import { EditMetricsPage } from '../features/user/bodyMetric/pages/EditMetrics.p
 import { NewMetricPage } from '../features/user/bodyMetric/pages/NewMetric.page'
 import { MetricsEvolutionPage } from '../features/user/bodyMetric/pages/MetricsEvolution.page'
 import { CreateFoodPage } from '../features/nutrition/pages/CreateFood.page'
+import { DietLogPage } from '../features/nutrition/pages/DietLog.page'
+import { DietGoalsPage } from '../features/nutrition/pages/DietGoals.page'
 
 export const router = createBrowserRouter([
 	{
@@ -72,10 +74,26 @@ export const router = createBrowserRouter([
 		),
 	},
 	{
+		path: '/nutrition/goals',
+		element: (
+			<ProtectedRoute>
+				<DietGoalsPage />
+			</ProtectedRoute>
+		),
+	},
+	{
 		path: '/nutrition/create-food',
 		element: (
 			<ProtectedRoute>
 				<CreateFoodPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/nutrition',
+		element: (
+			<ProtectedRoute>
+				<DietLogPage />
 			</ProtectedRoute>
 		),
 	},

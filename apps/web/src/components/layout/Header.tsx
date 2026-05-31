@@ -1,4 +1,4 @@
-import { AppShell, Burger, Group, ActionIcon } from '@mantine/core'
+import { AppShell, Burger, Group, ActionIcon, Text } from '@mantine/core'
 import { HeaderSearch } from './HeaderSearch.js'
 import { type ReactNode } from 'react'
 import { ArrowLeft } from 'lucide-react'
@@ -9,9 +9,10 @@ interface HeaderProps {
 	showSearch?: boolean
 	actions?: ReactNode
 	onBack?: () => void
+	title?: string
 }
 
-export function Header({ opened, onToggle, showSearch = true, actions, onBack }: HeaderProps) {
+export function Header({ opened, onToggle, showSearch = true, actions, onBack, title }: HeaderProps) {
 	return (
 		<AppShell.Header>
 			<Group h="100%" px="md" align="center" justify="space-between">
@@ -24,6 +25,11 @@ export function Header({ opened, onToggle, showSearch = true, actions, onBack }:
 						<Burger opened={opened} onClick={onToggle} hiddenFrom="sm" size="sm" />
 					)}
 					{showSearch && <HeaderSearch />}
+					{!showSearch && title && (
+						<Text fw={700} size="md">
+							{title}
+						</Text>
+					)}
 				</Group>
 
 				{actions && <Group>{actions}</Group>}

@@ -24,7 +24,7 @@ export function Footer() {
 						</Text>
 					</Stack>
 				</UnstyledButton>
-				<UnstyledButton h="100%" onClick={() => navigate('/nutrition/create-food')}>
+				<UnstyledButton h="100%" onClick={() => navigate('/nutrition')}>
 					<Stack h="100%" justify="center" align="center" gap={4}>
 						<Apple size="24" />
 						<Text size="xs" lh={1}>
