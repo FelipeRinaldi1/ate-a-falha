@@ -1,7 +1,46 @@
+import { CreateFoodDTO } from '../schemas/nutrition/food.schema.js'
 import { FoodInMealDTO } from '../schemas/nutrition/foodInMeal.schema.js'
 import { MealDTO } from '../schemas/nutrition/meal.schema.js'
+
 export class NutritionLogic {
-	static calculateMacros(foodInMeal: FoodInMealDTO) {
+	static calculateCalories(protein: number, carbohydrate: number, lipids: number, _fiber?: number): number {
+		return Number((protein * 4 + carbohydrate * 4 + lipids * 9).toFixed(2))
+	}
+
+	static calculateMacros(carbohydrates: number, proteins: number, lipds: number) {
+		return {
+			calories: this.calculateCalories(proteins, carbohydrates, lipds),
+		}
+	}
+
+	static normalizeMacrosTo100g(food: CreateFoodDTO, weight: number) {
+		const factor = 100 / weight
+
+		return {
+			name: food.name,
+			protein: Number((food.protein * factor).toFixed(2)),
+			carbohydrate: Number((food.carbohydrate * factor).toFixed(2)),
+			lipids: Number((food.lipids * factor).toFixed(2)),
+			fiber: Number((food.fiber * factor).toFixed(2)),
+		}
+	}
+
+	static normalizeMacros(
+		name: string,
+		quantity: number,
+		protein: number,
+		carbohydrate: number,
+		lipids: number,
+		fiber: number
+	) {
+		const normalized = this.normalizeMacrosTo100g({ name, protein, carbohydrate, lipids, fiber }, quantity)
+		return {
+			...normalized,
+			calories: this.calculateCalories(normalized.protein, normalized.carbohydrate, normalized.lipids),
+		}
+	}
+
+	static calculateFoodInMealMacros(foodInMeal: FoodInMealDTO) {
 		const { food, quantity } = foodInMeal
 
 		if (!quantity || quantity <= 0) {
@@ -22,7 +61,7 @@ export class NutritionLogic {
 	static calculateMealMacros(foodsInMeal: FoodInMealDTO[]) {
 		const initialValues = { calories: 0, carbohydrates: 0, proteins: 0, fats: 0, fiber: 0 }
 		const totals = (foodsInMeal || []).reduce((accumulator, item) => {
-			const foodMacros = this.calculateMacros(item)
+			const foodMacros = this.calculateFoodInMealMacros(item)
 
 			return {
 				calories: accumulator.calories + foodMacros.calories,

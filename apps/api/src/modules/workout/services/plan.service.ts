@@ -1,4 +1,10 @@
-import { type CreatePlanDTO, type UpdatePlanDTO, failure, type Result, type authenticatedUser } from '@ate-a-falha/shared'
+import {
+	type CreatePlanDTO,
+	type UpdatePlanDTO,
+	failure,
+	type Result,
+	type authenticatedUser,
+} from '@ate-a-falha/shared'
 import { type PlanFull } from '@ate-a-falha/database'
 
 import type { IPlanRepository } from '../interfaces/plan.interface.js'

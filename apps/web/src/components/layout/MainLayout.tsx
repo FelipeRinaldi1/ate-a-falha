@@ -10,9 +10,10 @@ interface MainLayoutProps {
 	children?: ReactNode
 	showSearch?: boolean
 	actions?: ReactNode
+	onBack?: () => void
 }
 
-export function MainLayout({ children, showSearch = true, actions }: MainLayoutProps) {
+export function MainLayout({ children, showSearch = true, actions, onBack }: MainLayoutProps) {
 	const [opened, { toggle, close }] = useDisclosure()
 
 	return (
@@ -22,7 +23,7 @@ export function MainLayout({ children, showSearch = true, actions }: MainLayoutP
 			navbar={{ width: { base: '70vw', sm: 200, lg: 300 }, breakpoint: 'sm', collapsed: { mobile: true } }}
 			footer={{ height: { base: 60, sm: 0 } }}
 		>
-			<Header opened={opened} onToggle={toggle} showSearch={showSearch} actions={actions} />
+			<Header opened={opened} onToggle={toggle} showSearch={showSearch} actions={actions} onBack={onBack} />
 
 			<AppShell.Navbar>
 				<DesktopNavbar />
@@ -32,9 +33,7 @@ export function MainLayout({ children, showSearch = true, actions }: MainLayoutP
 				<MobileNavbar />
 			</Drawer>
 
-			<AppShell.Main>
-				{children}
-			</AppShell.Main>
+			<AppShell.Main>{children}</AppShell.Main>
 
 			<Footer />
 		</AppShell>

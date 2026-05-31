@@ -3,11 +3,12 @@ import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
 import { HomePage } from '../pages/Home.page'
 import { LoginPage } from '../features/user/pages/Login.page'
 import { RegisterPage } from '../features/user/pages/Register.page'
-import { BodyMetricRegisterPage } from '../features/bodyMetric/pages/SetupMetrics.page'
+import { BodyMetricRegisterPage } from '../features/user/bodyMetric/pages/SetupMetrics.page'
 import { ProfilePage } from '../features/user/pages/Profile.page'
-import { EditMetricsPage } from '../features/bodyMetric/pages/EditMetrics.page'
-import { NewMetricPage } from '../features/bodyMetric/pages/NewMetric.page'
-import { MetricsEvolutionPage } from '../features/bodyMetric/pages/MetricsEvolution.page'
+import { EditMetricsPage } from '../features/user/bodyMetric/pages/EditMetrics.page'
+import { NewMetricPage } from '../features/user/bodyMetric/pages/NewMetric.page'
+import { MetricsEvolutionPage } from '../features/user/bodyMetric/pages/MetricsEvolution.page'
+import { CreateFoodPage } from '../features/nutrition/pages/CreateFood.page'
 
 export const router = createBrowserRouter([
 	{
@@ -67,6 +68,14 @@ export const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<BodyMetricRegisterPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/nutrition/create-food',
+		element: (
+			<ProtectedRoute>
+				<CreateFoodPage />
 			</ProtectedRoute>
 		),
 	},

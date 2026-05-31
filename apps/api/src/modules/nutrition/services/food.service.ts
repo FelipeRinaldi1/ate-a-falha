@@ -1,4 +1,13 @@
-import { type CreateFoodDTO, type FoodSearchDTO, type UpdateFoodDTO, type Result, success, failure, type authenticatedUser } from '@ate-a-falha/shared'
+import {
+	type CreateFoodDTO,
+	type FoodSearchDTO,
+	type UpdateFoodDTO,
+	type Result,
+	success,
+	failure,
+	type authenticatedUser,
+	NutritionLogic,
+} from '@ate-a-falha/shared'
 import { type FoodFull } from '@ate-a-falha/database'
 
 import type { IFoodRepository } from '../interfaces/food.interfaces.js'
@@ -14,7 +23,16 @@ export class FoodService {
 	async create(data: CreateFoodDTO, authUser: authenticatedUser): Promise<Result<FoodFull>> {
 		const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
 
-		const result = await this.foodRepository.create(data, ownerId)
+		const calories =
+			data.calories ??
+			NutritionLogic.calculateCalories(
+				data.protein || 0,
+				data.carbohydrate || 0,
+				data.lipids || 0,
+				data.fiber || 0
+			)
+
+		const result = await this.foodRepository.create({ ...data, calories }, ownerId)
 		if (result.isFailure()) {
 			return failure(result.error)
 		}

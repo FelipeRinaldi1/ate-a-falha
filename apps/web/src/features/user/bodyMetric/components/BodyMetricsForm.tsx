@@ -1,11 +1,11 @@
-import { api } from '../../../api/axiosInstance'
+import { api } from '../../../../api/axiosInstance'
 import { Button, NumberInput, Paper, Select, Stack } from '@mantine/core'
 
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../../features/user/hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 export function BodyMetricRegisterForm() {
 	const navigate = useNavigate()
@@ -25,7 +25,7 @@ export function BodyMetricRegisterForm() {
 		mutationFn: (data: CreateBodyMetricDTO) => {
 			return api.post('/users/body-metrics', data)
 		},
-		onSuccess: async (response) => {
+		onSuccess: async (response: any) => {
 			await refreshUser()
 			console.log('Register body-metrics success:', response.data)
 			navigate('/')

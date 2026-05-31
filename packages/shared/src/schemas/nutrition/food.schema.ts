@@ -13,14 +13,17 @@ export const foodSchema = z.object({
 	updatedAt: z.date(),
 })
 
-export const createFoodSchema = foodSchema.pick({
-	name: true,
-	calories: true,
-	carbohydrate: true,
-	protein: true,
-	lipids: true,
-	fiber: true,
-})
+export const createFoodSchema = foodSchema
+	.pick({
+		name: true,
+		carbohydrate: true,
+		protein: true,
+		lipids: true,
+		fiber: true,
+	})
+	.extend({
+		calories: z.number().optional(),
+	})
 
 export const updateFoodSchema = createFoodSchema.partial()
 

@@ -45,10 +45,7 @@ export class BodyMetricService {
 		)
 		const tdee = BodyMetricLogic.calculateTDEE(bmr, data.activityLevel)
 
-		const result = await this.bodyMetricRepository.create(
-			{ ...data, bmi, bmr, tdee },
-			authUser.id
-		)
+		const result = await this.bodyMetricRepository.create({ ...data, bmi, bmr, tdee }, authUser.id)
 
 		if (result.isFailure()) {
 			return failure(result.error)
@@ -99,19 +96,10 @@ export class BodyMetricService {
 
 		const age = this.calculateAge(user.birthDate)
 		const bmi = BodyMetricLogic.calculateBMI(weight, height / 100)
-		const bmr = BodyMetricLogic.calculateBMR(
-			user.gender === 'FEMALE' ? 'FEMALE' : 'MALE',
-			weight,
-			height,
-			age
-		)
+		const bmr = BodyMetricLogic.calculateBMR(user.gender === 'FEMALE' ? 'FEMALE' : 'MALE', weight, height, age)
 		const tdee = BodyMetricLogic.calculateTDEE(bmr, activityLevel)
 
-		const result = await this.bodyMetricRepository.update(
-			id,
-			{ ...data, bmi, bmr, tdee },
-			authUser.id
-		)
+		const result = await this.bodyMetricRepository.update(id, { ...data, bmi, bmr, tdee }, authUser.id)
 
 		if (result.isFailure())
 			return failure({

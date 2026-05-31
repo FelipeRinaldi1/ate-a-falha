@@ -62,9 +62,7 @@ describe('Workout Plan Integration Tests', () => {
 		test('Should require authentication', async () => {
 			const planData = getCreatePlanMock()
 
-			const result = await request(app)
-				.post(`${BASE_API_URL}/workout/plans`)
-				.send(planData)
+			const result = await request(app).post(`${BASE_API_URL}/workout/plans`).send(planData)
 
 			expect(result.status).toBe(401)
 		})

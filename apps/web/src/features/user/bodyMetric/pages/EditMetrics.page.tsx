@@ -1,9 +1,9 @@
 import { Center, Container, Title, Button, Stack, Group } from '@mantine/core'
 import { ArrowLeft } from 'lucide-react'
-import { NewBodyMetricForm } from '../components/NewBodyMetricForm'
+import { EditBodyMetricsForm } from '../components/EditBodyMetricsForm'
 import { useNavigate } from 'react-router-dom'
 
-export function NewMetricPage() {
+export function EditMetricsPage() {
 	const navigate = useNavigate()
 
 	return (
@@ -11,9 +11,9 @@ export function NewMetricPage() {
 			<Container size="xs" w="100%">
 				<Stack gap="lg">
 					<Group>
-						<Button 
-							variant="subtle" 
-							leftSection={<ArrowLeft size={16} />} 
+						<Button
+							variant="subtle"
+							leftSection={<ArrowLeft size={16} />}
 							onClick={() => navigate('/profile')}
 							size="xs"
 							color="gray"
@@ -21,12 +21,12 @@ export function NewMetricPage() {
 							Voltar ao Perfil
 						</Button>
 					</Group>
-					
+
 					<Title order={2} style={{ textAlign: 'center', letterSpacing: '-0.5px' }}>
-						Registrar Nova Pesagem
+						Editar Métricas Corporais
 					</Title>
-					
-					<NewBodyMetricForm />
+
+					<EditBodyMetricsForm />
 				</Stack>
 			</Container>
 		</Center>

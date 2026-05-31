@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { api } from '../../../api/axiosInstance'
+import { api } from '../../../../api/axiosInstance'
 import { Center, Container, Title, Button, Stack, Group, SegmentedControl, Paper, Loader, Text } from '@mantine/core'
 import { ArrowLeft, TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { LineChart } from '@mantine/charts'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
-import { useAuth } from '../../user/hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth'
 import dayjs from 'dayjs'
 import { useQuery } from '@tanstack/react-query'
 
