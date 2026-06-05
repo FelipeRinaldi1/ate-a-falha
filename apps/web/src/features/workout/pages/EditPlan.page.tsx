@@ -24,7 +24,7 @@ import {
 import { Plus, Trash2, Search } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
-import { type ExerciseDTO } from '@ate-a-falha/shared'
+import { type ExerciseDTO, type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
 
 type DivisionType = 'A' | 'AB' | 'ABC' | 'ABCD' | 'ABCDE' | 'ABCDEF'
 
@@ -90,13 +90,15 @@ export function EditPlanPage() {
 	const [editingSets, setEditingSets] = useState<{ id?: string; setNumber: number; repetitions: number; weight: number; restTimeSeconds: number }[]>([])
 
 	// Fetch Plan details (includes workouts, exercises, sets)
-	const { data: plan, isLoading } = useQuery<any>({
+	const { data: plan, isLoading } = useQuery<PlanDTO>({
 		queryKey: ['workout-plans-detail', id],
 		queryFn: async () => {
 			const res = await api.get(`/workout/plans/${id}`)
 			return res.data
 		},
 		enabled: !!id,
+		refetchOnWindowFocus: false,
+		staleTime: 300000, // 5 minutes
 	})
 
 	// Fetch Exercise Catalog for adding exercises
@@ -114,7 +116,7 @@ export function EditPlanPage() {
 			setPlanName(plan.name)
 			
 			// Detect division based on existing workouts
-			const days = plan.workouts?.map((w: any) => w.day) || []
+			const days = plan.workouts?.map((w: WorkoutDTO) => w.day) || []
 			let maxDiv: DivisionType = 'A'
 			if (days.includes('F')) maxDiv = 'ABCDEF'
 			else if (days.includes('E')) maxDiv = 'ABCDE'
@@ -126,7 +128,7 @@ export function EditPlanPage() {
 
 			const names: Record<string, string> = {}
 			const weekDays: Record<string, string | null> = {}
-			plan.workouts?.forEach((w: any) => {
+			plan.workouts?.forEach((w: WorkoutDTO) => {
 				names[w.day] = w.name || ''
 				weekDays[w.day] = w.weekDay || null
 			})
@@ -144,7 +146,7 @@ export function EditPlanPage() {
 			// 2. Update all active workouts names and weekDays
 			const activeDays = DIVISION_DAYS[selectedDivision]
 			for (const day of activeDays) {
-				const existingWorkout = plan.workouts?.find((w: any) => w.day === day)
+				const existingWorkout = plan?.workouts?.find((w: WorkoutDTO) => w.day === day)
 				const wName = workoutNames[day] || `Treino ${day}`
 				const wWeekDay = workoutWeekDays[day] || null
 				if (existingWorkout) {
@@ -165,7 +167,7 @@ export function EditPlanPage() {
 	// Mutation: Add Exercise to Workout
 	const addExerciseMutation = useMutation({
 		mutationFn: async ({ day, exerciseId }: { day: string; exerciseId: string }) => {
-			let workout = plan.workouts?.find((w: any) => w.day === day)
+			let workout = plan?.workouts?.find((w: WorkoutDTO) => w.day === day)
 			
 			// If workout doesn't exist yet, create it first
 			if (!workout) {
@@ -175,6 +177,8 @@ export function EditPlanPage() {
 				})
 				workout = res.data
 			}
+
+			if (!workout) return
 
 			// Add the exercise
 			const orderIndex = workout.workoutExercises?.length || 0
@@ -242,9 +246,9 @@ export function EditPlanPage() {
 		},
 	})
 
-	const handleOpenSetsModal = (workoutExercise: any) => {
+	const handleOpenSetsModal = (workoutExercise: WorkoutExerciseDTO) => {
 		setEditingWorkoutExerciseId(workoutExercise.id)
-		const sets = workoutExercise.sets?.map((s: any) => ({
+		const sets = workoutExercise.sets?.map((s: SetDTO) => ({
 			id: s.id,
 			setNumber: s.setNumber,
 			repetitions: s.repetitions,
@@ -284,7 +288,7 @@ export function EditPlanPage() {
 		setEditingSets(updated)
 	}
 
-	const handleUpdateSetField = (index: number, field: string, value: any) => {
+	const handleUpdateSetField = (index: number, field: string, value: string | number) => {
 		const updated = [...editingSets]
 		updated[index] = { ...updated[index], [field]: value }
 		setEditingSets(updated)
@@ -351,7 +355,7 @@ export function EditPlanPage() {
 					{/* Workouts corresponding in order to days A-F */}
 					<Stack gap="md">
 						{activeDays.map((day) => {
-							const workout = plan.workouts?.find((w: any) => w.day === day)
+							const workout = plan.workouts?.find((w: WorkoutDTO) => w.day === day)
 							const currentWorkoutName = workoutNames[day] ?? (workout?.name || '')
 							const exercises = workout?.workoutExercises || []
 
@@ -393,7 +397,7 @@ export function EditPlanPage() {
 										{/* Workout Exercises */}
 										<Stack gap="xs" mt="xs">
 											{exercises.length > 0 ? (
-												exercises.map((we: any) => {
+												exercises.map((we: WorkoutExerciseDTO) => {
 													const imagePath = we.exercise?.images?.[0]
 													const exerciseImageUrl = imagePath
 														? `${apiBaseUrl}/assets/exercises/${imagePath.endsWith('.webp') ? imagePath : imagePath.replace(/\.[^/.]+$/, '.webp')}`

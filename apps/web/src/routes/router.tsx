@@ -6,6 +6,7 @@ import { ExerciseDetailsPage } from '../features/workout/pages/ExerciseDetails.p
 import { WorkoutPlansPage } from '../features/workout/pages/WorkoutPlans.page'
 import { EditPlanPage } from '../features/workout/pages/EditPlan.page'
 import { SelectActiveWorkoutPage } from '../features/workout/pages/SelectActiveWorkout.page'
+import { ActiveWorkoutPage } from '../features/workout/pages/ActiveWorkout.page'
 import { LoginPage } from '../features/user/pages/Login.page'
 import { RegisterPage } from '../features/user/pages/Register.page'
 import { BodyMetricRegisterPage } from '../features/user/bodyMetric/pages/SetupMetrics.page'
@@ -50,6 +51,14 @@ export const router = createBrowserRouter([
 		element: (
 			<ProtectedRoute>
 				<SelectActiveWorkoutPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/active/:id',
+		element: (
+			<ProtectedRoute>
+				<ActiveWorkoutPage />
 			</ProtectedRoute>
 		),
 	},

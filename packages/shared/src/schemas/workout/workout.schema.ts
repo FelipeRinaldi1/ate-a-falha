@@ -8,7 +8,7 @@ export const workoutSchema = z.object({
 	day: z.enum(['A', 'B', 'C', 'D', 'E', 'F']),
 	weekDay: z.string().nullable().optional(),
 
-	exercises: z.array(workoutexerciseSchema).optional(),
+	workoutExercises: z.array(workoutexerciseSchema).optional(),
 
 	createdAt: z.date(),
 	updatedAt: z.date(),

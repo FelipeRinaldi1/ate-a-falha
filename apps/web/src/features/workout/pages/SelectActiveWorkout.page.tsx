@@ -24,7 +24,7 @@ export function SelectActiveWorkoutPage() {
 	const sortedWorkouts = [...workouts].sort((a: WorkoutDTO, b: WorkoutDTO) => a.day.localeCompare(b.day))
 
 	const handleStartWorkout = (workout: WorkoutDTO) => {
-		console.log('Iniciando treino:', workout.day)
+		navigate(`/workout/active/${id}?workoutId=${workout.id}`)
 	}
 
 	if (isLoading) {

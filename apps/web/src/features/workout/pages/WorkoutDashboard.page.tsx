@@ -144,7 +144,7 @@ export function WorkoutDashboardPage() {
 												variant="light"
 												mt="sm"
 												fullWidth
-												onClick={() => navigate(`/workout/active/${activePlan.id}/select`)}
+												onClick={() => navigate(`/workout/active/${activePlan.id}?workoutId=${todaysWorkout.id}`)}
 											>
 												Começar Treino Diário ({todaysWorkout.day})
 											</Button>
@@ -287,7 +287,7 @@ export function WorkoutDashboardPage() {
 						fullWidth
 						mt="xl"
 						mb="xl"
-						onClick={() => activePlan && navigate(`/workout/active/${activePlan.id}`)}
+						onClick={() => activePlan && navigate(`/workout/active/${activePlan.id}/select`)}
 						style={{
 							boxShadow: '0 8px 24px rgba(34, 139, 230, 0.3)',
 							fontWeight: 800,

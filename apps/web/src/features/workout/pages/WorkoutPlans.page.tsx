@@ -159,7 +159,7 @@ export function WorkoutPlansPage() {
 													e.stopPropagation()
 													togglePlanActiveMutation.mutate({ id: plan.id, isActive: !plan.isActive })
 												}}
-												loading={togglePlanActiveMutation.isPending}
+												loading={togglePlanActiveMutation.isPending && togglePlanActiveMutation.variables?.id === plan.id}
 											>
 												{plan.isActive ? 'Desativar' : 'Ativar'}
 											</Button>
