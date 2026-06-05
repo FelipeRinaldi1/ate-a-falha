@@ -13,6 +13,8 @@ const accessService = new WorkoutAccessControlService(accessRepo)
 const planService = new PlanService(planRepo, accessService)
 const planController = new PlanController(planService)
 
+planRouter.get('/plans/:id/export', planController.export)
+
 planRouter.use(ensureAuthenticated)
 
 planRouter.post('/plans', planController.create)
@@ -25,4 +27,7 @@ planRouter.patch('/plans/:id', planController.update)
 
 planRouter.delete('/plans/:id', planController.delete)
 
+planRouter.post('/plans/:id/import', planController.import)
+
 export { planRouter }
+

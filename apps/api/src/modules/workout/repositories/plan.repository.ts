@@ -138,4 +138,103 @@ export class PlanRepository implements IPlanRepository {
 
 		return success(result.value)
 	}
+
+	async findPublicById(id: string): Promise<Result<PlanFull>> {
+		const result = await safeCall(
+			prisma.plan.findFirstOrThrow({
+				where: {
+					id: id,
+					isExported: true,
+				},
+				include: {
+					workouts: {
+						include: {
+							workoutExercises: {
+								include: {
+									sets: true,
+									exercise: true,
+								},
+							},
+						},
+					},
+				},
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+
+		return success(result.value)
+	}
+
+	async importPlan(targetPlanId: string, userId: string): Promise<Result<PlanFull>> {
+		const targetResult = await this.findPublicById(targetPlanId)
+		if (targetResult.isFailure()) return failure(targetResult.error)
+		const targetPlan = targetResult.value
+
+		const importResult = await safeCall(
+			prisma.$transaction(async (tx) => {
+				const newPlan = await tx.plan.create({
+					data: {
+						name: `${targetPlan.name} (Importado)`,
+						goal: targetPlan.goal,
+						coverImageUrl: targetPlan.coverImageUrl,
+						coverExerciseId: targetPlan.coverExerciseId,
+						userId: userId,
+						isActive: false,
+					},
+				})
+
+				for (const w of targetPlan.workouts || []) {
+					const newWorkout = await tx.workout.create({
+						data: {
+							name: w.name,
+							day: w.day,
+							weekDay: w.weekDay,
+							planId: newPlan.id,
+						},
+					})
+
+					for (const we of w.workoutExercises || []) {
+						const newWE = await tx.workoutExercise.create({
+							data: {
+								orderIndex: we.orderIndex,
+								exerciseId: we.exerciseId,
+								workoutId: newWorkout.id,
+							},
+						})
+
+						for (const s of we.sets || []) {
+							await tx.set.create({
+								data: {
+									setNumber: s.setNumber,
+									repetitions: s.repetitions,
+									weight: s.weight,
+									restTimeSeconds: s.restTimeSeconds,
+									workoutExerciseId: newWE.id,
+								},
+							})
+						}
+					}
+				}
+
+				return tx.plan.findUniqueOrThrow({
+					where: { id: newPlan.id },
+					include: {
+						workouts: {
+							include: {
+								workoutExercises: {
+									include: {
+										sets: true,
+										exercise: true,
+									},
+								},
+							},
+						},
+					},
+				})
+			})
+		)
+
+		if (importResult.isFailure()) return failure(importResult.error)
+		return success(importResult.value)
+	}
 }

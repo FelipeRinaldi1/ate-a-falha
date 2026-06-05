@@ -20,6 +20,8 @@ import { DietGoalsPage } from '../features/nutrition/pages/DietGoals.page'
 import { MealDetailsPage } from '../features/nutrition/pages/MealDetails.page'
 import { FoodSearchPage } from '../features/nutrition/pages/FoodSearch.page'
 import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
+import { ShareWorkoutPage } from '../pages/ShareWorkout.page'
+import { ShareDietPage } from '../pages/ShareDiet.page'
 
 export const router = createBrowserRouter([
 	{
@@ -181,6 +183,14 @@ export const router = createBrowserRouter([
 				<DietLogPage />
 			</ProtectedRoute>
 		),
+	},
+	{
+		path: '/share/workout/:id',
+		element: <ShareWorkoutPage />,
+	},
+	{
+		path: '/share/diet/:id',
+		element: <ShareDietPage />,
 	},
 	{
 		path: '/',

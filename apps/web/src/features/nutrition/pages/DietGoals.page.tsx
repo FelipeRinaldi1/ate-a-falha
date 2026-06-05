@@ -17,12 +17,13 @@ import {
 	Progress,
 	Divider,
 } from '@mantine/core'
-import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
+import { Pencil, PlusCircle, Trash2, Share2 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
+import { ShareModal } from '../../../components/ShareModal'
 import { type DietDTO, type MealDTO, type FoodInMealDTO, NutritionLogic } from '@ate-a-falha/shared'
 import { DonutChart } from '@mantine/charts'
 
@@ -40,6 +41,7 @@ export function DietGoalsPage() {
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
 	const [opened, setOpened] = useState(false)
+	const [shareModalOpen, setShareModalOpen] = useState(false)
 
 	// Fetch active diet plans
 	const { data: diets = [], isLoading: isLoadingDiets } = useQuery<DietDTO[]>({
@@ -115,6 +117,16 @@ export function DietGoalsPage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['diets'] })
 			setOpened(false)
+		},
+	})
+
+	// Mutation: Toggle isExported diet
+	const toggleDietExportMutation = useMutation({
+		mutationFn: async ({ id, isExported }: { id: string; isExported: boolean }) => {
+			return api.patch(`/nutrition/diets/${id}`, { isExported })
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['diets'] })
 		},
 	})
 
@@ -334,14 +346,26 @@ export function DietGoalsPage() {
 										<Text fw={700} c="dimmed" size="sm">
 											Macronutrientes
 										</Text>
-										<Button
-											size="xs"
-											variant="light"
-											leftSection={<Pencil size={12} />}
-											onClick={handleOpenEditModal}
-										>
-											Editar
-										</Button>
+										<Group gap="xs">
+											{activeDiet && (
+												<Button
+													size="xs"
+													variant="light"
+													leftSection={<Share2 size={12} />}
+													onClick={() => setShareModalOpen(true)}
+												>
+													Compartilhar
+												</Button>
+											)}
+											<Button
+												size="xs"
+												variant="light"
+												leftSection={<Pencil size={12} />}
+												onClick={handleOpenEditModal}
+											>
+												Editar
+											</Button>
+										</Group>
 									</Group>
 
 									{/* Calories Goal Card */}
@@ -935,6 +959,23 @@ export function DietGoalsPage() {
 					</Button>
 				</Stack>
 			</Modal>
+
+			{activeDiet && (
+				<ShareModal
+					opened={shareModalOpen}
+					onClose={() => setShareModalOpen(false)}
+					resourceId={activeDiet.id}
+					resourceType="diet"
+					isExported={activeDiet.isExported ?? false}
+					onToggleExport={async (newVal) => {
+						await toggleDietExportMutation.mutateAsync({
+							id: activeDiet.id,
+							isExported: newVal,
+						})
+					}}
+					loading={toggleDietExportMutation.isPending}
+				/>
+			)}
 		</MainLayout>
 	)
 }

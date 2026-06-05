@@ -10,6 +10,7 @@ export const getCreatePlanMock = (overrides?: Partial<CreatePlanDTO>): CreatePla
 	return {
 		name: 'Standard Hypertrophy Plan',
 		goal: 'hipertrofia',
+		isExported: false,
 		...overrides,
 	}
 }

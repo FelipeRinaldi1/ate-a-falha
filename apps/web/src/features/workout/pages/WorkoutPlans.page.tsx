@@ -15,13 +15,14 @@ import {
 	Badge,
 	Image,
 } from '@mantine/core'
-import { ChevronRight, Plus, Trash2 } from 'lucide-react'
+import { ChevronRight, Plus, Trash2, Share2 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO } from '@ate-a-falha/shared'
+import { ShareModal } from '../../../components/ShareModal'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -33,6 +34,8 @@ export function WorkoutPlansPage() {
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
 	const [createModalOpen, setCreateModalOpen] = useState(false)
+	const [shareModalOpen, setShareModalOpen] = useState(false)
+	const [selectedPlanForShare, setSelectedPlanForShare] = useState<PlanDTO | null>(null)
 	const [newPlanName, setNewPlanName] = useState('')
 	const [newPlanGoal, setNewPlanGoal] = useState<'forca' | 'hipertrofia' | 'resistencia'>('hipertrofia')
 
@@ -66,6 +69,19 @@ export function WorkoutPlansPage() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
+		},
+	})
+
+	// Mutation: Toggle isExported plan
+	const togglePlanExportMutation = useMutation({
+		mutationFn: async ({ id, isExported }: { id: string; isExported: boolean }) => {
+			return api.patch(`/workout/plans/${id}`, { isExported })
+		},
+		onSuccess: (_, variables) => {
+			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
+			if (selectedPlanForShare && selectedPlanForShare.id === variables.id) {
+				setSelectedPlanForShare((prev) => prev ? { ...prev, isExported: variables.isExported } : null)
+			}
 		},
 	})
 
@@ -201,6 +217,18 @@ export function WorkoutPlansPage() {
 												</Button>
 												<ActionIcon
 													variant="subtle"
+													color="blue"
+													size="md"
+													onClick={(e) => {
+														e.stopPropagation()
+														setSelectedPlanForShare(plan)
+														setShareModalOpen(true)
+													}}
+												>
+													<Share2 size={16} />
+												</ActionIcon>
+												<ActionIcon
+													variant="subtle"
 													color="red"
 													size="md"
 													onClick={(e) => handleDeletePlan(e, plan)}
@@ -282,6 +310,26 @@ export function WorkoutPlansPage() {
 					</Button>
 				</Stack>
 			</Modal>
+
+			{selectedPlanForShare && (
+				<ShareModal
+					opened={shareModalOpen}
+					onClose={() => {
+						setShareModalOpen(false)
+						setSelectedPlanForShare(null)
+					}}
+					resourceId={selectedPlanForShare.id}
+					resourceType="workout"
+					isExported={selectedPlanForShare.isExported ?? false}
+					onToggleExport={async (newVal) => {
+						await togglePlanExportMutation.mutateAsync({
+							id: selectedPlanForShare.id,
+							isExported: newVal,
+						})
+					}}
+					loading={togglePlanExportMutation.isPending}
+				/>
+			)}
 		</MainLayout>
 	)
 }

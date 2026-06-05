@@ -10,6 +10,7 @@ export const dietSchema = z.object({
 	dailyWaterGoal: z.number().positive('Water goal must be a positive number'),
 	dailyWater: z.number().nonnegative('Water must be a nonnegative number'),
 	userId: z.uuid('Invalid User ID format'),
+	isExported: z.boolean().default(false),
 	createdAt: z.date(),
 	updatedAt: z.date(),
 })
@@ -23,6 +24,7 @@ export const createDietSchema = dietSchema.pick({
 	dailyFiberGoal: true,
 	dailyWaterGoal: true,
 	dailyWater: true,
+	isExported: true,
 })
 
 export const updateDietSchema = createDietSchema.partial()

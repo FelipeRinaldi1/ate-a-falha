@@ -99,6 +99,7 @@ model Diet {
   dailyWaterGoal   Int
   
   dailyWater       Int
+  isExported       Boolean @default(false)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
@@ -218,6 +219,7 @@ model Plan {
   goal     String  @default("hipertrofia")
   coverImageUrl String?
   coverExerciseId String?
+  isExported    Boolean @default(false)
 
   workouts Workout[]
 

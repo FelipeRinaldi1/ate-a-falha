@@ -271,4 +271,53 @@ describe('Diet Plan Integration Tests', () => {
 			expect(result.status).toBe(403)
 		})
 	})
+
+	describe('Sharing and Cloning', () => {
+		test('Should fail to export diet if isExported is false', async () => {
+			const diet = await setupTestDiet(user1Context.cookie || '', 'Private Diet')
+
+			const result = await request(app)
+				.get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`)
+				.send()
+
+			expect(result.status).toBe(404)
+		})
+
+		test('Should export diet if isExported is true (public access)', async () => {
+			const diet = await setupTestDiet(user1Context.cookie || '', 'Public Diet')
+
+			await prisma.diet.update({
+				where: { id: diet.id },
+				data: { isExported: true },
+			})
+
+			const result = await request(app)
+				.get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`)
+				.send()
+
+			expect(result.status).toBe(200)
+			expect(result.body.id).toBe(diet.id)
+			expect(result.body.isExported).toBe(true)
+		})
+
+		test('Should import diet to another user account', async () => {
+			const diet = await setupTestDiet(user1Context.cookie || '', 'To Import')
+
+			await prisma.diet.update({
+				where: { id: diet.id },
+				data: { isExported: true },
+			})
+
+			const result = await request(app)
+				.post(`${BASE_API_URL}/nutrition/diets/${diet.id}/import`)
+				.set('Cookie', user2Context.cookie || '')
+				.send()
+
+			expect(result.status).toBe(201)
+			expect(result.body.name).toBe(`${diet.name} (Importada)`)
+			expect(result.body.userId).toBe(user2Context.user.id)
+
+			await prisma.diet.delete({ where: { id: result.body.id } })
+		})
+	})
 })
