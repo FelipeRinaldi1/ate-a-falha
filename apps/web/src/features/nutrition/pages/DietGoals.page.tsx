@@ -90,7 +90,7 @@ export function DietGoalsPage() {
 	const calculatedProtein = Number((proteinGPerKg * weight).toFixed(0))
 	const calculatedFat = Number((fatGPerKg * weight).toFixed(0))
 	const calculatedCarb = Number((carbGPerKg * weight).toFixed(0))
-	const calculatedKcal = calculatedProtein * 4 + calculatedCarb * 4 + calculatedFat * 9
+	const calculatedKcal = Math.round(NutritionLogic.calculateCalories(calculatedProtein, calculatedCarb, calculatedFat))
 
 	// Mutation: Save Diet Goals (Create or Update)
 	const saveDietGoalsMutation = useMutation({

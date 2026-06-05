@@ -144,25 +144,26 @@ export function EditPlanPage() {
 	const savePlanMutation = useMutation({
 		mutationFn: async () => {
 			// 1. Update plan name & cover images
-			await api.patch(`/workout/plans/${id}`, { 
+			const patchPlanPromise = api.patch(`/workout/plans/${id}`, { 
 				name: planName,
 				coverImageUrl,
 				coverExerciseId,
 			})
 
-			// 2. Update all active workouts names and weekDays
+			// 2. Update all active workouts names and weekDays in parallel
 			const activeDays = DIVISION_DAYS[selectedDivision]
-			for (const day of activeDays) {
+			const workoutPromises = activeDays.map((day) => {
 				const existingWorkout = plan?.workouts?.find((w: WorkoutDTO) => w.day === day)
 				const wName = workoutNames[day] || `Treino ${day}`
 				const wWeekDay = workoutWeekDays[day] || null
 				if (existingWorkout) {
-					await api.patch(`/workout/workouts/${existingWorkout.id}`, { name: wName, weekDay: wWeekDay })
+					return api.patch(`/workout/workouts/${existingWorkout.id}`, { name: wName, weekDay: wWeekDay })
 				} else {
-					// Create workout if it doesn't exist
-					await api.post(`/workout/plans/${id}/workouts`, { name: wName, day, weekDay: wWeekDay })
+					return api.post(`/workout/plans/${id}/workouts`, { name: wName, day, weekDay: wWeekDay })
 				}
-			}
+			})
+
+			await Promise.all([patchPlanPromise, ...workoutPromises])
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
@@ -230,21 +231,19 @@ export function EditPlanPage() {
 			const res = await api.get(`/workout/workout-exercises/${editingWorkoutExerciseId}/sets`)
 			const currentSets = res.data
 
-			// 2. Delete all current sets (backend simplicity)
-			for (const set of currentSets) {
-				await api.delete(`/workout/sets/${set.id}`)
-			}
+			// 2. Delete all current sets in parallel (backend simplicity)
+			await Promise.all(currentSets.map((set: any) => api.delete(`/workout/sets/${set.id}`)))
 
-			// 3. Insert updated sets
-			for (let i = 0; i < editingSets.length; i++) {
-				const set = editingSets[i]
-				await api.post(`/workout/workout-exercises/${editingWorkoutExerciseId}/sets`, {
+			// 3. Insert updated sets in parallel
+			const postPromises = editingSets.map((set, i) =>
+				api.post(`/workout/workout-exercises/${editingWorkoutExerciseId}/sets`, {
 					setNumber: i + 1,
 					repetitions: set.repetitions,
 					weight: set.weight,
 					restTimeSeconds: set.restTimeSeconds,
 				})
-			}
+			)
+			await Promise.all(postPromises)
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })

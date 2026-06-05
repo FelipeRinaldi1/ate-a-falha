@@ -178,12 +178,13 @@ export function DietLogPage() {
 				const newMealLogId = newMealRes.data.id
 
 				const foodsToLog = targetMeal.foods || []
-				for (const f of foodsToLog) {
-					await api.post(`/nutrition/meal-logs/${newMealLogId}/foods`, {
+				const foodPromises = foodsToLog.map((f) =>
+					api.post(`/nutrition/meal-logs/${newMealLogId}/foods`, {
 						foodId: f.foodId,
 						quantity: f.quantity,
 					})
-				}
+				)
+				await Promise.all(foodPromises)
 			}
 		},
 		onSuccess: () => {
