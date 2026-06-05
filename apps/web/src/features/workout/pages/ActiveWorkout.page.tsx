@@ -129,7 +129,7 @@ export function ActiveWorkoutPage() {
 					{/* Active Workout Info Header */}
 					{activeWorkout && (
 						<Text fw={700} size="sm" c="dimmed" style={{ textAlign: 'center' }}>
-							&lt; Treino {activeWorkout.day} - {activeWorkout.name || 'Sem Foco'} &gt;
+							Treino {activeWorkout.day} - {activeWorkout.name || 'Sem Foco'}
 						</Text>
 					)}
 
@@ -213,6 +213,21 @@ export function ActiveWorkoutPage() {
 											{isExpanded && (
 												<Stack gap="xs" px="md" pb="md">
 													<Divider color="dark.4" />
+
+													{we.exercise?.instructions && we.exercise.instructions.length > 0 && (
+														<div style={{ backgroundColor: 'var(--mantine-color-dark-8)', padding: '10px', borderRadius: '6px', border: '1px solid var(--mantine-color-dark-5)', marginBottom: '4px' }}>
+															<Text size="xs" fw={800} c="blue.4" mb={6}>
+																Instruções / Execução:
+															</Text>
+															<Stack gap={4}>
+																{we.exercise.instructions.map((step: string, i: number) => (
+																	<Text key={i} size="11px" style={{ lineHeight: 1.35 }}>
+																		<strong>{i + 1}.</strong> {step}
+																	</Text>
+																))}
+															</Stack>
+														</div>
+													)}
 													
 													{/* Sets Table Header */}
 													<Group justify="space-between" px="xs" py={4} style={{ color: 'var(--mantine-color-gray-5)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>

@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Container, Stack, Text, Button, Center, Loader, Paper, Group } from '@mantine/core'
-import { ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react'
+import { Dumbbell } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO, type WorkoutDTO } from '@ate-a-falha/shared'
@@ -42,13 +42,11 @@ export function SelectActiveWorkoutPage() {
 			<Container size="xs" px={0}>
 				<Stack gap="xl" align="center" pt="xl" pb="xl">
 					{/* Plan Selector Header */}
-					<Group justify="space-between" align="center" style={{ width: '100%' }} wrap="nowrap">
-						<ChevronLeft size={20} style={{ cursor: 'pointer', opacity: 0.5 }} />
+					<Center style={{ width: '100%' }}>
 						<Text fw={700} size="md" c="dimmed" style={{ textAlign: 'center' }}>
-							&lt; {plan?.name || 'Sem Ficha'} &gt;
+							{plan?.name || 'Sem Ficha'}
 						</Text>
-						<ChevronRight size={20} style={{ cursor: 'pointer', opacity: 0.5 }} />
-					</Group>
+					</Center>
 
 					{/* Question */}
 					<Stack gap={4} align="center">

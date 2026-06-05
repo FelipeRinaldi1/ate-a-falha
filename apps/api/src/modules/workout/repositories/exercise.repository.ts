@@ -45,11 +45,34 @@ export class ExerciseRepository implements IExerciseRepository {
 	}
 
 	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseFull[]>> {
+		let skip = data.cursorId ? 1 : 0
+
+		if (data.random) {
+			const countResult = await safeCall(
+				prisma.exercise.count({
+					where: {
+						AND: [
+							data.name ? { name: { contains: data.name, mode: 'insensitive' } } : {},
+							data.category ? { category: { equals: data.category, mode: 'insensitive' } } : {},
+							data.primaryMuscles ? { primaryMuscles: { has: data.primaryMuscles.toLowerCase() } } : {},
+						],
+					},
+				})
+			)
+			if (countResult.isSuccess()) {
+				const count = countResult.value
+				const take = data.take || 10
+				if (count > take) {
+					skip = Math.floor(Math.random() * (count - take))
+				}
+			}
+		}
+
 		const result = await safeCall(
 			prisma.exercise.findMany({
 				take: data.take || 10,
-				skip: data.cursorId ? 1 : 0,
-				cursor: data.cursorId ? { id: data.cursorId } : undefined,
+				skip,
+				cursor: data.cursorId && !data.random ? { id: data.cursorId } : undefined,
 				where: {
 					AND: [
 						data.name
@@ -69,7 +92,7 @@ export class ExerciseRepository implements IExerciseRepository {
 							: {},
 					],
 				},
-				orderBy: [{ name: 'asc' }, { id: 'asc' }],
+				orderBy: data.random ? undefined : [{ name: 'asc' }, { id: 'asc' }],
 				include: { usedInWorkouts: true },
 			})
 		)

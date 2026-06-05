@@ -39,7 +39,7 @@ export function WorkoutDashboardPage() {
 	const { data: exercises = [], isLoading: isLoadingExercises } = useQuery<ExerciseDTO[]>({
 		queryKey: ['exercise-catalog'],
 		queryFn: async () => {
-			const res = await api.get('/workout/exercise-catalog')
+			const res = await api.get('/workout/exercise-catalog', { params: { random: true } })
 			return res.data
 		},
 	})
@@ -237,7 +237,7 @@ export function WorkoutDashboardPage() {
 														border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : '1px solid var(--mantine-color-dark-4)',
 														cursor: 'pointer',
 													}}
-													onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
+													onClick={() => navigate(`/workout/active/${plan.id}/select`)}
 												>
 													<Card.Section>
 														{planCoverUrl ? (
