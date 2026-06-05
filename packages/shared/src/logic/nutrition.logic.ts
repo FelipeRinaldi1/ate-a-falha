@@ -85,7 +85,7 @@ export class NutritionLogic {
 		const initialValues = { calories: 0, carbohydrates: 0, proteins: 0, fats: 0, fiber: 0 }
 
 		const totals = (meals || []).reduce((accumulator, meal) => {
-			const mealMacros = this.calculateMealMacros(meal.foodsInMeal)
+			const mealMacros = this.calculateMealMacros(meal.foods)
 			return {
 				calories: accumulator.calories + mealMacros.calories,
 				carbohydrates: accumulator.carbohydrates + mealMacros.carbohydrates,

@@ -4,7 +4,7 @@ import { foodInMealSchema } from './foodInMeal.schema.js'
 export const mealSchema = z.object({
 	id: z.uuid(),
 	dietId: z.uuid(),
-	foodsInMeal: z.array(z.object(foodInMealSchema.shape)),
+	foods: z.array(z.object(foodInMealSchema.shape)),
 	name: z.string().min(1).max(64),
 	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/),
 	orderIndex: z.number().int().min(0),
