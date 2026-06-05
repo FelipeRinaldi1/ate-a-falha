@@ -21,7 +21,7 @@ import {
 	Badge,
 	SimpleGrid,
 } from '@mantine/core'
-import { Plus, Trash2, Search } from 'lucide-react'
+import { Plus, Trash2, Search, Star } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO, type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
@@ -76,6 +76,8 @@ export function EditPlanPage() {
 	const [selectedDivision, setSelectedDivision] = useState<DivisionType>('ABC')
 	const [workoutNames, setWorkoutNames] = useState<Record<string, string>>({}) // key: day, value: name
 	const [workoutWeekDays, setWorkoutWeekDays] = useState<Record<string, string | null>>({}) // key: day, value: weekDay string
+	const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null)
+	const [coverExerciseId, setCoverExerciseId] = useState<string | null>(null)
 
 	// Modal states
 	const [exerciseModalOpen, setExerciseModalOpen] = useState(false)
@@ -114,6 +116,8 @@ export function EditPlanPage() {
 	useEffect(() => {
 		if (plan) {
 			setPlanName(plan.name)
+			setCoverImageUrl(plan.coverImageUrl || null)
+			setCoverExerciseId(plan.coverExerciseId || null)
 			
 			// Detect division based on existing workouts
 			const days = plan.workouts?.map((w: WorkoutDTO) => w.day) || []
@@ -137,11 +141,14 @@ export function EditPlanPage() {
 		}
 	}, [plan])
 
-	// Mutation: Save Plan Details
 	const savePlanMutation = useMutation({
 		mutationFn: async () => {
-			// 1. Update plan name
-			await api.patch(`/workout/plans/${id}`, { name: planName })
+			// 1. Update plan name & cover images
+			await api.patch(`/workout/plans/${id}`, { 
+				name: planName,
+				coverImageUrl,
+				coverExerciseId,
+			})
 
 			// 2. Update all active workouts names and weekDays
 			const activeDays = DIVISION_DAYS[selectedDivision]
@@ -436,17 +443,40 @@ export function EditPlanPage() {
 																		</Text>
 																	</Stack>
 																</Group>
-																<ActionIcon
-																	variant="subtle"
-																	color="red"
-																	size="sm"
-																	onClick={(e) => {
-																		e.stopPropagation()
-																		deleteExerciseMutation.mutate(we.id)
-																	}}
-																>
-																	<Trash2 size={15} />
-																</ActionIcon>
+																<Group gap="xs">
+																	<ActionIcon
+																		variant="subtle"
+																		color={coverExerciseId === we.exercise?.id ? 'yellow' : 'gray'}
+																		size="sm"
+																		onClick={(e) => {
+																			e.stopPropagation()
+																			if (coverExerciseId === we.exercise?.id) {
+																				setCoverExerciseId(null)
+																				setCoverImageUrl(null)
+																			} else {
+																				setCoverExerciseId(we.exercise?.id || null)
+																				setCoverImageUrl(we.exercise?.images?.[0] || null)
+																			}
+																		}}
+																		title={coverExerciseId === we.exercise?.id ? 'Remover foto de capa' : 'Definir como foto de capa'}
+																	>
+																		<Star
+																			size={15}
+																			fill={coverExerciseId === we.exercise?.id ? 'currentColor' : 'none'}
+																		/>
+																	</ActionIcon>
+																	<ActionIcon
+																		variant="subtle"
+																		color="red"
+																		size="sm"
+																		onClick={(e) => {
+																			e.stopPropagation()
+																			deleteExerciseMutation.mutate(we.id)
+																		}}
+																	>
+																		<Trash2 size={15} />
+																	</ActionIcon>
+																</Group>
 															</Group>
 														</Card>
 													)

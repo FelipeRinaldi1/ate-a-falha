@@ -13,6 +13,7 @@ import {
 	TextInput,
 	Select,
 	Badge,
+	Image,
 } from '@mantine/core'
 import { ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -112,6 +113,8 @@ export function WorkoutPlansPage() {
 		)
 	}
 
+	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
+
 	return (
 		<MainLayout title="Minhas Fichas" onBack={() => navigate(-1)}>
 			<Container size="xs" px={0}>
@@ -119,65 +122,99 @@ export function WorkoutPlansPage() {
 					{/* Plan list matching the mockup */}
 					<Stack gap="sm">
 						{plans.length > 0 ? (
-							plans.map((plan) => (
-								<Paper
-									key={plan.id}
-									withBorder
-									p="md"
-									radius="md"
-									shadow="sm"
-									style={{
-										cursor: 'pointer',
-										position: 'relative',
-										border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : undefined,
-									}}
-									onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
-								>
-									<Group justify="space-between" align="center" wrap="nowrap">
-										<Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-											<Group gap="xs" wrap="nowrap">
-												<Text fw={700} size="md" truncate>
-													{plan.name}
-												</Text>
-												{plan.isActive && (
-													<Badge color="blue" variant="filled" size="xs">
-														Ativa
-													</Badge>
-												)}
-											</Group>
-											<Text size="xs" c="dimmed" fw={600}>
-												{GOAL_LABELS[(plan as any).goal] || 'Hipertrofia'}
-											</Text>
-										</Stack>
+							plans.map((plan) => {
+								const coverUrl = plan.coverImageUrl
+									? plan.coverImageUrl.startsWith('http')
+										? plan.coverImageUrl
+										: `${apiBaseUrl}/assets/exercises/${plan.coverImageUrl.endsWith('.webp') ? plan.coverImageUrl : plan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
+									: null
 
-										<Group gap="xs">
-											<Button
-												size="xs"
-												variant="light"
-												color={plan.isActive ? 'red' : 'blue'}
-												onClick={(e) => {
-													e.stopPropagation()
-													togglePlanActiveMutation.mutate({ id: plan.id, isActive: !plan.isActive })
-												}}
-												loading={togglePlanActiveMutation.isPending && togglePlanActiveMutation.variables?.id === plan.id}
-											>
-												{plan.isActive ? 'Desativar' : 'Ativar'}
-											</Button>
-											<ActionIcon
-												variant="subtle"
-												color="red"
-												size="md"
-												onClick={(e) => handleDeletePlan(e, plan)}
-											>
-												<Trash2 size={16} />
-											</ActionIcon>
-											<ActionIcon variant="subtle" color="gray" size="md">
-												<ChevronRight size={18} />
-											</ActionIcon>
+								return (
+									<Paper
+										key={plan.id}
+										withBorder
+										p="md"
+										radius="md"
+										shadow="sm"
+										style={{
+											cursor: 'pointer',
+											position: 'relative',
+											overflow: 'hidden',
+											border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : undefined,
+										}}
+										onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
+									>
+										{/* Premium Gradient/Cover Image Header */}
+										<div style={{ height: '80px', overflow: 'hidden', borderTopLeftRadius: '7px', borderTopRightRadius: '7px', position: 'relative', margin: '-16px -16px 12px -16px' }}>
+											{coverUrl ? (
+												<Image
+													src={coverUrl}
+													h={80}
+													fit="cover"
+													fallbackSrc="https://placehold.co/400x80?text=Treino"
+												/>
+											) : (
+												<div style={{
+													height: '100%',
+													background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+												}} />
+											)}
+											<div style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												right: 0,
+												bottom: 0,
+												background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6))',
+											}} />
+										</div>
+
+										<Group justify="space-between" align="center" wrap="nowrap">
+											<Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
+												<Group gap="xs" wrap="nowrap">
+													<Text fw={700} size="md" truncate>
+														{plan.name}
+													</Text>
+													{plan.isActive && (
+														<Badge color="blue" variant="filled" size="xs">
+															Ativa
+														</Badge>
+													)}
+												</Group>
+												<Text size="xs" c="dimmed" fw={600}>
+													{GOAL_LABELS[(plan as any).goal] || 'Hipertrofia'}
+												</Text>
+											</Stack>
+
+											<Group gap="xs">
+												<Button
+													size="xs"
+													variant="light"
+													color={plan.isActive ? 'red' : 'blue'}
+													onClick={(e) => {
+														e.stopPropagation()
+														togglePlanActiveMutation.mutate({ id: plan.id, isActive: !plan.isActive })
+													}}
+													loading={togglePlanActiveMutation.isPending && togglePlanActiveMutation.variables?.id === plan.id}
+												>
+													{plan.isActive ? 'Desativar' : 'Ativar'}
+												</Button>
+												<ActionIcon
+													variant="subtle"
+													color="red"
+													size="md"
+													onClick={(e) => handleDeletePlan(e, plan)}
+												>
+													<Trash2 size={16} />
+												</ActionIcon>
+												<ActionIcon variant="subtle" color="gray" size="md">
+													<ChevronRight size={18} />
+												</ActionIcon>
+											</Group>
 										</Group>
-									</Group>
-								</Paper>
-							))
+									</Paper>
+								)
+							})
 						) : (
 							<Center p="xl">
 								<Text c="dimmed" size="sm">

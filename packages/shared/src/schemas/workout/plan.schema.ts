@@ -7,6 +7,8 @@ export const planSchema = z.object({
 	name: z.string().min(3).max(50),
 	isActive: z.boolean().default(false),
 	goal: z.enum(['forca', 'hipertrofia', 'resistencia']).default('hipertrofia'),
+	coverImageUrl: z.string().nullable().optional(),
+	coverExerciseId: z.string().nullable().optional(),
 
 	workouts: z.array(workoutSchema).optional(),
 
@@ -17,12 +19,16 @@ export const planSchema = z.object({
 export const createPlanSchema = planSchema.pick({
 	name: true,
 	goal: true,
+	coverImageUrl: true,
+	coverExerciseId: true,
 })
 
 export const updatePlanSchema = planSchema.pick({
 	name: true,
 	goal: true,
 	isActive: true,
+	coverImageUrl: true,
+	coverExerciseId: true,
 }).partial()
 
 export type PlanDTO = z.infer<typeof planSchema>

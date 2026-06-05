@@ -216,6 +216,8 @@ model Plan {
   name     String
   isActive Boolean @default(false)
   goal     String  @default("hipertrofia")
+  coverImageUrl String?
+  coverExerciseId String?
 
   workouts Workout[]
 

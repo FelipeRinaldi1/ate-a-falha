@@ -82,6 +82,12 @@ export function WorkoutDashboardPage() {
 
 	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
 
+	const activeCoverUrl = activePlan?.coverImageUrl
+		? activePlan.coverImageUrl.startsWith('http')
+			? activePlan.coverImageUrl
+			: `${apiBaseUrl}/assets/exercises/${activePlan.coverImageUrl.endsWith('.webp') ? activePlan.coverImageUrl : activePlan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
+		: null
+
 	if (isLoadingPlans || isLoadingExercises) {
 		return (
 			<MainLayout title="Treino">
@@ -121,7 +127,32 @@ export function WorkoutDashboardPage() {
 							</Group>
 
 							{activePlan ? (
-								<Card withBorder p="md" radius="md" shadow="sm" style={{ backgroundColor: 'var(--mantine-color-dark-6)' }}>
+								<Card withBorder p="md" radius="md" shadow="sm" style={{ backgroundColor: 'var(--mantine-color-dark-6)', overflow: 'hidden' }}>
+									{/* Premium Cover Banner */}
+									<div style={{ height: '110px', overflow: 'hidden', borderTopLeftRadius: '7px', borderTopRightRadius: '7px', position: 'relative', margin: '-16px -16px 12px -16px' }}>
+										{activeCoverUrl ? (
+											<Image
+												src={activeCoverUrl}
+												h={110}
+												fit="cover"
+												fallbackSrc="https://placehold.co/400x110?text=Treino"
+											/>
+										) : (
+											<div style={{
+												height: '100%',
+												background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+											}} />
+										)}
+										<div style={{
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.65))',
+										}} />
+									</div>
+
 									<Stack gap="xs">
 										<Group justify="space-between" align="center">
 											<Stack gap={2}>
@@ -185,29 +216,56 @@ export function WorkoutDashboardPage() {
 							<ScrollArea w="100%" scrollbars="x" type="never">
 								<Group gap="md" wrap="nowrap" pb="xs">
 									{plans.length > 0 ? (
-										plans.map((plan) => (
-											<Card
-												key={plan.id}
-												withBorder
-												p="sm"
-												radius="md"
-												style={{
-													width: 140,
-													flexShrink: 0,
-													backgroundColor: plan.isActive ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-dark-6)',
-													border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : '1px solid var(--mantine-color-dark-4)',
-												}}
-											>
-												<Stack gap="xs" justify="space-between" style={{ height: 100 }}>
-													<Text fw={700} size="sm" lineClamp={2} style={{ whiteSpace: 'normal' }}>
-														{plan.name}
-													</Text>
-													<Badge size="xs" color={plan.isActive ? 'blue' : 'gray'}>
-														{plan.isActive ? 'Ativa' : 'Ficha'}
-													</Badge>
-												</Stack>
-											</Card>
-										))
+										plans.map((plan) => {
+											const planCoverUrl = plan.coverImageUrl
+												? plan.coverImageUrl.startsWith('http')
+													? plan.coverImageUrl
+													: `${apiBaseUrl}/assets/exercises/${plan.coverImageUrl.endsWith('.webp') ? plan.coverImageUrl : plan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
+												: null
+
+											return (
+												<Card
+													key={plan.id}
+													withBorder
+													p="sm"
+													radius="md"
+													style={{
+														width: 140,
+														flexShrink: 0,
+														overflow: 'hidden',
+														backgroundColor: plan.isActive ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-dark-6)',
+														border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : '1px solid var(--mantine-color-dark-4)',
+														cursor: 'pointer',
+													}}
+													onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
+												>
+													<Card.Section>
+														{planCoverUrl ? (
+															<Image
+																src={planCoverUrl}
+																height={60}
+																alt={plan.name}
+																fallbackSrc="https://placehold.co/140x60?text=Treino"
+																fit="cover"
+															/>
+														) : (
+															<div style={{
+																height: '60px',
+																background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+															}} />
+														)}
+													</Card.Section>
+													<Stack gap="xs" justify="space-between" mt="xs" style={{ height: 70 }}>
+														<Text fw={700} size="sm" lineClamp={2} style={{ whiteSpace: 'normal' }}>
+															{plan.name}
+														</Text>
+														<Badge size="xs" color={plan.isActive ? 'blue' : 'gray'}>
+															{plan.isActive ? 'Ativa' : 'Ficha'}
+														</Badge>
+													</Stack>
+												</Card>
+											)
+										})
 									) : (
 										<Text size="xs" c="dimmed">Nenhuma ficha criada</Text>
 									)}
