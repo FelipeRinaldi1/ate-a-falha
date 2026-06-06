@@ -35,9 +35,10 @@ RUN npm install --omit=dev
 
 COPY --from=builder /app/packages/database/src/generated ./packages/database/dist/generated
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/database/src/data ./packages/database/src/data
 COPY --from=builder /app/packages/database/prisma.config.ts ./packages/database/prisma.config.ts
 COPY --from=builder /app/apps/api/public ./apps/api/public
 
 EXPOSE 3333
 
-CMD ["sh", "-c", "npm run db:migrate -w @ate-a-falha/database && node apps/api/dist/server.js"]
+CMD ["sh", "-c", "npm run db:migrate -w @ate-a-falha/database && node packages/database/dist/seeds/index.js && node apps/api/dist/server.js"]
