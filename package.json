@@ -8,7 +8,7 @@
 	"scripts": {
 		"--- INFRA & DEPLOY ---": "",
 		"build": "npm run build -w @ate-a-falha/shared && npm run db:generate && npm run build -w @ate-a-falha/database && npm run build -w apps/api && npm run build -w apps/web",
-		"start:api": "npm run start -w apps/api",
+		"start:api": "npm run db:migrate && npm run db:seed && npm run start -w apps/api",
 		"start:web": "npm run preview -w apps/web",
 		"lint": "eslint .",
 		"format": "prettier --write .",
