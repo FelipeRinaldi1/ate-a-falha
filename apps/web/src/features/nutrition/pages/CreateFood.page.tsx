@@ -3,9 +3,12 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { useForm } from '@mantine/form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Paper, Stack, Group, Text, Title, TextInput, NumberInput, Button, Container } from '@mantine/core'
-
+import { Paper, Stack, Group, Text, Title, TextInput, NumberInput, Button, Container, Alert } from '@mantine/core'
 import { NutritionLogic, type CreateFoodDTO } from '@ate-a-falha/shared'
+import { useState } from 'react'
+import { AlertCircle } from 'lucide-react'
+import { translateError } from '../../../utils/errorTranslator'
+import type { AxiosError } from 'axios'
 
 interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
 	quantity: number
@@ -14,6 +17,7 @@ interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
 export function CreateFoodPage() {
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<FoodFormValues>({
 		initialValues: {
@@ -52,12 +56,15 @@ export function CreateFoodPage() {
 			}
 			return api.post('/nutrition/food-catalog', foodData)
 		},
+		onMutate: () => {
+			setErrorMsg(null)
+		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
 			navigate(-1)
 		},
-		onError: (error) => {
-			console.error('Erro ao criar alimento:', error)
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao criar alimento.'))
 		},
 	})
 
@@ -78,12 +85,18 @@ export function CreateFoodPage() {
 
 							<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 								<Stack gap="sm">
+									{errorMsg && (
+										<Alert variant="light" color="red" title="Erro" icon={<AlertCircle size={16} />}>
+											{errorMsg}
+										</Alert>
+									)}
 									<TextInput
 										label="Nome Alimento"
 										placeholder="Ex: Arroz Integral"
 										required
 										{...form.getInputProps('name')}
 									/>
+
 
 									<NumberInput
 										label="Quantidade de Referência (g)"

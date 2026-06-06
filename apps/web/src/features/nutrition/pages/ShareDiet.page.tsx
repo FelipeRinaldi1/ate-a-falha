@@ -2,8 +2,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { Container, Paper, Stack, Text, Title, Button, Center, Loader, Card, Badge, Group, List, Alert, Divider, SimpleGrid } from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
-import { api } from '../api/axiosInstance'
-import { useAuth } from '../features/user/hooks/useAuth'
+import { api } from '../../../api/axiosInstance'
+import { useAuth } from '../../user/hooks/useAuth'
+import { type MealDTO, type FoodInMealDTO } from '@ate-a-falha/shared'
 
 export function ShareDietPage() {
 	const { id } = useParams()
@@ -57,7 +58,7 @@ export function ShareDietPage() {
 		<Container size="xs" py="xl">
 			<Stack gap="lg">
 				<Group justify="space-between" align="center">
-					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/')}>
+					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/nutrition')}>
 						Voltar
 					</Button>
 					<Badge color="green" size="lg" variant="light">
@@ -103,7 +104,7 @@ export function ShareDietPage() {
 
 						<Stack gap="md">
 							{diet.meals && diet.meals.length > 0 ? (
-								diet.meals.map((m: any) => (
+								diet.meals.map((m: MealDTO) => (
 									<Card key={m.id} withBorder p="md" radius="sm" bg="var(--mantine-color-dark-8)">
 										<Stack gap="xs">
 											<Group justify="space-between">
@@ -113,7 +114,7 @@ export function ShareDietPage() {
 
 											<List spacing="xs" size="xs">
 												{m.foods && m.foods.length > 0 ? (
-													m.foods.map((f: any) => (
+													m.foods.map((f: FoodInMealDTO) => (
 														<List.Item key={f.id}>
 															<Text size="xs" fw={600} style={{ display: 'inline' }}>
 																{f.food.name}

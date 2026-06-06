@@ -1,15 +1,20 @@
 import { useForm, schemaResolver } from '@mantine/form'
-import { TextInput, PasswordInput, Button, Stack, Paper, Select } from '@mantine/core'
+import { TextInput, PasswordInput, Button, Stack, Paper, Select, Alert } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../../../api/axiosInstance.js'
 import { createUserWithAuthSchema, type CreateUserWithAuthDTO } from '@ate-a-falha/shared'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
+import { useState } from 'react'
+import { AlertCircle } from 'lucide-react'
+import { translateError } from '../../../utils/errorTranslator'
+import type { AxiosError } from 'axios'
 
 export function RegisterForm() {
 	const navigate = useNavigate()
 	const { login } = useAuth()
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<CreateUserWithAuthDTO>({
 		initialValues: {
@@ -29,13 +34,15 @@ export function RegisterForm() {
 		mutationFn: (data: CreateUserWithAuthDTO) => {
 			return api.post('/users/register', data)
 		},
-		onSuccess: (response) => {
-			console.log('Register success:', response.data)
-			login(response.data.user)
-			navigate('/')
+		onMutate: () => {
+			setErrorMsg(null)
 		},
-		onError: (error) => {
-			console.error('Register error:', error)
+		onSuccess: (response) => {
+			login(response.data.user)
+			navigate('/workout')
+		},
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao registrar usuário. Tente novamente.'))
 		},
 	})
 
@@ -43,7 +50,13 @@ export function RegisterForm() {
 		<Paper withBorder shadow="md" p={30} mt={30} radius="md">
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack>
+					{errorMsg && (
+						<Alert variant="light" color="red" title="Erro de Cadastro" icon={<AlertCircle size={16} />}>
+							{errorMsg}
+						</Alert>
+					)}
 					<TextInput label="Nome" placeholder="Nome completo" required {...form.getInputProps('name')} />
+
 
 					<TextInput
 						label="Email"

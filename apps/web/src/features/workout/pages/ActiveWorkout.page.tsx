@@ -17,8 +17,7 @@ import {
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
-import { type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO } from '@ate-a-falha/shared'
-import { notifications } from '@mantine/notifications'
+import { type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
 
 export function ActiveWorkoutPage() {
 	const { id } = useParams<{ id: string }>()
@@ -79,11 +78,6 @@ export function ActiveWorkoutPage() {
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:expanded`)
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:checked`)
 		}
-		notifications.show({
-			title: 'Treino Concluído! 🎉',
-			message: 'Parabéns por finalizar mais um treino. Continue focado!',
-			color: 'green',
-		})
 		navigate('/workout')
 	}
 
@@ -148,7 +142,7 @@ export function ActiveWorkoutPage() {
 								const restTimeMin = we.sets?.[0]
 									? (we.sets[0].restTimeSeconds / 60).toFixed(0)
 									: '1'
-								const isExerciseCompleted = we.sets && we.sets.length > 0 && we.sets.every((s: any) => !!checkedItems[s.id])
+								const isExerciseCompleted = we.sets && we.sets.length > 0 && we.sets.every((s: SetDTO) => !!checkedItems[s.id])
 
 								return (
 									<Paper
@@ -239,8 +233,7 @@ export function ActiveWorkoutPage() {
 														<Text size="11px" fw={700} style={{ width: '40px', textAlign: 'center' }}>Feito</Text>
 													</Group>
 
-													{/* Sets Grid */}
-													{we.sets?.map((s: any, idx: number) => {
+													{we.sets?.map((s: SetDTO, idx: number) => {
 														const setId = s.id
 														const isChecked = !!checkedItems[setId]
 														return (

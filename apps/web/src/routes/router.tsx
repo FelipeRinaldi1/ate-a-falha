@@ -20,8 +20,8 @@ import { DietGoalsPage } from '../features/nutrition/pages/DietGoals.page'
 import { MealDetailsPage } from '../features/nutrition/pages/MealDetails.page'
 import { FoodSearchPage } from '../features/nutrition/pages/FoodSearch.page'
 import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
-import { ShareWorkoutPage } from '../pages/ShareWorkout.page'
-import { ShareDietPage } from '../pages/ShareDiet.page'
+import { ShareWorkoutPage } from '../features/workout/pages/ShareWorkout.page'
+import { ShareDietPage } from '../features/nutrition/pages/ShareDiet.page'
 
 export const router = createBrowserRouter([
 	{

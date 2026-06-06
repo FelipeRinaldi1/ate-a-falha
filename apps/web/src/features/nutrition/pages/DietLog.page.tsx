@@ -252,7 +252,7 @@ export function DietLogPage() {
 					}
 				}
 			})
-			.filter(Boolean) as any[]
+			.filter((item): item is NonNullable<typeof item> => Boolean(item))
 
 		const remaining = loggedMealsArr
 			.filter((l) => l && !matchedLoggedIds.has(l.id))

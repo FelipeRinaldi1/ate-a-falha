@@ -4,15 +4,15 @@ import { LoginForm } from '../components/LoginForm'
 
 export function LoginPage() {
 	return (
-		<Center style={{ height: '100vh', backgroundColor: 'var(--mantine-color-gray-0)' }}>
+		<Center style={{ height: '100vh', backgroundColor: 'var(--mantine-color-dark-8)' }}>
 			<Container size={420} w="100%">
-				<Title ta="center" fw={900}>
-					Welcome back!
+				<Title ta="center" fw={900} style={{ fontFamily: 'Outfit, sans-serif', fontSize: '32px' }}>
+					Até a Falha
 				</Title>
 				<Text c="dimmed" size="sm" ta="center" mt={5} mb={30}>
-					Do not have an account yet?{' '}
+					Não tem uma conta ainda?{' '}
 					<Anchor size="sm" component={Link} to="/register">
-						Create account
+						Criar conta
 					</Anchor>
 				</Text>
 

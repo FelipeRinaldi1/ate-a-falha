@@ -19,14 +19,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
-import { type PlanDTO, type ExerciseDTO } from '@ate-a-falha/shared'
+import { type PlanDTO, type ExerciseDTO, type WorkoutDTO } from '@ate-a-falha/shared'
 import { CalendarSelector } from '../../../components/CalendarSelector'
 
 export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
-	// Fetch workout plans
 	const { data: plans = [], isLoading: isLoadingPlans } = useQuery<PlanDTO[]>({
 		queryKey: ['workout-plans'],
 		queryFn: async () => {
@@ -35,7 +34,6 @@ export function WorkoutDashboardPage() {
 		},
 	})
 
-	// Fetch exercises catalog
 	const { data: exercises = [], isLoading: isLoadingExercises } = useQuery<ExerciseDTO[]>({
 		queryKey: ['exercise-catalog'],
 		queryFn: async () => {
@@ -47,14 +45,14 @@ export function WorkoutDashboardPage() {
 	const activePlan = plans.find((p) => p.isActive) || plans[0]
 
 	const scheduledWorkouts: Record<string, string> = {}
-	activePlan?.workouts?.forEach((w: any) => {
+	activePlan?.workouts?.forEach((w: WorkoutDTO) => {
 		if (w.weekDay) {
 			scheduledWorkouts[w.weekDay] = w.day
 		}
 	})
 
 	const selectedWeekDayStr = selectedDate.getDay().toString()
-	const todaysWorkout = activePlan?.workouts?.find((w: any) => w.weekDay === selectedWeekDayStr)
+	const todaysWorkout = activePlan?.workouts?.find((w: WorkoutDTO) => w.weekDay === selectedWeekDayStr)
 
 	// Generate surrounding 7 days
 	const getWeekDays = () => {

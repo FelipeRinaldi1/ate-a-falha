@@ -39,7 +39,6 @@ export function WorkoutPlansPage() {
 	const [newPlanName, setNewPlanName] = useState('')
 	const [newPlanGoal, setNewPlanGoal] = useState<'forca' | 'hipertrofia' | 'resistencia'>('hipertrofia')
 
-	// Fetch all workout plans
 	const { data: plans = [], isLoading } = useQuery<PlanDTO[]>({
 		queryKey: ['workout-plans'],
 		queryFn: async () => {
@@ -48,7 +47,6 @@ export function WorkoutPlansPage() {
 		},
 	})
 
-	// Mutation: Create a new plan
 	const createPlanMutation = useMutation({
 		mutationFn: async (data: { name: string; goal: string }) => {
 			const res = await api.post('/workout/plans', data)
@@ -198,7 +196,7 @@ export function WorkoutPlansPage() {
 													)}
 												</Group>
 												<Text size="xs" c="dimmed" fw={600}>
-													{GOAL_LABELS[(plan as any).goal] || 'Hipertrofia'}
+													{GOAL_LABELS[plan.goal] || 'Hipertrofia'}
 												</Text>
 											</Stack>
 
@@ -291,7 +289,7 @@ export function WorkoutPlansPage() {
 						label="Foco do Treino"
 						placeholder="Selecione o objetivo..."
 						value={newPlanGoal}
-						onChange={(val) => setNewPlanGoal(val as any)}
+						onChange={(val) => setNewPlanGoal(val as 'forca' | 'hipertrofia' | 'resistencia')}
 						data={[
 							{ label: 'Força', value: 'forca' },
 							{ label: 'Hipertrofia', value: 'hipertrofia' },

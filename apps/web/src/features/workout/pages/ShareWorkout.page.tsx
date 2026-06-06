@@ -1,9 +1,25 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { Container, Paper, Stack, Text, Title, Button, Center, Loader, Card, Badge, Group, List, Alert, Divider } from '@mantine/core'
+import {
+	Container,
+	Paper,
+	Stack,
+	Text,
+	Title,
+	Button,
+	Center,
+	Loader,
+	Card,
+	Badge,
+	Group,
+	List,
+	Alert,
+	Divider,
+} from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
-import { api } from '../api/axiosInstance'
-import { useAuth } from '../features/user/hooks/useAuth'
+import { api } from '../../../api/axiosInstance.js'
+import { useAuth } from '../../user/hooks/useAuth.js'
+import { type WorkoutDTO, type WorkoutExerciseDTO } from '@ate-a-falha/shared'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -16,7 +32,11 @@ export function ShareWorkoutPage() {
 	const navigate = useNavigate()
 	const { isAuthenticated } = useAuth()
 
-	const { data: plan, isLoading, isError } = useQuery({
+	const {
+		data: plan,
+		isLoading,
+		isError,
+	} = useQuery({
 		queryKey: ['share-workout', id],
 		queryFn: async () => {
 			const res = await api.get(`/workout/plans/${id}/export`)
@@ -49,7 +69,8 @@ export function ShareWorkoutPage() {
 			<Container size="xs" py="xl">
 				<Stack gap="lg" align="center" style={{ minHeight: '80vh', justifyContent: 'center' }}>
 					<Alert color="red" title="Treino Indisponível" icon={<Info size={16} />}>
-						Este link de compartilhamento de treino é inválido ou o criador desativou o compartilhamento público.
+						Este link de compartilhamento de treino é inválido ou o criador desativou o compartilhamento
+						público.
 					</Alert>
 					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/login')}>
 						Voltar para a Tela Inicial
@@ -63,7 +84,7 @@ export function ShareWorkoutPage() {
 		<Container size="xs" py="xl">
 			<Stack gap="lg">
 				<Group justify="space-between" align="center">
-					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/')}>
+					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/workout')}>
 						Voltar
 					</Button>
 					<Badge color="blue" size="lg" variant="light">
@@ -82,39 +103,51 @@ export function ShareWorkoutPage() {
 
 						<Divider />
 
-						<Title order={4} c="dimmed">Rotina de Treinos</Title>
+						<Title order={4} c="dimmed">
+							Rotina de Treinos
+						</Title>
 
 						<Stack gap="md">
 							{plan.workouts && plan.workouts.length > 0 ? (
-								plan.workouts.map((w: any) => (
+								plan.workouts.map((w: WorkoutDTO) => (
 									<Card key={w.id} withBorder p="md" radius="sm" bg="var(--mantine-color-dark-8)">
 										<Stack gap="xs">
 											<Group justify="space-between">
-												<Text fw={700} size="md">{w.name}</Text>
+												<Text fw={700} size="md">
+													{w.name}
+												</Text>
 												<Badge color="gray">{w.day}</Badge>
 											</Group>
 
 											<List spacing="xs" size="sm" center>
 												{w.workoutExercises && w.workoutExercises.length > 0 ? (
-													w.workoutExercises.map((we: any) => (
+													w.workoutExercises.map((we: WorkoutExerciseDTO) => (
 														<List.Item key={we.id}>
 															<Text size="sm" fw={600} style={{ display: 'inline' }}>
-																{we.exercise.name}
+																{we.exercise?.name}
 															</Text>
-															<Text size="xs" c="dimmed" style={{ display: 'inline', marginLeft: '6px' }}>
+															<Text
+																size="xs"
+																c="dimmed"
+																style={{ display: 'inline', marginLeft: '6px' }}
+															>
 																({we.sets ? we.sets.length : 0} séries)
 															</Text>
 														</List.Item>
 													))
 												) : (
-													<Text size="xs" c="dimmed">Nenhum exercício cadastrado.</Text>
+													<Text size="xs" c="dimmed">
+														Nenhum exercício cadastrado.
+													</Text>
 												)}
 											</List>
 										</Stack>
 									</Card>
 								))
 							) : (
-								<Text size="sm" c="dimmed">Nenhum treino cadastrado neste plano.</Text>
+								<Text size="sm" c="dimmed">
+									Nenhum treino cadastrado neste plano.
+								</Text>
 							)}
 						</Stack>
 

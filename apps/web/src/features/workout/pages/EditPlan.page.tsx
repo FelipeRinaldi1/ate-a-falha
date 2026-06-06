@@ -232,7 +232,7 @@ export function EditPlanPage() {
 			const currentSets = res.data
 
 			// 2. Delete all current sets in parallel (backend simplicity)
-			await Promise.all(currentSets.map((set: any) => api.delete(`/workout/sets/${set.id}`)))
+			await Promise.all(currentSets.map((set: SetDTO) => api.delete(`/workout/sets/${set.id}`)))
 
 			// 3. Insert updated sets in parallel
 			const postPromises = editingSets.map((set, i) =>

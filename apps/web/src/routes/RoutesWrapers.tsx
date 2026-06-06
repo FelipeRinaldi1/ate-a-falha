@@ -1,7 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/user/hooks/useAuth'
 
-// Redirect to login if not authenticated
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 	const { user, isAuthenticated, isLoading } = useAuth()
 	const location = useLocation()
@@ -16,7 +15,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 		return <>{children}</>
 	}
 }
-// Redirect to home or redirect parameter if authenticated
 export function PublicRoute({ children }: { children: React.ReactNode }) {
 	const { isAuthenticated, isLoading } = useAuth()
 	const location = useLocation()
@@ -26,9 +24,8 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
 	if (isAuthenticated) {
 		const searchParams = new URLSearchParams(location.search)
 		const redirect = searchParams.get('redirect')
-		return <Navigate to={redirect || "/"} replace />
+		return <Navigate to={redirect || "/workout"} replace />
 	}
 	
 	return <>{children}</>
 }
-// If the route doesnt need authentication, do not use public neither protect wrapper
