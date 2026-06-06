@@ -82,4 +82,12 @@ export class DietService {
 
 		return await this.dietRepo.findLogById(id, authUser.id)
 	}
+
+	async export(id: string): Promise<Result<DietFull>> {
+		return await this.dietRepo.findPublicById(id)
+	}
+
+	async import(id: string, authUser: authenticatedUser): Promise<Result<DietFull>> {
+		return await this.dietRepo.importDiet(id, authUser.id)
+	}
 }

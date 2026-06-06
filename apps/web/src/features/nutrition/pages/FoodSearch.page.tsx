@@ -33,6 +33,7 @@ export function FoodSearchPage() {
 	const { user } = useAuth()
 
 	const mealLogId = searchParams.get('mealLogId')
+	const mealId = searchParams.get('mealId')
 
 	const [searchQuery, setSearchQuery] = useState('')
 	const [filterBy, setFilterBy] = useState<string | null>(null)
@@ -56,13 +57,27 @@ export function FoodSearchPage() {
 	// Mutation: Log Food in Meal
 	const addFoodMutation = useMutation({
 		mutationFn: async ({ foodId, quantity }: { foodId: string; quantity: number }) => {
-			if (!mealLogId) throw new Error('Meal Log ID is required')
+			if (mealId) {
+				return api.post(`/nutrition/meals/${mealId}/foods`, {
+					foodId,
+					quantity,
+				})
+			}
+			if (!mealLogId) throw new Error('Meal Log ID or Meal Template ID is required')
 			return api.post(`/nutrition/meal-logs/${mealLogId}/foods`, {
 				foodId,
 				quantity,
 			})
 		},
 		onSuccess: () => {
+			if (mealId) {
+				queryClient.invalidateQueries({ queryKey: ['target-meals'] })
+				queryClient.invalidateQueries({ queryKey: ['diets'] })
+				setSelectedFood(null)
+				setPortionGrams(100)
+				navigate('/nutrition/goals')
+				return
+			}
 			queryClient.invalidateQueries({ queryKey: ['meal-log', mealLogId] })
 			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
 			setSelectedFood(null)
@@ -104,7 +119,7 @@ export function FoodSearchPage() {
 	}
 
 	const handleFoodClick = (food: FoodDTO) => {
-		if (mealLogId) {
+		if (mealLogId || mealId) {
 			setSelectedFood(food)
 		} else {
 			// Redireciona para a página de detalhes do alimento no catálogo se acessado pela lupa geral
@@ -147,7 +162,9 @@ export function FoodSearchPage() {
 		<MainLayout
 			title="Procurar Alimento"
 			onBack={() => {
-				if (mealLogId) {
+				if (mealId) {
+					navigate('/nutrition/goals')
+				} else if (mealLogId) {
 					navigate(`/nutrition/meals/${mealLogId}`)
 				} else {
 					navigate('/nutrition')
@@ -362,37 +379,21 @@ export function FoodSearchPage() {
 								</Center>
 								<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											P
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											C
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											G
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
-									<Stack gap={0}>
-										<Text size="xs" c="dimmed">
-											F
-										</Text>
-										<Text size="xs" fw={700}>
-											{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g
-										</Text>
-									</Stack>
+									<Text size="xs" c="dimmed">P</Text>
+									<Text size="xs" fw={700} c="red.6">{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">C</Text>
+									<Text size="xs" fw={700} c="yellow.5">{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">G</Text>
+									<Text size="xs" fw={700} c="green.6">{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
+								<Stack gap={0}>
+									<Text size="xs" c="dimmed">F</Text>
+									<Text size="xs" fw={700} c="teal.5">{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g</Text>
+								</Stack>
 								</SimpleGrid>
 							</Stack>
 						</Paper>

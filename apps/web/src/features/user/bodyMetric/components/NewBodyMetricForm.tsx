@@ -1,10 +1,14 @@
 import { api } from '../../../../api/axiosInstance'
-import { Button, NumberInput, Paper, Select, Stack, Loader, Center } from '@mantine/core'
+import { Button, NumberInput, Paper, Select, Stack, Loader, Center, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useState } from 'react'
+import { AlertCircle } from 'lucide-react'
+import { translateError } from '../../../../utils/errorTranslator'
+import type { AxiosError } from 'axios'
 
 interface BodyMetric {
 	id: string
@@ -20,6 +24,7 @@ export function NewBodyMetricForm() {
 	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<CreateBodyMetricDTO>({
 		initialValues: {
@@ -38,8 +43,8 @@ export function NewBodyMetricForm() {
 			const response = await api.get('/users/body-metrics')
 			const latest = response.data[0]
 			if (latest) {
-				form.setValues({
-					weight: 0, // Force user to enter new weight
+			form.setValues({
+					weight: 0,
 					height: latest.height,
 					activityLevel: latest.activityLevel,
 					bodyFat: latest.bodyFat ?? 0,
@@ -54,14 +59,16 @@ export function NewBodyMetricForm() {
 		mutationFn: (data: CreateBodyMetricDTO) => {
 			return api.post('/users/body-metrics', data)
 		},
-		onSuccess: async (response: any) => {
+		onMutate: () => {
+			setErrorMsg(null)
+		},
+		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			console.log('Register new body-metric success:', response.data)
 			navigate('/profile')
 		},
-		onError: (error) => {
-			console.error('Register new body-metric error:', error)
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao registrar nova pesagem.'))
 		},
 	})
 
@@ -77,6 +84,11 @@ export function NewBodyMetricForm() {
 		<Paper withBorder p="xl" radius="md" shadow="sm">
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack gap="md">
+					{errorMsg && (
+						<Alert variant="light" color="red" title="Erro ao registrar pesagem" icon={<AlertCircle size={16} />}>
+							{errorMsg}
+						</Alert>
+					)}
 					<NumberInput
 						label="Peso Atual (kg)"
 						placeholder="Digite seu peso"
@@ -129,3 +141,4 @@ export function NewBodyMetricForm() {
 		</Paper>
 	)
 }
+

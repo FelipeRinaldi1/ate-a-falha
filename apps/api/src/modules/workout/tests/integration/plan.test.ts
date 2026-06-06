@@ -164,4 +164,48 @@ describe('Workout Plan Integration Tests', () => {
 			expect(result.status).toBe(403)
 		})
 	})
+
+	describe('Sharing and Cloning', () => {
+		test('Should fail to export plan if isExported is false', async () => {
+			const result = await request(app)
+				.get(`${BASE_API_URL}/workout/plans/${workout1Context.plan.id}/export`)
+				.send()
+
+			expect(result.status).toBe(404)
+		})
+
+		test('Should export plan if isExported is true (public access)', async () => {
+			await prisma.plan.update({
+				where: { id: workout1Context.plan.id },
+				data: { isExported: true },
+			})
+
+			const result = await request(app)
+				.get(`${BASE_API_URL}/workout/plans/${workout1Context.plan.id}/export`)
+				.send()
+
+			expect(result.status).toBe(200)
+			expect(result.body.id).toBe(workout1Context.plan.id)
+			expect(result.body.isExported).toBe(true)
+		})
+
+		test('Should import plan to another user account', async () => {
+			await prisma.plan.update({
+				where: { id: workout1Context.plan.id },
+				data: { isExported: true },
+			})
+
+			const result = await request(app)
+				.post(`${BASE_API_URL}/workout/plans/${workout1Context.plan.id}/import`)
+				.set('Cookie', user2Context.cookie || '')
+				.send()
+
+			expect(result.status).toBe(201)
+			expect(result.body.name).toBe(`${workout1Context.plan.name} (Importado)`)
+			expect(result.body.userId).toBe(user2Context.user.id)
+			expect(result.body.isActive).toBe(false)
+
+			await prisma.plan.delete({ where: { id: result.body.id } })
+		})
+	})
 })

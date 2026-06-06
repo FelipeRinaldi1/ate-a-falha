@@ -14,6 +14,8 @@ const dietRepo = new DietRepository()
 const dietService = new DietService(dietRepo, accessServ)
 const dietController = new DietController(dietService)
 
+dietRouter.get('/diets/:id/export', dietController.export)
+
 dietRouter.use(ensureAuthenticated)
 
 dietRouter.post('/diets', dietController.create)
@@ -21,6 +23,7 @@ dietRouter.get('/diets', dietController.findAll)
 dietRouter.get('/diets/:id', dietController.findById)
 dietRouter.patch('/diets/:id', dietController.update)
 dietRouter.delete('/diets/:id', dietController.delete)
+dietRouter.post('/diets/:id/import', dietController.import)
 
 // DietLog routes
 dietRouter.post('/diet-logs', dietController.createLog)

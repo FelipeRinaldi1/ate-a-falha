@@ -1,6 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute, PublicRoute } from './RoutesWrapers'
-import { HomePage } from '../pages/Home.page'
+import { WorkoutDashboardPage } from '../features/workout/pages/WorkoutDashboard.page'
+import { ExerciseSearchPage } from '../features/workout/pages/ExerciseSearch.page'
+import { ExerciseDetailsPage } from '../features/workout/pages/ExerciseDetails.page'
+import { WorkoutPlansPage } from '../features/workout/pages/WorkoutPlans.page'
+import { EditPlanPage } from '../features/workout/pages/EditPlan.page'
+import { SelectActiveWorkoutPage } from '../features/workout/pages/SelectActiveWorkout.page'
+import { ActiveWorkoutPage } from '../features/workout/pages/ActiveWorkout.page'
 import { LoginPage } from '../features/user/pages/Login.page'
 import { RegisterPage } from '../features/user/pages/Register.page'
 import { BodyMetricRegisterPage } from '../features/user/bodyMetric/pages/SetupMetrics.page'
@@ -14,11 +20,65 @@ import { DietGoalsPage } from '../features/nutrition/pages/DietGoals.page'
 import { MealDetailsPage } from '../features/nutrition/pages/MealDetails.page'
 import { FoodSearchPage } from '../features/nutrition/pages/FoodSearch.page'
 import { FoodDetailsPage } from '../features/nutrition/pages/FoodDetails.page'
+import { ShareWorkoutPage } from '../features/workout/pages/ShareWorkout.page'
+import { ShareDietPage } from '../features/nutrition/pages/ShareDiet.page'
 
 export const router = createBrowserRouter([
 	{
-		path: '/sandbox',
-		element: <ProtectedRoute>a</ProtectedRoute>,
+		path: '/workout',
+		element: (
+			<ProtectedRoute>
+				<WorkoutDashboardPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/plans',
+		element: (
+			<ProtectedRoute>
+				<WorkoutPlansPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/plans/:id/edit',
+		element: (
+			<ProtectedRoute>
+				<EditPlanPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/active/:id/select',
+		element: (
+			<ProtectedRoute>
+				<SelectActiveWorkoutPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/active/:id',
+		element: (
+			<ProtectedRoute>
+				<ActiveWorkoutPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/exercises',
+		element: (
+			<ProtectedRoute>
+				<ExerciseSearchPage />
+			</ProtectedRoute>
+		),
+	},
+	{
+		path: '/workout/exercises/:id',
+		element: (
+			<ProtectedRoute>
+				<ExerciseDetailsPage />
+			</ProtectedRoute>
+		),
 	},
 	{
 		path: '/profile',
@@ -125,12 +185,16 @@ export const router = createBrowserRouter([
 		),
 	},
 	{
+		path: '/share/workout/:id',
+		element: <ShareWorkoutPage />,
+	},
+	{
+		path: '/share/diet/:id',
+		element: <ShareDietPage />,
+	},
+	{
 		path: '/',
-		element: (
-			<ProtectedRoute>
-				<HomePage />
-			</ProtectedRoute>
-		),
+		element: <Navigate to="/workout" replace />,
 	},
 
 	{

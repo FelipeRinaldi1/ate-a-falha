@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { api } from '../../../../api/axiosInstance'
-import { Button, NumberInput, Paper, Select, Stack, Loader, Center } from '@mantine/core'
+import { Button, NumberInput, Paper, Select, Stack, Loader, Center, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { AlertCircle } from 'lucide-react'
+import { translateError } from '../../../../utils/errorTranslator'
+import type { AxiosError } from 'axios'
 
 interface BodyMetric {
 	id: string
@@ -22,6 +25,7 @@ export function EditBodyMetricsForm() {
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
 	const [metricId, setMetricId] = useState<string | null>(null)
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<CreateBodyMetricDTO>({
 		initialValues: {
@@ -56,19 +60,20 @@ export function EditBodyMetricsForm() {
 	const mutation = useMutation({
 		mutationFn: (data: CreateBodyMetricDTO) => {
 			if (!metricId) {
-				// If no metric exists, fall back to POST
 				return api.post('/users/body-metrics', data)
 			}
 			return api.patch(`/users/body-metrics/${metricId}`, data)
 		},
-		onSuccess: async (response: any) => {
+		onMutate: () => {
+			setErrorMsg(null)
+		},
+		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			console.log('Update body-metrics success:', response.data)
 			navigate('/profile')
 		},
-		onError: (error) => {
-			console.error('Update body-metrics error:', error)
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao atualizar métricas corporais.'))
 		},
 	})
 
@@ -77,14 +82,16 @@ export function EditBodyMetricsForm() {
 			if (!metricId) return Promise.reject(new Error('Nenhum registro para excluir'))
 			return api.delete(`/users/body-metrics/${metricId}`)
 		},
+		onMutate: () => {
+			setErrorMsg(null)
+		},
 		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			console.log('Delete body-metrics success')
 			navigate('/profile')
 		},
-		onError: (error) => {
-			console.error('Delete body-metrics error:', error)
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao excluir métricas corporais.'))
 		},
 	})
 
@@ -100,6 +107,11 @@ export function EditBodyMetricsForm() {
 		<Paper withBorder p="xl" radius="md" shadow="sm">
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack gap="md">
+					{errorMsg && (
+						<Alert variant="light" color="red" title="Erro" icon={<AlertCircle size={16} />}>
+							{errorMsg}
+						</Alert>
+					)}
 					<NumberInput
 						label="Altura (cm)"
 						placeholder="175cm"
@@ -107,6 +119,7 @@ export function EditBodyMetricsForm() {
 						min={1}
 						{...form.getInputProps('height')}
 					></NumberInput>
+
 					<NumberInput
 						label="Peso (kg)"
 						placeholder="60kg"

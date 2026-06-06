@@ -300,7 +300,7 @@ describe('Nutrition Logic tests', () => {
 					name: 'Breakfast',
 					time: '08:00',
 					orderIndex: 0,
-					foodsInMeal: [
+					foods: [
 						{
 							id: 'fim-1',
 							foodId: mockFood2.id,
@@ -320,7 +320,7 @@ describe('Nutrition Logic tests', () => {
 					name: 'Lunch',
 					time: '12:00',
 					orderIndex: 1,
-					foodsInMeal: [
+					foods: [
 						{
 							id: 'fim-2',
 							foodId: mockFood1.id,
@@ -383,7 +383,7 @@ describe('Nutrition Logic tests', () => {
 			})
 		})
 
-		test('Should handle a meal with null/undefined foodsInMeal list', () => {
+		test('Should handle a meal with null/undefined foods list', () => {
 			const meals: MealDTO[] = [
 				{
 					id: 'meal-1',
@@ -391,7 +391,7 @@ describe('Nutrition Logic tests', () => {
 					name: 'Empty Meal',
 					time: '15:00',
 					orderIndex: 2,
-					foodsInMeal: null as unknown as FoodInMealDTO[],
+					foods: null as unknown as FoodInMealDTO[],
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				},

@@ -9,6 +9,8 @@ import type {
 export const getCreatePlanMock = (overrides?: Partial<CreatePlanDTO>): CreatePlanDTO => {
 	return {
 		name: 'Standard Hypertrophy Plan',
+		goal: 'hipertrofia',
+		isExported: false,
 		...overrides,
 	}
 }

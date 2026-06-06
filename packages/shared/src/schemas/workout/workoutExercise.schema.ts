@@ -10,7 +10,7 @@ export const workoutexerciseSchema = z.object({
 	exerciseId: z.uuid(),
 	exercise: exerciseSchema.optional(),
 
-	set: z.array(setSchema).optional(),
+	sets: z.array(setSchema).optional(),
 
 	orderIndex: z.number().int().nonnegative(),
 	createdAt: z.date(),

@@ -1,15 +1,19 @@
 import { api } from '../../../../api/axiosInstance'
-import { Button, NumberInput, Paper, Select, Stack } from '@mantine/core'
-
+import { Button, NumberInput, Paper, Select, Stack, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useState } from 'react'
+import { AlertCircle } from 'lucide-react'
+import { translateError } from '../../../../utils/errorTranslator'
+import type { AxiosError } from 'axios'
 
 export function BodyMetricRegisterForm() {
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
+	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<CreateBodyMetricDTO>({
 		initialValues: {
@@ -25,19 +29,27 @@ export function BodyMetricRegisterForm() {
 		mutationFn: (data: CreateBodyMetricDTO) => {
 			return api.post('/users/body-metrics', data)
 		},
-		onSuccess: async (response: any) => {
-			await refreshUser()
-			console.log('Register body-metrics success:', response.data)
-			navigate('/')
+		onMutate: () => {
+			setErrorMsg(null)
 		},
-		onError: (error) => {
-			console.error('Register body-metrics error:', error)
+		onSuccess: async () => {
+			await refreshUser()
+			navigate('/workout')
+		},
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao registrar métricas corporais.'))
 		},
 	})
 	return (
-		<Paper>
+		<Paper withBorder shadow="md" p={30} radius="md">
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack>
+					{errorMsg && (
+						<Alert variant="light" color="red" title="Erro ao salvar métricas" icon={<AlertCircle size={16} />}>
+							{errorMsg}
+						</Alert>
+					)}
+
 					<NumberInput
 						label="Altura (cm)"
 						placeholder="175cm"

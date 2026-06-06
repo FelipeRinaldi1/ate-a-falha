@@ -31,7 +31,8 @@ export const searchExerciseSchema = z.object({
 	secondaryMuscles: z.string().optional(),
 	category: z.string().optional(),
 	cursorId: z.string().optional(),
-	take: z.coerce.number().min(1).max(100).default(10),
+	take: z.coerce.number().min(1).max(1000).default(10),
+	random: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
 })
 
 export type ExerciseDTO = z.infer<typeof exerciseSchema>

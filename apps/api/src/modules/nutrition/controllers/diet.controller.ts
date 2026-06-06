@@ -124,4 +124,22 @@ export class DietController {
 
 		return res.status(HTTP_STATUS.OK).json(result.value)
 	}
+
+	export = async (req: Request, res: Response, next: NextFunction) => {
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Diet ID')
+		if (idValid.isFailure()) return next(idValid.error)
+
+		const result = await this.dietService.export(idValid.value)
+		if (result.isFailure()) return next(result.error)
+		return res.status(HTTP_STATUS.OK).json(result.value)
+	}
+
+	import = async (req: Request, res: Response, next: NextFunction) => {
+		const idValid = validateData(z.uuid(), req.params.id, 'Invalid Diet ID')
+		if (idValid.isFailure()) return next(idValid.error)
+
+		const result = await this.dietService.import(idValid.value, req.user)
+		if (result.isFailure()) return next(result.error)
+		return res.status(HTTP_STATUS.CREATED).json(result.value)
+	}
 }

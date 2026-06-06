@@ -46,4 +46,14 @@ export class PlanService {
 		const result = await this.planRepo.findById(id, authUser.id)
 		return result
 	}
+
+	async export(id: string): Promise<Result<PlanFull>> {
+		const result = await this.planRepo.findPublicById(id)
+		return result
+	}
+
+	async import(id: string, authUser: authenticatedUser): Promise<Result<PlanFull>> {
+		const result = await this.planRepo.importPlan(id, authUser.id)
+		return result
+	}
 }

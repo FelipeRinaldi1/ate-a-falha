@@ -22,7 +22,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
 app.use(pinoHttp({ logger }))
-app.use(helmet())
+app.use(helmet({ crossOriginResourcePolicy: false }))
 app.use(cors(corsOptions))
 app.use(apiRateLimiter)
 app.use(express.json())

@@ -27,6 +27,11 @@ describe('user Tests', () => {
 			const result = await request(app).post(`${BASE_API_URL}/users/register`).send(createUser)
 
 			expect(result.status).toBe(HTTP_STATUS.CREATED)
+
+			// Clean up the registered user so it doesn't leak into the database
+			const cookie = result.header['set-cookie']
+			const createdUserId = result.body.user.id
+			await cleanupTestUser(createdUserId, cookie)
 		})
 
 		test('Should fail if email already exists | 409 Conflict', async () => {
@@ -211,6 +216,9 @@ describe('user Tests', () => {
 				.send(userContext.user.id)
 
 			expect(result.status).toBe(HTTP_STATUS.OK)
+			
+			// Nullify userContext so afterEach doesn't attempt to double-delete an already deleted user
+			userContext = null as any
 		})
 	})
 })

@@ -17,6 +17,10 @@ export interface IDietRepository {
 	findAll(userId: string): Promise<Result<DietFull[]>>
 
 	findById(id: string, userId: string): Promise<Result<DietFull>>
+
+	findPublicById(id: string): Promise<Result<DietFull>>
+
+	importDiet(targetDietId: string, userId: string): Promise<Result<DietFull>>
 }
 
 export interface IDietLogRepository {

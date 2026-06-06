@@ -64,12 +64,31 @@ export function DietLogPage() {
 
 	const activeDiet = diets[0]
 
+	// Fetch reference meals
+	const { data: targetMeals = [], isLoading: isLoadingMeals } = useQuery<MealDTO[]>({
+		queryKey: ['target-meals', activeDiet?.id],
+		queryFn: async () => {
+			const res = await api.get(`/nutrition/diets/${activeDiet.id}/meals`)
+			return res.data
+		},
+		enabled: !!activeDiet?.id,
+	})
+
 	// Find diet log for the selected date
 	const activeLog = dietLogs.find((log) => {
 		const rawDate = log.date as unknown as string | Date
 		const logDateStr = typeof rawDate === 'string' ? rawDate.slice(0, 10) : formatDateString(rawDate)
 		return logDateStr === selectedDateStr
 	})
+
+	// Calculate current daily macro totals from logged meals
+	const loggedMeals = [...(activeLog?.meals || [])].sort((a, b) => a.time.localeCompare(b.time))
+	const dietTotals = NutritionLogic.calculateDietMacros(
+		loggedMeals.map((meal: MealLogDTO) => ({
+			...meal,
+			foodsInMeal: meal.foods || [],
+		})) as unknown as MealDTO[]
+	)
 
 	// Mutation: Create a Diet Log entry
 	const createDietLogMutation = useMutation({
@@ -93,6 +112,17 @@ export function DietLogPage() {
 		},
 	})
 
+	// Mutation: Update active diet log (e.g. waterIntake)
+	const updateDietLogMutation = useMutation({
+		mutationFn: async ({ id, data }: { id: string; data: { waterIntake: number } }) => {
+			const res = await api.patch(`/nutrition/diet-logs/${id}`, data)
+			return res.data
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+		},
+	})
+
 	// Mutation: Add a Meal Log to a Diet Log
 	const addMealLogMutation = useMutation({
 		mutationFn: async ({ dietLogId, name, time }: { dietLogId: string; name: string; time: string }) => {
@@ -110,6 +140,135 @@ export function DietLogPage() {
 			setMealTime('12:00')
 		},
 	})
+
+	const isCurrentOrFuture = (() => {
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		const currentSelected = new Date(selectedDateStr + 'T00:00:00')
+		return currentSelected >= today
+	})()
+
+	const [togglingMealId, setTogglingMealId] = useState<string | null>(null)
+
+	const toggleReferenceMealMutation = useMutation({
+		mutationFn: async ({
+			targetMeal,
+			isLogged,
+			loggedMealId,
+		}: {
+			targetMeal: MealDTO
+			isLogged: boolean
+			loggedMealId?: string
+		}) => {
+			setTogglingMealId(targetMeal.id)
+			if (isLogged && loggedMealId) {
+				await api.delete(`/nutrition/meal-logs/${loggedMealId}`)
+			} else {
+				let dietLogId = activeLog?.id
+				if (!dietLogId) {
+					const newLog = await api.post('/nutrition/diet-logs', { date: selectedDateStr })
+					dietLogId = newLog.data.id
+				}
+
+				const newMealRes = await api.post(`/nutrition/diet-logs/${dietLogId}/meals`, {
+					name: targetMeal.name,
+					time: targetMeal.time,
+					orderIndex: activeLog?.meals?.length || 0,
+				})
+				const newMealLogId = newMealRes.data.id
+
+				const foodsToLog = targetMeal.foods || []
+				const foodPromises = foodsToLog.map((f) =>
+					api.post(`/nutrition/meal-logs/${newMealLogId}/foods`, {
+						foodId: f.foodId,
+						quantity: f.quantity,
+					})
+				)
+				await Promise.all(foodPromises)
+			}
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			setTogglingMealId(null)
+		},
+		onError: () => {
+			setTogglingMealId(null)
+		},
+	})
+
+	const getMergedMeals = () => {
+		const targetMealsArr = targetMeals || []
+		const loggedMealsArr = loggedMeals || []
+		if (!isCurrentOrFuture || targetMealsArr.length === 0) {
+			return loggedMealsArr.map((meal) => ({
+				key: `logged-${meal.id}`,
+				meal,
+				isTemplate: false,
+				isLogged: false,
+				onToggle: undefined,
+				isToggling: false,
+			}))
+		}
+
+		const matchedLoggedIds = new Set<string>()
+
+		const merged = targetMealsArr
+			.map((target) => {
+				if (!target) return null
+				const match = loggedMealsArr.find(
+					(l) =>
+						l &&
+						(l.name || '').toLowerCase() === (target.name || '').toLowerCase() &&
+						!matchedLoggedIds.has(l.id)
+				)
+
+				if (match) {
+					matchedLoggedIds.add(match.id)
+					return {
+						key: `target-logged-${target.id}`,
+						meal: match,
+						isTemplate: false,
+						isLogged: true,
+						onToggle: () =>
+							toggleReferenceMealMutation.mutate({
+								targetMeal: target,
+								isLogged: true,
+								loggedMealId: match.id,
+							}),
+						isToggling: togglingMealId === target.id,
+					}
+				} else {
+					return {
+						key: `target-template-${target.id}`,
+						meal: target as unknown as MealLogDTO,
+						isTemplate: true,
+						isLogged: false,
+						onToggle: () =>
+							toggleReferenceMealMutation.mutate({
+								targetMeal: target,
+								isLogged: false,
+							}),
+						isToggling: togglingMealId === target.id,
+					}
+				}
+			})
+			.filter((item): item is NonNullable<typeof item> => Boolean(item))
+
+		const remaining = loggedMealsArr
+			.filter((l) => l && !matchedLoggedIds.has(l.id))
+			.map((meal) => ({
+				key: `logged-${meal.id}`,
+				meal,
+				isTemplate: false,
+				isLogged: false,
+				onToggle: undefined,
+				isToggling: false,
+			}))
+
+		return [...merged, ...remaining]
+	}
+
+	const displayMeals = getMergedMeals()
 
 	const handleAddMeal = async () => {
 		if (!mealName.trim()) return
@@ -131,10 +290,22 @@ export function DietLogPage() {
 		}
 	}
 
-	const handleUpdateWater = (amount: number) => {
-		if (!activeDiet) return
-		const newWater = Math.max(0, activeDiet.dailyWater + amount)
-		updateDietMutation.mutate({ id: activeDiet.id, data: { dailyWater: newWater } })
+	const handleUpdateWater = async (amount: number) => {
+		const currentWater = activeLog?.waterIntake || 0
+		const newWater = Math.max(0, currentWater + amount)
+
+		if (activeLog) {
+			updateDietLogMutation.mutate({
+				id: activeLog.id,
+				data: { waterIntake: newWater },
+			})
+		} else {
+			const newLog = await createDietLogMutation.mutateAsync(selectedDateStr)
+			updateDietLogMutation.mutate({
+				id: newLog.id,
+				data: { waterIntake: newWater },
+			})
+		}
 	}
 
 	const handleOpenWaterGoalModal = () => {
@@ -149,6 +320,7 @@ export function DietLogPage() {
 			dailyProteinGoal: targets.protein,
 			dailyCarbGoal: targets.carb,
 			dailyFatGoal: targets.fat,
+			dailyFiberGoal: targets.fiber,
 			dailyWaterGoal: newWaterGoal,
 			dailyWater: targets.waterCurrent,
 		}
@@ -180,14 +352,7 @@ export function DietLogPage() {
 
 	const weekDays = getWeekDays()
 
-	// Calculate current daily macro totals from logged meals
-	const loggedMeals = [...(activeLog?.meals || [])].sort((a, b) => a.time.localeCompare(b.time))
-	const dietTotals = NutritionLogic.calculateDietMacros(
-		loggedMeals.map((meal: MealLogDTO) => ({
-			...meal,
-			foodsInMeal: meal.foods || [],
-		})) as unknown as MealDTO[]
-	)
+
 
 	// Fallback/Default targets if no active diet is registered
 	const targets = {
@@ -195,11 +360,12 @@ export function DietLogPage() {
 		protein: activeDiet?.dailyProteinGoal || 150,
 		carb: activeDiet?.dailyCarbGoal || 200,
 		fat: activeDiet?.dailyFatGoal || 60,
+		fiber: activeDiet?.dailyFiberGoal || 25,
 		water: activeDiet?.dailyWaterGoal || 4000,
-		waterCurrent: activeDiet?.dailyWater || 0,
+		waterCurrent: activeLog?.waterIntake || 0,
 	}
 
-	if (isLoadingDiets || isLoadingLogs) {
+	if (isLoadingDiets || isLoadingLogs || (!!activeDiet && isLoadingMeals)) {
 		return (
 			<MainLayout title="Dieta">
 				<Center style={{ height: '70vh' }}>
@@ -233,7 +399,7 @@ export function DietLogPage() {
 						waterCurrent={targets.waterCurrent}
 						waterTarget={targets.water}
 						onUpdateWater={handleUpdateWater}
-						isPending={updateDietMutation.isPending}
+						isPending={updateDietLogMutation.isPending || createDietLogMutation.isPending}
 						onEditTargetClick={handleOpenWaterGoalModal}
 					/>
 
@@ -248,13 +414,22 @@ export function DietLogPage() {
 						fat={dietTotals.fats}
 						fatTarget={targets.fat}
 						fiber={dietTotals.fiber}
-						fiberTarget={25}
+						fiberTarget={targets.fiber}
 						onEditClick={() => navigate('/nutrition/goals')}
 					/>
 
 					{/* Meal Logs List */}
-					{loggedMeals.length > 0 ? (
-						loggedMeals.map((meal: MealLogDTO, idx: number) => <MealCard key={idx} meal={meal} />)
+					{displayMeals.length > 0 ? (
+						displayMeals.map((item) => (
+							<MealCard
+								key={item.key}
+								meal={item.meal}
+								isTemplate={item.isTemplate}
+								isLogged={item.isLogged}
+								onToggle={item.onToggle}
+								isToggling={item.isToggling}
+							/>
+						))
 					) : (
 						<Paper withBorder p="xl" radius="md" shadow="sm" style={{ textAlign: 'center' }}>
 							<Text c="dimmed" size="sm">

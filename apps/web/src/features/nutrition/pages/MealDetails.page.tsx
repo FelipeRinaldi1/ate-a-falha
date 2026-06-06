@@ -158,17 +158,8 @@ export function MealDetailsPage() {
 
 	const mealFoods = meal.foods || []
 
-	// Calculate totals for the entire meal using shared logic
 	const mealTotals = NutritionLogic.calculateMealMacros(
-		mealFoods.map((f: FoodLogDTO) => ({
-			id: f.id,
-			foodId: f.foodId,
-			food: f.food,
-			quantity: f.quantity,
-			mealId: f.mealLogId,
-			createdAt: f.createdAt,
-			updatedAt: f.updatedAt,
-		}))
+		mealFoods as unknown as Parameters<typeof NutritionLogic.calculateMealMacros>[0]
 	)
 
 	return (
@@ -183,14 +174,12 @@ export function MealDetailsPage() {
 		>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
-					{/* Subtitle / Name and Time of the meal centered */}
 					<Center>
 						<Title order={2} size="h3" fw={700} c="bright" style={{ letterSpacing: '-0.5px' }}>
 							{meal.name} ({meal.time})
 						</Title>
 					</Center>
 
-					{/* 1. Meal totals summary card */}
 					<Paper withBorder p="md" shadow="sm" radius="md" bg="var(--mantine-color-dark-8)">
 						<Stack gap="xs">
 							<Center>
@@ -240,38 +229,43 @@ export function MealDetailsPage() {
 					<Stack gap="sm">
 						{mealFoods.length > 0 ? (
 							mealFoods.map((item: FoodLogDTO) => {
-								const itemMacros = NutritionLogic.calculateFoodInMealMacros({
-									id: item.id,
-									foodId: item.foodId,
-									food: item.food,
-									quantity: item.quantity,
-									mealId: item.mealLogId,
-									createdAt: item.createdAt,
-									updatedAt: item.updatedAt,
-								})
+								const itemMacros = NutritionLogic.calculateFoodInMealMacros(
+									item as unknown as Parameters<typeof NutritionLogic.calculateFoodInMealMacros>[0]
+								)
 
 								return (
-									<Paper
-										key={item.id}
-										withBorder
-										p="md"
-										radius="md"
-										shadow="xs"
-										style={{ position: 'relative' }}
-									>
+									<Paper key={item.id} withBorder p="md" radius="md" shadow="xs">
 										<Stack gap="xs">
-											<Group justify="space-between" align="flex-start" pr={70}>
-												<Stack gap={2}>
-													<Text fw={700} size="sm">
+											<Group justify="space-between" align="flex-start" wrap="nowrap">
+												<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+													<Text fw={700} size="sm" style={{ wordBreak: 'break-word' }}>
 														{item.food.name}
 													</Text>
 													<Text size="xs" c="dimmed">
 														Porção: {item.quantity}g
 													</Text>
 												</Stack>
-												<Text fw={700} size="sm" c="dimmed">
-													{itemMacros.calories.toFixed(0)} Kal
-												</Text>
+												<Group gap="xs" wrap="nowrap" align="flex-start">
+													<Text fw={700} size="sm" c="dimmed">
+														{itemMacros.calories.toFixed(0)} Kal
+													</Text>
+													<ActionIcon
+														variant="subtle"
+														color="gray"
+														onClick={() => handleOpenEditFood(item)}
+														size="sm"
+													>
+														<Pencil size={14} />
+													</ActionIcon>
+													<ActionIcon
+														variant="subtle"
+														color="red"
+														onClick={() => handleRemoveFood(item.id, item.food.name)}
+														size="sm"
+													>
+														<Trash2 size={14} />
+													</ActionIcon>
+												</Group>
 											</Group>
 
 											<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
@@ -308,25 +302,6 @@ export function MealDetailsPage() {
 													</Text>
 												</Stack>
 											</SimpleGrid>
-
-											<Group gap={6} style={{ position: 'absolute', top: 12, right: 12 }}>
-												<ActionIcon
-													variant="subtle"
-													color="gray"
-													onClick={() => handleOpenEditFood(item)}
-													size="sm"
-												>
-													<Pencil size={16} />
-												</ActionIcon>
-												<ActionIcon
-													variant="subtle"
-													color="red"
-													onClick={() => handleRemoveFood(item.id, item.food.name)}
-													size="sm"
-												>
-													<Trash2 size={16} />
-												</ActionIcon>
-											</Group>
 										</Stack>
 									</Paper>
 								)
@@ -440,7 +415,7 @@ export function MealDetailsPage() {
 										<Text size="xs" c="dimmed">
 											P
 										</Text>
-										<Text size="xs" fw={700}>
+										<Text size="xs" fw={700} c="red.6">
 											{((editingFood.food.protein * editQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
@@ -448,7 +423,7 @@ export function MealDetailsPage() {
 										<Text size="xs" c="dimmed">
 											C
 										</Text>
-										<Text size="xs" fw={700}>
+										<Text size="xs" fw={700} c="yellow.5">
 											{((editingFood.food.carbohydrate * editQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
@@ -456,7 +431,7 @@ export function MealDetailsPage() {
 										<Text size="xs" c="dimmed">
 											G
 										</Text>
-										<Text size="xs" fw={700}>
+										<Text size="xs" fw={700} c="green.6">
 											{((editingFood.food.lipids * editQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
@@ -464,7 +439,7 @@ export function MealDetailsPage() {
 										<Text size="xs" c="dimmed">
 											F
 										</Text>
-										<Text size="xs" fw={700}>
+										<Text size="xs" fw={700} c="teal.5">
 											{((editingFood.food.fiber * editQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>

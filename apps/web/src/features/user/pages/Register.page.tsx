@@ -4,9 +4,9 @@ import { RegisterForm } from '../components/RegisterForm'
 
 export function RegisterPage() {
 	return (
-		<Center style={{ minHeight: '100vh', backgroundColor: 'var(--mantine-color-gray-0)', padding: '20px 0' }}>
+		<Center style={{ minHeight: '100vh', backgroundColor: 'var(--mantine-color-dark-8)', padding: '20px 0' }}>
 			<Container size={420} w="100%">
-				<Title ta="center" fw={900}>
+				<Title ta="center" fw={900} style={{ fontFamily: 'Outfit, sans-serif', fontSize: '32px' }}>
 					Criar uma conta
 				</Title>
 				<Text c="dimmed" size="sm" ta="center" mt={5} mb={30}>

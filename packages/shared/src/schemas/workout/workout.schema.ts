@@ -6,8 +6,9 @@ export const workoutSchema = z.object({
 	planId: z.uuid(),
 	name: z.string().min(3).max(32).nullable(),
 	day: z.enum(['A', 'B', 'C', 'D', 'E', 'F']),
+	weekDay: z.string().nullable().optional(),
 
-	exercises: z.array(workoutexerciseSchema).optional(),
+	workoutExercises: z.array(workoutexerciseSchema).optional(),
 
 	createdAt: z.date(),
 	updatedAt: z.date(),
@@ -16,6 +17,7 @@ export const workoutSchema = z.object({
 export const createWorkoutSchema = workoutSchema.pick({
 	name: true,
 	day: true,
+	weekDay: true,
 })
 
 export const updateWorkoutSchema = createWorkoutSchema.partial()

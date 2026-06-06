@@ -7,4 +7,6 @@ export interface IPlanRepository {
 	delete(id: string, userId: string): Promise<Result<void>>
 	findAll(userId: string): Promise<Result<PlanFull[]>>
 	findById(id: string, userId: string): Promise<Result<PlanFull>>
+	findPublicById(id: string): Promise<Result<PlanFull>>
+	importPlan(targetPlanId: string, userId: string): Promise<Result<PlanFull>>
 }
