@@ -10,25 +10,25 @@
 
 ### Desenvolvimento
 
-| Comando                 | Descrição                                          |
-| ----------------------- | -------------------------------------------------- |
-| `npm run setup`         | Sobe todos os serviços, aplica as migrations, seed |
-| `npm run dev`           | Sobe todos os serviços                             |
-| `npm run dev:all`       | Build + sobe tudo em background                    |
-| `npm run dev:api`       | Sobe apenas o backend                              |
-| `npm run dev:web`       | Sobe apenas o frontend                             |
-| `npm run dev:build:api` | Rebuild do container da API                        |
-| `npm run dev:build:web` | Rebuild do container do Web                        |
+| Comando                 | Descrição                                               |
+| ----------------------- | ------------------------------------------------------- |
+| `npm run dev:setup`     | Sobe todos os serviços, aplica migrations e seed (setup)|
+| `npm run dev`           | Sobe todos os serviços via Docker Compose               |
+| `npm run dev:shutdown`  | Para e remove todos os containers                       |
+| `npm run dev:api`       | Sobe apenas o container da API (backend)                |
+| `npm run dev:web`       | Sobe apenas o container do Web (frontend)               |
+| `npm run dev:build`     | Rebuilda todos os containers do Docker                  |
 
 ### Banco de Dados
 
 | Comando                  | Descrição                                               |
 | ------------------------ | ------------------------------------------------------- |
-| `npm run db:migrate`     | Aplica migrations pendentes (produção)                  |
-| `npm run db:migrate:dev` | Cria/aplica migration interativamente (desenvolvimento) |
+| `npm run db:migrate`     | Aplica migrations pendentes (produção/local)            |
+| `npm run dev:db:migrate` | Executa migrations dentro do container da API           |
+| `npm run dev:db:migrate:save` | Cria uma nova migration de forma interativa        |
 | `npm run db:generate`    | Regenera o Prisma Client após alterar o schema          |
-| `npm run db:seed`        | Executa o seed para popular o banco                     |
-| `npm run db:studio`      | Abre o Prisma Studio                                    |
+| `npm run db:seed`        | Executa o seed para popular o banco de dados            |
+| `npm run db:studio`      | Abre a interface visual do Prisma Studio                |
 
 ### Pipeline de Dados
 
@@ -61,7 +61,7 @@ model Food {
 ### 2. Criar Migration
 
 ```bash
-npm run db:migrate:dev
+npm run dev:db:migrate:save
 # Digite o nome da migration quando solicitado
 ```
 
@@ -116,4 +116,4 @@ Copiar `.env.example` para `.env` e preencher. As principais variáveis são:
 | `WEB_PORT`              | Porta do frontend                  | `3000`                                          |
 | `JWT_SECRET`            | Chave secreta para tokens JWT      | jwt_secret_here                                 |
 | `VITE_API_URL`          | URL da API para o frontend         | `http://localhost:3333`                         |
-| `ASSETS_EXERCISES_PATH` | Caminho para imagens de exercícios | `/app/packages/assets/exercises`                |
+| `ASSETS_EXERCISES_PATH` | Caminho para imagens de exercícios | `/app/apps/api/public/exercises`                |

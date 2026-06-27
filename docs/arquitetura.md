@@ -13,9 +13,8 @@ ate-a-falha/
 │   └── web/          # Frontend React + Mantine v9
 ├── packages/
 │   ├── database/     # Prisma Client, Schema, Migrations e Seeds
-│   ├── shared/       # Schemas Zod, Tipos, Result Pattern
-│   ├── pipeline/     # ETL para ingestão de dados
-│   └── assets/       # Arquivos estáticos
+│   └── shared/       # Schemas Zod, Tipos, Result Pattern
+├── pipeline/         # ETL para ingestão de dados (Python)
 ├── docs/             # Documentação do projeto
 ├── data/             # Dados brutos para pipeline
 └── docker-compose.yml
@@ -55,13 +54,9 @@ ate-a-falha/
 - Contém a interface AppError.
 - **Importante:** Este pacote NÃO deve conter dependências exclusivas de Node.js, pois é consumido também pelo frontend.
 
-### `packages/pipeline`
+### `pipeline/` — ETL (Python)
 
-- Responsável por processar e transformar dados brutos.
-
-### `packages/assets`
-
-- Armazena arquivos estáticos.
+- Responsável por processar e transformar dados brutos de nutrição (tabela TACO) e biblioteca de exercícios, populando o banco de dados.
 
 ## Infraestrutura
 
