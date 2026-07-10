@@ -16,13 +16,13 @@
 		"@prisma/adapter-pg": "^7.6.0",
 		"@prisma/client": "^7.6.0",
 		"pg": "^8.13.0",
-		"prisma": "^7.6.0"
+		"prisma": "^7.6.0",
+		"shx": "^0.4.0"
 	},
 	"devDependencies": {
 		"@types/node": "^24.12.2",
 		"@types/pg": "^8.11.0",
 		"dotenv": "^17.3.1",
-		"shx": "^0.4.0",
 		"tsx": "^4.19.0"
 	},
 	"keywords": [],
