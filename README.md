@@ -18,25 +18,17 @@ O projeto utiliza uma estrutura de **Monorepo** para compartilhamento de dados v
 ```text
 .
 ├── apps/
-│   ├── api/          # Backend Express & Prisma
-│   └── web/          # Frontend React & Mantine
+│   ├── api/          # Backend
+│   └── web/          # Frontend
 ├── packages/
 │   ├── database/     # Schema Prisma, Migrations e Client
-│   ├── shared/       # Schemas Zod e Tipos compartilhados
-│   ├── assets/       # Arquivos estáticos
-│   └── pipeline/     # Scripts de ingestão de dados
+│   └── shared/       # Schemas Zod e Tipos compartilhados
+├── pipeline/         # ETL para ingestão de dados
 ├── data/
 │   ├── bronze/       # Dados brutos
 │   ├── silver/       # Dados processados
 │   └── gold/         # Dados para uso
 ├── docs/
-|   ├──ai/            # Arquivos para Desenvolvimento com IA Integrada
-|   ├──arquitetura.md # Documentação da arquitetura
-|   ├──desenvolvimento.md # Documentação para quem contribuir com o projeto
-|   ├──requisitos.md # Documentação dos requisitos do projeto
-|   └──outros-arquivos...
-|
-|
 └── docker-compose.yml
 ```
 

@@ -15,6 +15,8 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
      │ 1:N
      ├──────────── BodyMetric
      │ 1:N
+     ├──────────── DietLog ──── 1:N ──── MealLog ──── 1:N ──── FoodLog ──── N:1 ──── Food
+     │ 1:N
      ├──────────── Diet ──── 1:N ──── Meal ──── 1:N ──── FoodInMeal ──── N:1 ──── Food
      │ 1:N
      ├──────────── Food
@@ -34,7 +36,7 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 | `Auth`       | Credenciais de autenticação |
 | `BodyMetric` | Medições corporais          |
 
-### Módulo de Nutrição
+### Módulo de Nutrição e Histórico Alimentar (Logs)
 
 | Model        | Descrição                                                          | Pai             |
 | ------------ | ------------------------------------------------------------------ | --------------- |
@@ -42,6 +44,9 @@ O projeto utiliza **PostgreSQL 18** como banco de dados, gerenciado pelo **Prism
 | `Meal`       | Refeição dentro de uma dieta                                       | `Diet`          |
 | `FoodInMeal` | Tabela associativa: liga um alimento a uma refeição com quantidade | `Meal` + `Food` |
 | `Food`       | Alimento com informações nutricionais                              | `User?`         |
+| `DietLog`    | Registro/Log de consumo diário de água e refeições                 | `User`          |
+| `MealLog`    | Registro de refeição realizada em um determinado dia              | `DietLog`       |
+| `FoodLog`    | Alimento consumido em uma refeição do diário com quantidade        | `MealLog` + `Food` |
 
 **Observações sobre `Food`:**
 
