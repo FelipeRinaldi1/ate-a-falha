@@ -79,7 +79,6 @@ npm run dev:setup
 - **ORM:** Prisma
 - **Validação:** Zod
 - **Gerenciamento de Estado:** TanStack React Query v5
-- **Monorepo:** npm Workspaces
 
 ---
 

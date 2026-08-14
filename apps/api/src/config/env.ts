@@ -26,10 +26,6 @@ const envSchema = z.object({
 
 	CORS_ORIGIN: z.string().default('*'),
 
-	SERVER_URL: z
-		.preprocess((val) => (val === '' ? undefined : val), z.url({ message: 'URL do servidor inválida' }))
-		.default('http://localhost:3333'),
-
 	LOG_LEVEL: z.string().default('info'),
 })
 
