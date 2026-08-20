@@ -8,7 +8,6 @@ export const corsOptions: CorsOptions = {
 		const cleanOrigin = origin ? origin.replace(/\/$/, '') : ''
 
 		const isLocalDev =
-			ENV.NODE_ENV === 'development' &&
 			origin &&
 			(origin.startsWith('http://localhost') ||
 				origin.startsWith('https://localhost') ||
