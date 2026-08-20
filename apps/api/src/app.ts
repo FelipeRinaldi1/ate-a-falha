@@ -28,7 +28,7 @@ app.use(apiRateLimiter)
 app.use(express.json())
 app.use(cookieParser())
 
-app.get('/health', async (_req, res) => {
+app.get(['/health', `${BASE_API_URL}/health`], async (_req, res) => {
 	try {
 		await prisma.$queryRaw`SELECT 1`
 		res.status(200).json({ status: 'ok', database: 'connected' })
