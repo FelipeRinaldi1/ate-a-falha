@@ -78,6 +78,23 @@ export function ActiveWorkoutPage() {
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:expanded`)
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:checked`)
 		}
+
+		// Mark today's date as completed in localStorage
+		try {
+			const today = new Date()
+			const year = today.getFullYear()
+			const month = String(today.getMonth() + 1).padStart(2, '0')
+			const day = String(today.getDate()).padStart(2, '0')
+			const todayStr = `${year}-${month}-${day}`
+
+			const saved = localStorage.getItem('ate-a-falha:completed-workouts')
+			const completed = saved ? JSON.parse(saved) : {}
+			completed[todayStr] = true
+			localStorage.setItem('ate-a-falha:completed-workouts', JSON.stringify(completed))
+		} catch (e) {
+			console.error('Failed to save completed workout', e)
+		}
+
 		navigate('/workout')
 	}
 

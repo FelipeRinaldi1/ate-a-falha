@@ -1,4 +1,5 @@
 import { Paper, Group, Text, Badge } from '@mantine/core'
+import { Check } from 'lucide-react'
 
 interface CalendarSelectorProps {
 	weekDays: Date[]
@@ -6,17 +7,27 @@ interface CalendarSelectorProps {
 	onSelectDate: (date: Date) => void
 	formatDateString: (date: Date) => string
 	scheduledWorkouts?: Record<string, string>
+	completedDays?: Record<string, boolean>
 }
 
-export function CalendarSelector({ weekDays, selectedDateStr, onSelectDate, formatDateString, scheduledWorkouts }: CalendarSelectorProps) {
+export function CalendarSelector({
+	weekDays,
+	selectedDateStr,
+	onSelectDate,
+	formatDateString,
+	scheduledWorkouts,
+	completedDays,
+}: CalendarSelectorProps) {
 	return (
 		<Paper withBorder p="xs" radius="md" shadow="sm">
 			<Group justify="space-between" grow gap="xs">
 				{weekDays.map((day, idx) => {
-					const isSelected = formatDateString(day) === selectedDateStr
+					const dayStr = formatDateString(day)
+					const isSelected = dayStr === selectedDateStr
 					const dayName = day.toLocaleDateString('pt-BR', { weekday: 'short' })
 					const dayNum = day.getDate()
 					const workoutLetter = scheduledWorkouts?.[day.getDay().toString()]
+					const isCompleted = !!completedDays?.[dayStr]
 
 					return (
 						<Paper
@@ -44,22 +55,44 @@ export function CalendarSelector({ weekDays, selectedDateStr, onSelectDate, form
 								{dayName.slice(0, 3)}
 							</Text>
 							{workoutLetter ? (
-								<Badge
-									size="xs"
-									variant={isSelected ? 'white' : 'filled'}
-									color="blue"
-									style={{
-										fontSize: '9px',
-										height: 'auto',
-										padding: '1px 5px',
-										textTransform: 'uppercase',
-										fontWeight: 800,
-									}}
-								>
-									{workoutLetter}
-								</Badge>
+								isCompleted ? (
+									<Badge
+										size="xs"
+										variant="filled"
+										color="green"
+										style={{
+											fontSize: '9px',
+											height: '18px',
+											padding: '0 5px',
+											textTransform: 'uppercase',
+											fontWeight: 800,
+										}}
+									>
+										<Group gap={2} wrap="nowrap" justify="center">
+											<Check size={10} strokeWidth={3} />
+											<span>{workoutLetter}</span>
+										</Group>
+									</Badge>
+								) : (
+									<Badge
+										size="xs"
+										variant="outline"
+										color={isSelected ? 'white' : 'blue'}
+										style={{
+											fontSize: '9px',
+											height: '18px',
+											padding: '0 5px',
+											textTransform: 'uppercase',
+											fontWeight: 700,
+											backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+											borderWidth: '1.5px',
+										}}
+									>
+										{workoutLetter}
+									</Badge>
+								)
 							) : (
-								<div style={{ height: '14px' }} />
+								<div style={{ height: '18px' }} />
 							)}
 						</Paper>
 					)
