@@ -14,7 +14,7 @@ import {
 	Loader,
 	Paper,
 } from '@mantine/core'
-import { Dumbbell, ArrowRight, Play } from 'lucide-react'
+import { Dumbbell, ArrowRight, Play, CheckCircle2, Circle } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { MainLayout } from '../../../components/layout/MainLayout'
@@ -25,6 +25,24 @@ import { CalendarSelector } from '../../../components/CalendarSelector'
 export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+	// Completed workouts state stored in localStorage (YYYY-MM-DD -> boolean)
+	const [completedWorkouts, setCompletedWorkouts] = useState<Record<string, boolean>>(() => {
+		try {
+			const saved = localStorage.getItem('ate-a-falha:completed-workouts')
+			return saved ? JSON.parse(saved) : {}
+		} catch {
+			return {}
+		}
+	})
+
+	const toggleDayCompleted = (dateStr: string) => {
+		setCompletedWorkouts((prev) => {
+			const updated = { ...prev, [dateStr]: !prev[dateStr] }
+			localStorage.setItem('ate-a-falha:completed-workouts', JSON.stringify(updated))
+			return updated
+		})
+	}
 
 	const { data: plans = [], isLoading: isLoadingPlans } = useQuery<PlanDTO[]>({
 		queryKey: ['workout-plans'],
@@ -77,6 +95,7 @@ export function WorkoutDashboardPage() {
 
 	const weekDays = getWeekDays()
 	const selectedDateStr = formatDateString(selectedDate)
+	const isTodayCompleted = !!completedWorkouts[selectedDateStr]
 
 	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
 
@@ -107,7 +126,86 @@ export function WorkoutDashboardPage() {
 						onSelectDate={setSelectedDate}
 						formatDateString={formatDateString}
 						scheduledWorkouts={scheduledWorkouts}
+						completedDays={completedWorkouts}
 					/>
+
+					{/* Treino do Dia Selecionado & Botão de Check */}
+					<Paper withBorder p="md" radius="md" shadow="sm">
+						<Stack gap="sm">
+							<Group justify="space-between" align="center" wrap="nowrap">
+								<Stack gap={2}>
+									<Text fw={700} size="md">
+										Treino do Dia
+									</Text>
+									<Text size="xs" c="dimmed" style={{ textTransform: 'capitalize' }}>
+										{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'short' })}
+									</Text>
+								</Stack>
+
+								{/* Botão de Check para marcar se foi treinado (exibido apenas se houver treino agendado) */}
+								{todaysWorkout && (
+									<Button
+										size="xs"
+										variant={isTodayCompleted ? 'filled' : 'light'}
+										color={isTodayCompleted ? 'green' : 'gray'}
+										leftSection={isTodayCompleted ? <CheckCircle2 size={15} /> : <Circle size={15} />}
+										onClick={() => toggleDayCompleted(selectedDateStr)}
+										style={{ transition: 'all 0.2s ease' }}
+									>
+										{isTodayCompleted ? 'Treinado ✓' : 'Marcar Treino'}
+									</Button>
+								)}
+							</Group>
+
+							{todaysWorkout ? (
+								<Card withBorder p="sm" radius="md" style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}>
+									<Group justify="space-between" align="center">
+										<Stack gap={2}>
+											<Group gap="xs">
+												<Badge size="sm" color="blue" variant="filled">
+													Treino {todaysWorkout.day}
+												</Badge>
+												<Text fw={700} size="sm">
+													{todaysWorkout.name || `Treino ${todaysWorkout.day}`}
+												</Text>
+											</Group>
+											<Text size="xs" c="dimmed">
+												{todaysWorkout.workoutExercises?.length || 0} exercícios cadastrados
+											</Text>
+										</Stack>
+
+										<Button
+											size="xs"
+											color="blue"
+											variant="light"
+											leftSection={<Play size={14} fill="currentColor" />}
+											onClick={() => activePlan && navigate(`/workout/active/${activePlan.id}?workoutId=${todaysWorkout.id}`)}
+										>
+											Iniciar
+										</Button>
+									</Group>
+								</Card>
+							) : (
+								<Card withBorder p="sm" radius="md" style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}>
+									<Group justify="space-between" align="center">
+										<Text size="xs" c="dimmed">
+											Nenhum treino agendado para este dia da semana.
+										</Text>
+										{activePlan && (
+											<Button
+												size="xs"
+												variant="subtle"
+												color="blue"
+												onClick={() => navigate(`/workout/active/${activePlan.id}/select`)}
+											>
+												Escolher treino
+											</Button>
+										)}
+									</Group>
+								</Card>
+							)}
+						</Stack>
+					</Paper>
 
 					{/* Ficha de Treino Principal */}
 					<Paper withBorder p="md" radius="md" shadow="sm">
@@ -165,19 +263,6 @@ export function WorkoutDashboardPage() {
 												Ficha Ativa
 											</Badge>
 										</Group>
-
-										{todaysWorkout && (
-											<Button
-												size="sm"
-												color="blue"
-												variant="light"
-												mt="sm"
-												fullWidth
-												onClick={() => navigate(`/workout/active/${activePlan.id}?workoutId=${todaysWorkout.id}`)}
-											>
-												Começar Treino Diário ({todaysWorkout.day})
-											</Button>
-										)}
 									</Stack>
 								</Card>
 							) : (
