@@ -8,8 +8,10 @@ export class NutritionAccessControlRepository implements INutritionAccessControl
 		const result = await safeCall(
 			prisma.diet.findUniqueOrThrow({
 				where: {
-					id: dietId,
-					userId: userId,
+					uniqueId: {
+						id: dietId,
+						userId: userId,
+					},
 				},
 				select: { id: true },
 			})

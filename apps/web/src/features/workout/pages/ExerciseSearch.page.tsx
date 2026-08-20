@@ -142,7 +142,7 @@ export function ExerciseSearchPage() {
 							placeholder="Músculo Foco"
 							data={allMuscles}
 							value={selectedMuscle}
-							onChange={setSelectedMuscle}
+							onChange={(val) => setSelectedMuscle(val)}
 							clearable
 							radius="md"
 						/>
@@ -150,7 +150,7 @@ export function ExerciseSearchPage() {
 							placeholder="Categoria"
 							data={allCategories}
 							value={selectedCategory}
-							onChange={setSelectedCategory}
+							onChange={(val) => setSelectedCategory(val)}
 							clearable
 							radius="md"
 						/>

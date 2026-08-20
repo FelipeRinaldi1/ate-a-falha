@@ -7,4 +7,3 @@ import '@mantine/charts/styles.css'
 export function App() {
 	return <RouterProvider router={router} />
 }
-

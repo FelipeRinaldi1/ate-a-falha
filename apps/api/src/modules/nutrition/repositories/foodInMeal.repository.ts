@@ -61,132 +61,104 @@ export class FoodInMealRepository implements IFoodInMealRepository, IFoodLogRepo
 		return success(result.value)
 	}
 
-	async update(id: string, data: UpdateFoodInMealDTO, userId: string): Promise<Result<FoodInMealFull>> {
+	async update(id: string, data: UpdateFoodInMealDTO, _userId: string): Promise<Result<FoodInMealFull>> {
 		const result = await safeCall(
-			prisma.foodInMeal.update({
-				where: {
-					id: id,
-					meal: {
-						diet: {
-							userId: userId,
-						},
-					},
-				},
-				data: data,
-				include: { food: true },
-			})
-		)
-		if (result.isFailure()) return failure(result.error)
+ 			prisma.foodInMeal.update({
+ 				where: { id },
+ 				data: data,
+ 				include: { food: true },
+ 			})
+ 		)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(result.value)
-	}
+ 		return success(result.value)
+ 	}
 
-	async delete(id: string, userId: string): Promise<Result<void>> {
-		const result = await safeCall(
-			prisma.foodInMeal.delete({
-				where: {
-					id: id,
-					meal: {
-						diet: {
-							userId: userId,
-						},
-					},
-				},
-			})
-		)
+ 	async delete(id: string, _userId: string): Promise<Result<void>> {
+ 		const result = await safeCall(
+ 			prisma.foodInMeal.delete({
+ 				where: { id },
+ 			})
+ 		)
 
-		if (result.isFailure()) return failure(result.error)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(undefined)
-	}
+ 		return success(undefined)
+ 	}
 
-	// Real Log FoodLog CRUD (No historical macro snapshotting as requested)
-	async createLog(mealLogId: string, foodId: string, data: CreateFoodLogDTO): Promise<Result<FoodLogFull>> {
-		const result = await safeCall(
-			prisma.foodLog.create({
-				data: {
-					...data,
-					mealLogId: mealLogId,
-					foodId: foodId,
-				},
-				include: { food: true },
-			})
-		)
+ 	// Real Log FoodLog CRUD (No historical macro snapshotting as requested)
+ 	async createLog(mealLogId: string, foodId: string, data: CreateFoodLogDTO): Promise<Result<FoodLogFull>> {
+ 		const result = await safeCall(
+ 			prisma.foodLog.create({
+ 				data: {
+ 					...data,
+ 					mealLogId: mealLogId,
+ 					foodId: foodId,
+ 				},
+ 				include: { food: true },
+ 			})
+ 		)
 
-		if (result.isFailure()) return failure(result.error)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(result.value)
-	}
+ 		return success(result.value)
+ 	}
 
-	async findAllLogs(mealLogId: string, userId: string): Promise<Result<FoodLogFull[]>> {
-		const result = await safeCall(
-			prisma.foodLog.findMany({
-				where: {
-					mealLogId: mealLogId,
-					mealLog: {
-						dietLog: {
-							userId: userId,
-						},
-					},
-				},
-				include: { food: true },
-			})
-		)
-		if (result.isFailure()) return failure(result.error)
-		return success(result.value)
-	}
+ 	async findAllLogs(mealLogId: string, userId: string): Promise<Result<FoodLogFull[]>> {
+ 		const result = await safeCall(
+ 			prisma.foodLog.findMany({
+ 				where: {
+ 					mealLogId: mealLogId,
+ 					mealLog: {
+ 						dietLog: {
+ 							userId: userId,
+ 						},
+ 					},
+ 				},
+ 				include: { food: true },
+ 			})
+ 		)
+ 		if (result.isFailure()) return failure(result.error)
+ 		return success(result.value)
+ 	}
 
-	async findLogById(id: string, userId: string): Promise<Result<FoodLogFull>> {
-		const result = await safeCall(
-			prisma.foodLog.findFirstOrThrow({
-				where: {
-					id: id,
-					mealLog: { dietLog: { userId: userId } },
-				},
-				include: { food: true },
-			})
-		)
-		if (result.isFailure()) return failure(result.error)
+ 	async findLogById(id: string, userId: string): Promise<Result<FoodLogFull>> {
+ 		const result = await safeCall(
+ 			prisma.foodLog.findFirstOrThrow({
+ 				where: {
+ 					id: id,
+ 					mealLog: { dietLog: { userId: userId } },
+ 				},
+ 				include: { food: true },
+ 			})
+ 		)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(result.value)
-	}
+ 		return success(result.value)
+ 	}
 
-	async updateLog(id: string, data: UpdateFoodLogDTO, userId: string): Promise<Result<FoodLogFull>> {
-		const result = await safeCall(
-			prisma.foodLog.update({
-				where: {
-					id: id,
-					mealLog: {
-						dietLog: {
-							userId: userId,
-						},
-					},
-				},
-				data: data,
-				include: { food: true },
-			})
-		)
-		if (result.isFailure()) return failure(result.error)
+ 	async updateLog(id: string, data: UpdateFoodLogDTO, _userId: string): Promise<Result<FoodLogFull>> {
+ 		const result = await safeCall(
+ 			prisma.foodLog.update({
+ 				where: { id },
+ 				data: data,
+ 				include: { food: true },
+ 			})
+ 		)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(result.value)
-	}
+ 		return success(result.value)
+ 	}
 
-	async deleteLog(id: string, userId: string): Promise<Result<void>> {
-		const result = await safeCall(
-			prisma.foodLog.delete({
-				where: {
-					id: id,
-					mealLog: {
-						dietLog: {
-							userId: userId,
-						},
-					},
-				},
-			})
-		)
+ 	async deleteLog(id: string, _userId: string): Promise<Result<void>> {
+ 		const result = await safeCall(
+ 			prisma.foodLog.delete({
+ 				where: { id },
+ 			})
+ 		)
 
-		if (result.isFailure()) return failure(result.error)
+ 		if (result.isFailure()) return failure(result.error)
 
-		return success(undefined)
-	}
+ 		return success(undefined)
+ 	}
 }

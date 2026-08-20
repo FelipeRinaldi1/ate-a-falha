@@ -551,7 +551,7 @@ export function EditPlanPage() {
 							placeholder="Músculo Foco"
 							data={MUSCLE_OPTIONS}
 							value={selectedMuscle}
-							onChange={setSelectedMuscle}
+							onChange={(val) => setSelectedMuscle(val)}
 							clearable
 							radius="md"
 						/>
@@ -559,7 +559,7 @@ export function EditPlanPage() {
 							placeholder="Categoria"
 							data={CATEGORY_OPTIONS}
 							value={selectedCategory}
-							onChange={setSelectedCategory}
+							onChange={(val) => setSelectedCategory(val)}
 							clearable
 							radius="md"
 						/>
