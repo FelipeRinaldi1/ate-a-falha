@@ -42,7 +42,7 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 
 	async findById(id: string, userId: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
-			prisma.bodyMetric.findUniqueOrThrow({
+			prisma.bodyMetric.findFirstOrThrow({
 				where: { id, userId },
 			})
 		)
@@ -53,11 +53,11 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 	async update(
 		id: string,
 		data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number },
-		userId: string
+		_userId: string
 	): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.update({
-				where: { id, userId },
+				where: { id },
 				data: { ...data },
 			})
 		)
@@ -65,10 +65,10 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		return result
 	}
 
-	async delete(id: string, userId: string): Promise<Result<void>> {
+	async delete(id: string, _userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.bodyMetric.delete({
-				where: { id, userId },
+				where: { id },
 			})
 		)
 

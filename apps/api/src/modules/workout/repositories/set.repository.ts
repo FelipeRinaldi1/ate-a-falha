@@ -26,13 +26,10 @@ export class SetRepository implements ISetRepository {
 		return success(result.value)
 	}
 
-	async update(id: string, data: UpdateSetDTO, userId: string): Promise<Result<SetFull>> {
+	async update(id: string, data: UpdateSetDTO, _userId: string): Promise<Result<SetFull>> {
 		const result = await safeCall(
 			prisma.set.update({
-				where: {
-					id: id,
-					...this.ownershipFilter(userId),
-				},
+				where: { id },
 				data: {
 					...data,
 				},
@@ -43,13 +40,10 @@ export class SetRepository implements ISetRepository {
 		return success(result.value)
 	}
 
-	async delete(id: string, userId: string): Promise<Result<void>> {
+	async delete(id: string, _userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.set.delete({
-				where: {
-					id: id,
-					...this.ownershipFilter(userId),
-				},
+				where: { id },
 			})
 		)
 
@@ -70,7 +64,7 @@ export class SetRepository implements ISetRepository {
 
 	async findById(id: string, userId: string): Promise<Result<SetFull>> {
 		const result = await safeCall(
-			prisma.set.findUniqueOrThrow({
+			prisma.set.findFirstOrThrow({
 				where: { id: id, ...this.ownershipFilter(userId) },
 			})
 		)

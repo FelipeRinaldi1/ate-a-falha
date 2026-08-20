@@ -51,8 +51,10 @@ export class PlanRepository implements IPlanRepository {
 				}
 				return tx.plan.update({
 					where: {
-						id: id,
-						userId: userId,
+						uniqueId: {
+							id: id,
+							userId: userId,
+						},
 					},
 					data: data,
 					include: {
@@ -78,8 +80,10 @@ export class PlanRepository implements IPlanRepository {
 		const result = await safeCall(
 			prisma.plan.delete({
 				where: {
-					id: id,
-					userId: userId,
+					uniqueId: {
+						id: id,
+						userId: userId,
+					},
 				},
 			})
 		)
@@ -117,8 +121,10 @@ export class PlanRepository implements IPlanRepository {
 		const result = await safeCall(
 			prisma.plan.findUniqueOrThrow({
 				where: {
-					id: id,
-					userId: userId,
+					uniqueId: {
+						id: id,
+						userId: userId,
+					},
 				},
 				include: {
 					workouts: {

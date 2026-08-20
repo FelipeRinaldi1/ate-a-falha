@@ -204,7 +204,7 @@ export function FoodSearchPage() {
 					<Select
 						placeholder="Filtrar por..."
 						value={filterBy}
-						onChange={setFilterBy}
+						onChange={(val) => setFilterBy(val)}
 						allowDeselect
 						data={[
 							{ value: 'high-protein', label: 'Maior quantidade de Proteína' },

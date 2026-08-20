@@ -23,13 +23,10 @@ export class WorkoutRepository implements IWorkoutRepository {
 
 		return success(result.value)
 	}
-	async update(id: string, data: UpdateWorkoutDTO, userId: string): Promise<Result<WorkoutFull>> {
+	async update(id: string, data: UpdateWorkoutDTO, _userId: string): Promise<Result<WorkoutFull>> {
 		const result = await safeCall(
 			prisma.workout.update({
-				where: {
-					id: id,
-					plan: { userId: userId },
-				},
+				where: { id },
 				data: data,
 				include: {
 					workoutExercises: {
@@ -45,10 +42,10 @@ export class WorkoutRepository implements IWorkoutRepository {
 
 		return success(result.value)
 	}
-	async delete(id: string, userId: string): Promise<Result<void>> {
+	async delete(id: string, _userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.workout.delete({
-				where: { id: id, plan: { userId: userId } },
+				where: { id },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)

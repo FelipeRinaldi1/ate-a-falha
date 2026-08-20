@@ -48,27 +48,38 @@ Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
 ### 3. Inicialização
 
-Para o primeiro acesso (ou para resetar o ambiente), utilize o comando de setup que prepara os containers Docker, aplica as migrations e popula o banco de dados automaticamente:
+### 3. Como Executar
 
-```bash
-npm run dev:setup
-```
+1. **Subir o banco de dados (Docker):**
+   ```bash
+   npm run db:up
+   ```
+
+2. **Rodar migrations e seeds (se for a primeira vez):**
+   ```bash
+   npm run db:migrate
+   npm run db:seed
+   ```
+
+3. **Iniciar os serviços (em terminais separados):**
+   * **Terminal 1 (API):** `npm run dev:api`
+   * **Terminal 2 (Web):** `npm run dev:web`
+
+---
 
 ### 4. Comandos Disponíveis
 
-| Categoria           | Função                     | Comando                 |
-| :------------------ | :------------------------- | :---------------------- |
-| **Infra & Deploy**  | Build Completo             | `npm run build`         |
-|                     | Iniciar API                | `npm run start:api`     |
-|                     | Preview Web                | `npm run start:web`     |
-| **Desenvolvimento** | Iniciar via Docker         | `npm run dev`           |
-|                     | Setup Inicial Completo     | `npm run dev:setup`     |
-|                     | Rebuild dos Containers     | `npm run dev:build`     |
-| **Banco de Dados**  | Prisma Studio              | `npm run db:studio`     |
-|                     | Rodar Migrations           | `npm run db:migrate`    |
-|                     | Popular Banco              | `npm run db:seed`       |
-| **Ferramentas**     | Executar Pipeline de Dados | `npm run data:pipeline` |
-|                     | Formatar Código            | `npm run format`        |
+| Categoria           | Função                     | Comando             |
+| :------------------ | :------------------------- | :------------------ |
+| **Desenvolvimento** | Iniciar API (+ auto DB)    | `npm run dev:api`   |
+|                     | Iniciar Frontend Web       | `npm run dev:web`   |
+| **Banco de Dados**  | Subir Banco (Docker)       | `npm run db:up`     |
+|                     | Parar Banco                | `npm run db:down`   |
+|                     | Rodar Migrations           | `npm run db:migrate`|
+|                     | Popular Banco (Seed)       | `npm run db:seed`   |
+|                     | Visualizar Banco (Studio)  | `npm run db:studio` |
+| **Qualidade & Build**| Compilar Tudo             | `npm run build`     |
+|                     | Rodar Testes               | `npm run test`      |
 
 ---
 

@@ -47,10 +47,10 @@ export class FoodRepository implements IFoodRepository {
 		return success(result.value)
 	}
 
-	async findById(id: string, userId?: string): Promise<Result<FoodFull>> {
+	async findById(id: string, _userId?: string): Promise<Result<FoodFull>> {
 		const result = await safeCall(
 			prisma.food.findUniqueOrThrow({
-				where: { id, userId },
+				where: { id },
 				include: { foodInMeals: true },
 			})
 		)
@@ -63,7 +63,7 @@ export class FoodRepository implements IFoodRepository {
 	async update(id: string, data: UpdateFoodDTO, userId?: string): Promise<Result<FoodFull>> {
 		const result = await safeCall(
 			prisma.food.update({
-				where: { id, userId },
+				where: userId ? { id_userId: { id, userId } } : { id },
 				data: { ...data },
 				include: { foodInMeals: true },
 			})
@@ -77,7 +77,7 @@ export class FoodRepository implements IFoodRepository {
 	async delete(id: string, userId?: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.food.delete({
-				where: { id, userId },
+				where: userId ? { id_userId: { id, userId } } : { id },
 			})
 		)
 

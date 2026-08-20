@@ -115,7 +115,7 @@ export function MetricsEvolutionPage() {
 					<Center>
 						<SegmentedControl
 							value={selectedTab}
-							onChange={setSelectedTab}
+							onChange={(val) => setSelectedTab(val)}
 							data={[
 								{ label: 'Peso (kg)', value: 'weight' },
 								{ label: 'IMC', value: 'bmi' },

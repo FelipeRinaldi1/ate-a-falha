@@ -28,13 +28,10 @@ export class MealRepository implements IMealRepository, IMealLogRepository {
 		return success(result.value)
 	}
 
-	async update(id: string, data: UpdateMealDTO, userId: string): Promise<Result<MealFull>> {
+	async update(id: string, data: UpdateMealDTO, _userId: string): Promise<Result<MealFull>> {
 		const result = await safeCall(
 			prisma.meal.update({
-				where: {
-					id: id,
-					diet: { userId: userId },
-				},
+				where: { id },
 				data: data,
 				include: { foods: { include: { food: true } } },
 			})
@@ -45,13 +42,10 @@ export class MealRepository implements IMealRepository, IMealLogRepository {
 		return success(result.value)
 	}
 
-	async delete(id: string, userId: string): Promise<Result<void>> {
+	async delete(id: string, _userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.meal.delete({
-				where: {
-					id: id,
-					diet: { userId: userId },
-				},
+				where: { id },
 			})
 		)
 
@@ -109,13 +103,10 @@ export class MealRepository implements IMealRepository, IMealLogRepository {
 		return success(result.value)
 	}
 
-	async updateLog(id: string, data: UpdateMealLogDTO, userId: string): Promise<Result<MealLogFull>> {
+	async updateLog(id: string, data: UpdateMealLogDTO, _userId: string): Promise<Result<MealLogFull>> {
 		const result = await safeCall(
 			prisma.mealLog.update({
-				where: {
-					id: id,
-					dietLog: { userId: userId },
-				},
+				where: { id },
 				data: data,
 				include: { foods: { include: { food: true } } },
 			})
@@ -126,13 +117,10 @@ export class MealRepository implements IMealRepository, IMealLogRepository {
 		return success(result.value)
 	}
 
-	async deleteLog(id: string, userId: string): Promise<Result<void>> {
+	async deleteLog(id: string, _userId: string): Promise<Result<void>> {
 		const result = await safeCall(
 			prisma.mealLog.delete({
-				where: {
-					id: id,
-					dietLog: { userId: userId },
-				},
+				where: { id },
 			})
 		)
 
