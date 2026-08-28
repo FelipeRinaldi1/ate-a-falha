@@ -21,6 +21,7 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO, type ExerciseDTO, type WorkoutDTO } from '@ate-a-falha/shared'
 import { CalendarSelector } from '../../../components/CalendarSelector'
+import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 
 export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
@@ -97,13 +98,7 @@ export function WorkoutDashboardPage() {
 	const selectedDateStr = formatDateString(selectedDate)
 	const isTodayCompleted = !!completedWorkouts[selectedDateStr]
 
-	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
-
-	const activeCoverUrl = activePlan?.coverImageUrl
-		? activePlan.coverImageUrl.startsWith('http')
-			? activePlan.coverImageUrl
-			: `${apiBaseUrl}/assets/exercises/${activePlan.coverImageUrl.endsWith('.webp') ? activePlan.coverImageUrl : activePlan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
-		: null
+	const activeCoverUrl = getExerciseImageUrl(activePlan?.coverImageUrl, false)
 
 	if (isLoadingPlans || isLoadingExercises) {
 		return (
@@ -300,11 +295,7 @@ export function WorkoutDashboardPage() {
 								<Group gap="md" wrap="nowrap" pb="xs">
 									{plans.length > 0 ? (
 										plans.map((plan) => {
-											const planCoverUrl = plan.coverImageUrl
-												? plan.coverImageUrl.startsWith('http')
-													? plan.coverImageUrl
-													: `${apiBaseUrl}/assets/exercises/${plan.coverImageUrl.endsWith('.webp') ? plan.coverImageUrl : plan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
-												: null
+											const planCoverUrl = getExerciseImageUrl(plan.coverImageUrl, true)
 
 											return (
 												<Card
@@ -317,7 +308,7 @@ export function WorkoutDashboardPage() {
 														flexShrink: 0,
 														overflow: 'hidden',
 														backgroundColor: plan.isActive ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-dark-6)',
-														border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : '1px solid var(--mantine-color-dark-4)',
+														border: plan.isActive ? '1.5px solid var(--mantine-primary-color-filled)' : '1px solid var(--mantine-color-dark-4)',
 														cursor: 'pointer',
 													}}
 													onClick={() => navigate(`/workout/active/${plan.id}/select`)}
@@ -330,6 +321,7 @@ export function WorkoutDashboardPage() {
 																alt={plan.name}
 																fallbackSrc="https://placehold.co/140x60?text=Treino"
 																fit="cover"
+																loading="lazy"
 															/>
 														) : (
 															<div style={{
@@ -376,11 +368,9 @@ export function WorkoutDashboardPage() {
 								<Group gap="md" wrap="nowrap" pb="xs">
 									{exercises.length > 0 ? (
 										exercises.slice(0, 10).map((exercise) => {
-											// Format exercise image URL
+											// Format exercise thumbnail image URL
 											const imagePath = exercise.images?.[0]
-											const exerciseImageUrl = imagePath
-												? `${apiBaseUrl}/assets/exercises/${imagePath.endsWith('.webp') ? imagePath : imagePath.replace(/\.[^/.]+$/, '.webp')}`
-												: 'https://placehold.co/120x120?text=Exercício'
+											const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 
 											return (
 												<Card
@@ -398,6 +388,7 @@ export function WorkoutDashboardPage() {
 															alt={exercise.name}
 															fallbackSrc="https://placehold.co/120x120?text=Exercício"
 															fit="cover"
+															loading="lazy"
 														/>
 													</Card.Section>
 													<Stack gap={4} mt="xs">

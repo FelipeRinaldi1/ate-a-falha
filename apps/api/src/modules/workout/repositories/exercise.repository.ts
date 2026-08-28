@@ -45,6 +45,54 @@ export class ExerciseRepository implements IExerciseRepository {
 	}
 
 	async findAll(data: SearchExerciseDTO): Promise<Result<ExerciseFull[]>> {
+		if (data.name && data.name.trim().length > 0 && !data.random) {
+			const cleanTerm = data.name.trim()
+			const pattern = `%${cleanTerm}%`
+			const limit = data.take || 10
+			const category = data.category ? data.category.toLowerCase() : null
+			const muscle = data.primaryMuscles ? data.primaryMuscles.toLowerCase() : null
+
+			const rawResult = await safeCall(
+				prisma.$queryRawUnsafe<ExerciseFull[]>(
+					`
+					SELECT 
+						e.id,
+						e."externalId",
+						e.name,
+						e."primaryMuscles",
+						e."secondaryMuscles",
+						e.instructions,
+						e.category,
+						e.images,
+						e."createdAt",
+						e."updatedAt",
+						similarity(e.name, $1) AS sim,
+						(CASE WHEN e.name ILIKE $2 THEN 1 ELSE 0 END) AS exact_match
+					FROM "Exercise" e
+					WHERE ($3::text IS NULL OR LOWER(e.category) = $3)
+					  AND ($4::text IS NULL OR $4 = ANY(e."primaryMuscles"))
+					  AND (
+					    e.name ILIKE $2
+					    OR similarity(e.name, $1) > 0.32
+					  )
+					ORDER BY 
+					  exact_match DESC,
+					  sim DESC,
+					  e.name ASC
+					LIMIT $5;
+					`,
+					cleanTerm,
+					pattern,
+					category,
+					muscle,
+					limit
+				)
+			)
+
+			if (rawResult.isFailure()) return rawResult
+			return success(rawResult.value)
+		}
+
 		let skip = data.cursorId ? 1 : 0
 
 		if (data.random) {

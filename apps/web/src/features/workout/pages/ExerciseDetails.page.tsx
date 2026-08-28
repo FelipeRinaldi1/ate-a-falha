@@ -5,6 +5,7 @@ import { Container, Stack, Paper, Group, Text, Title, Center, Loader, Image, Bad
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO } from '@ate-a-falha/shared'
+import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 
 export function ExerciseDetailsPage() {
 	const { id } = useParams<{ id: string }>()
@@ -32,8 +33,6 @@ export function ExerciseDetailsPage() {
 
 		return () => clearInterval(interval)
 	}, [exercise?.images])
-
-	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
 
 	if (isLoading) {
 		return (
@@ -81,10 +80,7 @@ export function ExerciseDetailsPage() {
 								backgroundColor: 'var(--mantine-color-dark-8)'
 							}}>
 								{imagesList.map((img, index) => {
-									const isPlaceholder = img === 'placeholder'
-									const exerciseImageUrl = isPlaceholder
-										? 'https://placehold.co/600x400?text=Imagens+do+Exerc%C3%ADcio'
-										: `${apiBaseUrl}/assets/exercises/${img.endsWith('.webp') ? img : img.replace(/\.[^/.]+$/, '.webp')}`
+									const exerciseImageUrl = getExerciseImageUrl(img, false)
 
 									return (
 										<Image

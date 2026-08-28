@@ -37,7 +37,7 @@ export function CalendarSelector({
 								cursor: 'pointer',
 								textAlign: 'center',
 								padding: '8px 4px',
-								backgroundColor: isSelected ? 'var(--mantine-color-blue-filled)' : 'transparent',
+								backgroundColor: isSelected ? 'var(--mantine-primary-color-filled)' : 'transparent',
 								color: isSelected ? 'white' : 'inherit',
 								borderRadius: '8px',
 								position: 'relative',
@@ -77,7 +77,7 @@ export function CalendarSelector({
 									<Badge
 										size="xs"
 										variant="outline"
-										color={isSelected ? 'white' : 'blue'}
+										color={isSelected ? 'white' : 'brand'}
 										style={{
 											fontSize: '9px',
 											height: '18px',

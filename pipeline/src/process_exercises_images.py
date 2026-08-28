@@ -29,6 +29,14 @@ def convert_to_webp(quality=80):
                 rgb_img = img.convert("RGB")
                 rgb_img.save(target_path, "WEBP", quality=quality)
                 print(f"Converted: {relative_path} -> {target_path.name}")
+
+                # If this is the main image (0), also generate a lightweight thumbnail
+                if relative_path.name in ["0.jpg", "0.png", "0.webp"]:
+                    thumb_path = target_path.parent / "0_thumb.webp"
+                    thumb_img = rgb_img.copy()
+                    thumb_img.thumbnail((200, 200), Image.Resampling.LANCZOS)
+                    thumb_img.save(thumb_path, "WEBP", quality=75)
+                    print(f"Generated thumb: {thumb_path.name}")
         except Exception as e:
             print(f"Error converting {img_path}: {e}")
 

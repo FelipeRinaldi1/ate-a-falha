@@ -11,15 +11,15 @@
 
 ## 🐛 Bugs & Correções
 
-- [ ] **Exercícios**: Imagem não carrega no detalhe/card do exercício
-- [ ] **Alimentos**: Pesquisa de alimentos trazendo resultados incorretos/inconsistentes
+- [x] **Exercícios**: Imagem não carrega no detalhe/card do exercício
+- [x] **Alimentos**: Pesquisa de alimentos trazendo resultados incorretos/inconsistentes
 
 ---
 
 ## ⚡ Melhorias, Otimizações & Refatoração
 
-- [ ] **Performance**: Otimizar imagens pesadas na busca/listagem de exercícios
-- [ ] **Acesso & Segurança**: Uniformizar controle de acesso entre módulos
+- [x] **Performance**: Otimizar imagens pesadas na busca/listagem de exercícios
+- [x] **Acesso & Segurança**: Uniformizar controle de acesso entre módulos
 - [ ] **UI/UX**: Melhoria visual nos componentes de gráficos
 
 ---
