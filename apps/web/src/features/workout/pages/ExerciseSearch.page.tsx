@@ -21,6 +21,8 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO } from '@ate-a-falha/shared'
 
+import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+
 export function ExerciseSearchPage() {
 	const navigate = useNavigate()
 	const [searchQuery, setSearchQuery] = useState('')
@@ -120,8 +122,6 @@ export function ExerciseSearchPage() {
 		return () => observer.unobserve(target)
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
-
 	return (
 		<MainLayout title="Exercícios" onBack={() => navigate(-1)}>
 			<Container size="xs" px={0}>
@@ -176,9 +176,7 @@ export function ExerciseSearchPage() {
 							<>
 								{exercisesList.map((exercise) => {
 									const imagePath = exercise.images?.[0]
-									const exerciseImageUrl = imagePath
-										? `${apiBaseUrl}/assets/exercises/${imagePath.endsWith('.webp') ? imagePath : imagePath.replace(/\.[^/.]+$/, '.webp')}`
-										: 'https://placehold.co/80x80?text=Exercício'
+									const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 
 									return (
 										<Card
@@ -196,6 +194,7 @@ export function ExerciseSearchPage() {
 														w={80}
 														h={80}
 														fit="cover"
+														loading="lazy"
 														fallbackSrc="https://placehold.co/80x80?text=Exercício"
 														style={{ backgroundColor: 'var(--mantine-color-dark-8)' }}
 													/>

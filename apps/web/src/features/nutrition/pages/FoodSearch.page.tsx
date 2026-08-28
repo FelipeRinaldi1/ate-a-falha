@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
@@ -20,6 +20,7 @@ import {
 	SegmentedControl,
 } from '@mantine/core'
 import { Plus, Search, Trash2 } from 'lucide-react'
+import { useDebouncedValue } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
@@ -36,6 +37,7 @@ export function FoodSearchPage() {
 	const mealId = searchParams.get('mealId')
 
 	const [searchQuery, setSearchQuery] = useState('')
+	const [debouncedSearch] = useDebouncedValue(searchQuery, 300)
 	const [filterBy, setFilterBy] = useState<string | null>(null)
 	const [foodScope, setFoodScope] = useState<'all' | 'mine'>('all')
 
@@ -45,10 +47,10 @@ export function FoodSearchPage() {
 
 	// Fetch catalog foods
 	const { data: foods = [], isLoading } = useQuery<FoodDTO[]>({
-		queryKey: ['food-catalog', searchQuery],
+		queryKey: ['food-catalog', debouncedSearch],
 		queryFn: async () => {
 			const res = await api.get('/nutrition/food-catalog', {
-				params: { name: searchQuery, take: 100 },
+				params: { name: debouncedSearch.trim() || undefined, take: 100 },
 			})
 			return res.data
 		},
@@ -135,8 +137,8 @@ export function FoodSearchPage() {
 		})
 	}
 
-	// Apply sorting/filtering/scope logic in the frontend
-	const getProcessedFoods = () => {
+	// Apply sorting/filtering/scope logic with useMemo to keep typing silky smooth
+	const processedFoods = useMemo(() => {
 		let result = [...foods]
 
 		// Filter by scope (Only My Foods created by the active user)
@@ -154,9 +156,7 @@ export function FoodSearchPage() {
 			result.sort((a, b) => a.lipids - b.lipids)
 		}
 		return result
-	}
-
-	const processedFoods = getProcessedFoods()
+	}, [foods, foodScope, user, filterBy])
 
 	return (
 		<MainLayout

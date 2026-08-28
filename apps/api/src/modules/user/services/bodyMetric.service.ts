@@ -11,11 +11,13 @@ import {
 import { type BodyMetricFull } from '@ate-a-falha/database'
 import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
+import { UserAccessControlService } from './userAccessControl.service.js'
 
 export class BodyMetricService {
 	constructor(
 		private readonly bodyMetricRepository: IBodyMetricRepository,
-		private readonly userRepository: IUserRepository
+		private readonly userRepository: IUserRepository,
+		private readonly accessControl: UserAccessControlService
 	) {}
 
 	private calculateAge(birthDate: Date): number {
@@ -54,13 +56,11 @@ export class BodyMetricService {
 	}
 
 	async findById(id: string, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
-		const result = await this.bodyMetricRepository.findById(id, authUser.id)
+		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
+		if (access.isFailure()) return failure(access.error)
 
-		if (result.isFailure())
-			return failure({
-				type: 'NOT_FOUND',
-				message: 'Body metric not found or access denied.',
-			})
+		const result = await this.bodyMetricRepository.findById(id, authUser.id)
+		if (result.isFailure()) return failure(result.error)
 
 		return success(result.value)
 	}
@@ -75,12 +75,12 @@ export class BodyMetricService {
 	}
 
 	async update(id: string, data: UpdateBodyMetricDTO, authUser: authenticatedUser): Promise<Result<BodyMetricFull>> {
+		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
+		if (access.isFailure()) return failure(access.error)
+
 		const existingResult = await this.bodyMetricRepository.findById(id, authUser.id)
 		if (existingResult.isFailure()) {
-			return failure({
-				type: 'NOT_FOUND',
-				message: 'Body metric not found or access denied for update.',
-			})
+			return failure(existingResult.error)
 		}
 		const existing = existingResult.value
 
@@ -101,22 +101,19 @@ export class BodyMetricService {
 
 		const result = await this.bodyMetricRepository.update(id, { ...data, bmi, bmr, tdee }, authUser.id)
 
-		if (result.isFailure())
-			return failure({
-				type: 'NOT_FOUND',
-				message: 'Body metric not found or access denied for update.',
-			})
+		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
 	}
 
 	async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
+		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
+		if (access.isFailure()) return failure(access.error)
+
 		const result = await this.bodyMetricRepository.delete(id, authUser.id)
 
-		if (result.isFailure())
-			return failure({
-				type: 'NOT_FOUND',
-				message: 'Body metric not found or access denied for deletion.',
-			})
+		if (result.isFailure()) {
+			return failure(result.error)
+		}
 
 		return success(result.value)
 	}

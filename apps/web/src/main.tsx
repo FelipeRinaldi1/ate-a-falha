@@ -7,10 +7,12 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './providers/queryClient'
 import { AuthProvider } from './providers/AuthProvider'
 
+import { theme } from './theme'
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<MantineProvider defaultColorScheme="dark">
+			<MantineProvider theme={theme} defaultColorScheme="dark">
 				<ModalsProvider>
 					<AuthProvider>
 						<App />

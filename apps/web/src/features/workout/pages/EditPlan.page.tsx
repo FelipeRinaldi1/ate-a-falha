@@ -25,6 +25,7 @@ import { Plus, Trash2, Search, Star } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO, type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
+import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 
 type DivisionType = 'A' | 'AB' | 'ABC' | 'ABCD' | 'ABCDE' | 'ABCDEF'
 
@@ -313,7 +314,6 @@ export function EditPlanPage() {
 		return matchesSearch && matchesCategory && matchesMuscle
 	})
 
-	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
 	const activeDays = DIVISION_DAYS[selectedDivision]
 
 	if (isLoading || !plan) {
@@ -405,9 +405,7 @@ export function EditPlanPage() {
 											{exercises.length > 0 ? (
 												exercises.map((we: WorkoutExerciseDTO) => {
 													const imagePath = we.exercise?.images?.[0]
-													const exerciseImageUrl = imagePath
-														? `${apiBaseUrl}/assets/exercises/${imagePath.endsWith('.webp') ? imagePath : imagePath.replace(/\.[^/.]+$/, '.webp')}`
-														: 'https://placehold.co/80x80?text=Exercício'
+													const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 													
 													const totalSets = we.sets?.length || 0
 													const reps = we.sets?.[0]?.repetitions || 10
@@ -568,9 +566,7 @@ export function EditPlanPage() {
 					<Stack gap="xs">
 						{filteredCatalog.slice(0, 15).map((ex) => {
 							const imagePath = ex.images?.[0]
-							const exerciseImageUrl = imagePath
-								? `${apiBaseUrl}/assets/exercises/${imagePath.endsWith('.webp') ? imagePath : imagePath.replace(/\.[^/.]+$/, '.webp')}`
-								: 'https://placehold.co/80x80?text=Exercício'
+							const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 
 							return (
 								<Card
@@ -583,7 +579,7 @@ export function EditPlanPage() {
 								>
 									<Group gap="md" wrap="nowrap" align="center">
 										<div style={{ width: '70px', height: '70px', flexShrink: 0, overflow: 'hidden', borderRadius: '6px' }}>
-											<Image src={exerciseImageUrl} w={70} h={70} fit="cover" />
+											<Image src={exerciseImageUrl} w={70} h={70} fit="cover" loading="lazy" />
 										</div>
 										<Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
 											<Text fw={700} size="sm" truncate>

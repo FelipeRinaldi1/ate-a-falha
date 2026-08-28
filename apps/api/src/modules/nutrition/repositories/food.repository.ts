@@ -18,6 +18,50 @@ export class FoodRepository implements IFoodRepository {
 	}
 
 	async findAll(data: FoodSearchDTO, userId?: string): Promise<Result<FoodFull[]>> {
+		if (data.name && data.name.trim().length > 0) {
+			const cleanTerm = data.name.trim()
+			const pattern = `%${cleanTerm}%`
+			const limit = data.take || 20
+
+			const rawResult = await safeCall(
+				prisma.$queryRawUnsafe<FoodFull[]>(
+					`
+					SELECT 
+						f.id,
+						f.name,
+						f.calories,
+						f.carbohydrate,
+						f.protein,
+						f.lipids,
+						f.fiber,
+						f."userId",
+						f."createdAt",
+						f."updatedAt",
+						similarity(f.name, $1) AS sim,
+						(CASE WHEN f.name ILIKE $2 THEN 1 ELSE 0 END) AS exact_match
+					FROM "Food" f
+					WHERE ($3::text IS NULL OR f."userId" = $3 OR f."userId" IS NULL)
+					  AND (
+					    f.name ILIKE $2
+					    OR similarity(f.name, $1) > 0.3
+					  )
+					ORDER BY 
+					  exact_match DESC,
+					  sim DESC,
+					  f.name ASC
+					LIMIT $4;
+					`,
+					cleanTerm,
+					pattern,
+					userId ?? null,
+					limit
+				)
+			)
+
+			if (rawResult.isFailure()) return rawResult
+			return success(rawResult.value)
+		}
+
 		const result = await safeCall(
 			prisma.food.findMany({
 				take: data.take || 10,
@@ -28,11 +72,6 @@ export class FoodRepository implements IFoodRepository {
 						userId
 							? {
 									OR: [{ userId: userId }, { userId: null }],
-								}
-							: {},
-						data.name
-							? {
-									name: { contains: data.name, mode: 'insensitive' },
 								}
 							: {},
 					],

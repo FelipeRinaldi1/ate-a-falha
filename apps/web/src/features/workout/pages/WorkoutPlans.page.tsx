@@ -23,6 +23,7 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO } from '@ate-a-falha/shared'
 import { ShareModal } from '../../../components/ShareModal'
+import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -127,8 +128,6 @@ export function WorkoutPlansPage() {
 		)
 	}
 
-	const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3333/api/v1'
-
 	return (
 		<MainLayout title="Minhas Fichas" onBack={() => navigate(-1)}>
 			<Container size="xs" px={0}>
@@ -137,11 +136,7 @@ export function WorkoutPlansPage() {
 					<Stack gap="sm">
 						{plans.length > 0 ? (
 							plans.map((plan) => {
-								const coverUrl = plan.coverImageUrl
-									? plan.coverImageUrl.startsWith('http')
-										? plan.coverImageUrl
-										: `${apiBaseUrl}/assets/exercises/${plan.coverImageUrl.endsWith('.webp') ? plan.coverImageUrl : plan.coverImageUrl.replace(/\.[^/.]+$/, '.webp')}`
-									: null
+								const coverUrl = getExerciseImageUrl(plan.coverImageUrl, true)
 
 								return (
 									<Paper
@@ -154,7 +149,7 @@ export function WorkoutPlansPage() {
 											cursor: 'pointer',
 											position: 'relative',
 											overflow: 'hidden',
-											border: plan.isActive ? '1.5px solid var(--mantine-color-blue-filled)' : undefined,
+											border: plan.isActive ? '1.5px solid var(--mantine-primary-color-filled)' : undefined,
 										}}
 										onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
 									>
@@ -165,6 +160,7 @@ export function WorkoutPlansPage() {
 													src={coverUrl}
 													h={80}
 													fit="cover"
+													loading="lazy"
 													fallbackSrc="https://placehold.co/400x80?text=Treino"
 												/>
 											) : (
