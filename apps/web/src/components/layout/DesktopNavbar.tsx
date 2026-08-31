@@ -22,12 +22,6 @@ export function DesktopNavbar() {
 			</Button>
 
 			<Stack mt="auto">
-				<Text size="sm" c="dimmed" fw={500}>
-					Outros
-				</Text>
-				<Button variant="subtle" justify="left">
-					Configurações
-				</Button>
 				<Button variant="subtle" justify="left" color="red" onClick={logout}>
 					Sair
 				</Button>

@@ -16,6 +16,7 @@ import {
 	ActionIcon,
 	Progress,
 	Divider,
+	Badge,
 } from '@mantine/core'
 import { Pencil, PlusCircle, Trash2, Share2 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -475,55 +476,59 @@ export function DietGoalsPage() {
 							{/* Daily Goals Chart Container */}
 							<Paper withBorder p="md" radius="md" shadow="sm">
 								<Stack gap="md" align="center">
-									<Group w="100%" justify="flex-start">
+									<Group w="100%" justify="space-between">
 										<Text fw={700} c="dimmed" size="sm">
 											Distribuição da Meta Diária (Macronutrientes)
 										</Text>
+										<Badge variant="light" color="brand" size="sm">
+											{targetKcal} Kcal
+										</Badge>
 									</Group>
 
 									<DonutChart
 										data={[
-											{ name: 'Proteínas', value: pCalGoal, color: 'red' },
-											{ name: 'Carboidratos', value: cCalGoal, color: 'yellow' },
-											{ name: 'Gorduras', value: fCalGoal, color: 'green' },
+											{ name: 'Proteínas', value: pCalGoal, color: 'red.6' },
+											{ name: 'Carboidratos', value: cCalGoal, color: 'yellow.5' },
+											{ name: 'Gorduras', value: fCalGoal, color: 'green.6' },
 										]}
-										withTooltip={false}
-										size={160}
-										thickness={20}
+										withTooltip={true}
+										size={180}
+										thickness={24}
+										chartLabel={`${targetKcal} Kcal`}
 									/>
 
-									<SimpleGrid cols={3} spacing="xs" w="100%" mt="sm">
+									<SimpleGrid cols={3} spacing="xs" w="100%" mt="xs">
 										<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
-											<Text size="xs" fw={700} c="red">
+											<Text size="xs" fw={700} c="red.6">
 												Proteínas
 											</Text>
-											<Text size="sm" fw={700}>
+											<Text size="sm" fw={800} mt={2}>
 												{protGoalPercent}%
 											</Text>
 											<Text size="xs" c="dimmed">
-												{pCalGoal.toFixed(0)} Kal
+												{pCalGoal.toFixed(0)} Kcal
 											</Text>
 										</Card>
 										<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
-											<Text size="xs" fw={700} c="yellow">
+											<Text size="xs" fw={700} c="yellow.5">
 												Carboidratos
 											</Text>
-											<Text size="sm" fw={700}>
+											<Text size="sm" fw={800} mt={2}>
 												{carbGoalPercent}%
 											</Text>
 											<Text size="xs" c="dimmed">
-												{cCalGoal.toFixed(0)} Kal
+												{cCalGoal.toFixed(0)} Kcal
 											</Text>
 										</Card>
 										<Card withBorder p="xs" radius="md" style={{ textAlign: 'center' }}>
-											<Text size="xs" fw={700} c="green">
+											<Text size="xs" fw={700} c="green.6">
 												Gorduras
 											</Text>
-											<Text size="sm" fw={700}>
+											<Text size="sm" fw={800} mt={2}>
 												{fatGoalPercent}%
 											</Text>
 											<Text size="xs" c="dimmed">
-												{fCalGoal.toFixed(0)} Kal
+												{fCalGoal.toFixed(0)} Kcal
 											</Text>
 										</Card>
 									</SimpleGrid>
