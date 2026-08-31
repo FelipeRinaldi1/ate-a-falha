@@ -27,6 +27,8 @@ const envSchema = z.object({
 	CORS_ORIGIN: z.string().default('*'),
 
 	LOG_LEVEL: z.string().default('info'),
+
+	ASSETS_EXERCISES_PATH: z.string().optional(),
 })
 
 const _env = envSchema.safeParse(process.env)
