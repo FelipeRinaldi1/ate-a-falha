@@ -1,4 +1,5 @@
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -37,7 +38,35 @@ app.get(['/health', `${BASE_API_URL}/health`], async (_req, res) => {
 	}
 })
 
-app.use(`${BASE_API_URL}/assets/exercises`, express.static(path.resolve(__dirname, '../public/exercises')))
+function resolveExercisesAssetsPath(): string {
+	if (process.env.ASSETS_EXERCISES_PATH && fs.existsSync(process.env.ASSETS_EXERCISES_PATH)) {
+		return path.resolve(process.env.ASSETS_EXERCISES_PATH)
+	}
+
+	const candidates = [
+		path.resolve(__dirname, '../public/exercises'),
+		path.resolve(__dirname, '../../public/exercises'),
+		path.resolve(process.cwd(), 'apps/api/public/exercises'),
+		path.resolve(process.cwd(), 'public/exercises'),
+	]
+
+	for (const candidate of candidates) {
+		if (fs.existsSync(candidate)) {
+			return candidate
+		}
+	}
+
+	return path.resolve(__dirname, '../public/exercises')
+}
+
+const exercisesAssetsPath = resolveExercisesAssetsPath()
+if (!fs.existsSync(exercisesAssetsPath)) {
+	logger.warn(`[Assets] Diretório de imagens de exercícios não encontrado em: ${exercisesAssetsPath}`)
+} else {
+	logger.info(`[Assets] Servindo imagens de exercícios a partir de: ${exercisesAssetsPath}`)
+}
+
+app.use(`${BASE_API_URL}/assets/exercises`, express.static(exercisesAssetsPath))
 
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)

@@ -6,11 +6,15 @@ import { UserController } from '../controllers/user.controller.js'
 import { ensureAuthenticated } from '../../../middlewares/ensureAuthenticated.js'
 import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
+import { UserAccessControlRepository } from '../repositories/accessControl.repository.js'
+import { UserAccessControlService } from '../services/userAccessControl.service.js'
 
 const userRouter = Router()
 const userRepo = new UserRepository()
 const authRepo = new AuthRepository()
-const bodyMetricService = new BodyMetricService(new BodyMetricRepository(), userRepo)
+const accessRepo = new UserAccessControlRepository()
+const accessService = new UserAccessControlService(accessRepo)
+const bodyMetricService = new BodyMetricService(new BodyMetricRepository(), userRepo, accessService)
 const userService = new UserService(userRepo, authRepo, bodyMetricService)
 const userController = new UserController(userService)
 
