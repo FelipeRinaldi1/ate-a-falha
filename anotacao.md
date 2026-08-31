@@ -20,7 +20,7 @@
 
 - [x] **Performance**: Otimizar imagens pesadas na busca/listagem de exercícios
 - [x] **Acesso & Segurança**: Uniformizar controle de acesso entre módulos
-- [ ] **UI/UX**: Melhoria visual nos componentes de gráficos
+- [x] **UI/UX**: Melhoria visual nos componentes de gráficos
 
 ---
 

@@ -1,6 +1,6 @@
 import { Center, Container, Paper, Stack, Group, Text, Title, Avatar, Button, Loader, RingProgress } from '@mantine/core'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp } from 'lucide-react'
+import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp, LogOut } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../../../api/axiosInstance'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
@@ -27,7 +27,7 @@ const getBmiCategory = (bmi: number) => {
 }
 
 export function ProfilePage() {
-	const { user } = useAuth()
+	const { user, logout } = useAuth()
 	const navigate = useNavigate()
 
 	const { data: metrics = [], isLoading } = useQuery<BodyMetric[]>({
@@ -328,6 +328,20 @@ export function ProfilePage() {
 							)}
 						</>
 					)}
+
+					{/* Botão Sair da Conta */}
+					<Button
+						variant="light"
+						color="red"
+						fullWidth
+						radius="md"
+						size="md"
+						leftSection={<LogOut size={18} />}
+						onClick={logout}
+						mt="sm"
+					>
+						Sair da Conta
+					</Button>
 				</Stack>
 			</Container>
 		</MainLayout>
