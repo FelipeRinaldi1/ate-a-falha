@@ -24,6 +24,9 @@ export * from './schemas/workout/set.schema.js'
 export * from './schemas/workout/workout.schema.js'
 export * from './schemas/workout/workoutExercise.schema.js'
 
+// Notification Schemas
+export * from './schemas/notification/notification.schema.js'
+
 // Logic
 export { BodyMetricLogic } from './logic/bodyMetric.logic.js'
 export { NutritionLogic } from './logic/nutrition.logic.js'

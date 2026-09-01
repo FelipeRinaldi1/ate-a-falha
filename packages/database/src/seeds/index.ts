@@ -1,11 +1,13 @@
 import { seedFoods } from './food.seed.js'
 import { seedExercises } from './exercise.seed.js'
+import { seedDemoUser } from './user.seed.js'
 import { prisma } from '@ate-a-falha/database/src/client.js'
 
 try {
 	console.log('Starting seeding...')
 	await seedFoods()
 	await seedExercises()
+	await seedDemoUser()
 	console.log('Finishing seeding...')
 } catch (e) {
 	console.error(e)

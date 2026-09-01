@@ -47,6 +47,7 @@ model User {
 
   bodyMetrics BodyMetric[]
   dietLogs    DietLog[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -295,3 +296,33 @@ model Exercise {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// Notification Related
+
+enum NOTIFICATION_TYPE {
+  INFO
+  SUCCESS
+  WARNING
+  WORKOUT
+  DIET
+  SYSTEM
+}
+
+model Notification {
+  id        String            @id @default(uuid())
+  title     String            @db.VarChar(128)
+  message   String            @db.VarChar(512)
+  type      NOTIFICATION_TYPE @default(INFO)
+  read      Boolean           @default(false)
+  link      String?           @db.VarChar(256)
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+

@@ -48,38 +48,55 @@ Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
 ### 3. Inicialização
 
-### 3. Como Executar
-
 1. **Subir o banco de dados (Docker):**
-   ```bash
-   npm run db:up
-   ```
+
+    ```bash
+    npm run db:up
+    ```
 
 2. **Rodar migrations e seeds (se for a primeira vez):**
-   ```bash
-   npm run db:migrate
-   npm run db:seed
-   ```
+
+    ```bash
+    npm run db:migrate
+    npm run db:seed
+    ```
 
 3. **Iniciar os serviços (em terminais separados):**
-   * **Terminal 1 (API):** `npm run dev:api`
-   * **Terminal 2 (Web):** `npm run dev:web`
+    - **Terminal 1 (API):** `npm run dev:api`
+    - **Terminal 2 (Web):** `npm run dev:web`
+
+---
+
+### 👤 Usuário de Demonstração / Testes
+
+Ao executar os seeds do banco (`npm run db:seed` ou `npm run db:seed:user`), um usuário demo completo é criado automaticamente:
+
+| Campo        | Valor                                                             |
+| :----------- | :---------------------------------------------------------------- |
+| **E-mail**   | `demo@ateafalha.com.br`                                           |
+| **Senha**    | `Senha123!`                                                       |
+| **Perfil**   | Felipe Rinaldi                                                    |
+| **Métricas** | 5 avaliações corporais históricas                                 |
+| **Dieta**    | Dieta Limpa                                                       |
+| **Treinos**  | Plano ABC Ativo                                                   |
+| **Avisos**   | Central de notificações com 5 alertas de treino, dieta e evolução |
 
 ---
 
 ### 4. Comandos Disponíveis
 
-| Categoria           | Função                     | Comando             |
-| :------------------ | :------------------------- | :------------------ |
-| **Desenvolvimento** | Iniciar API (+ auto DB)    | `npm run dev:api`   |
-|                     | Iniciar Frontend Web       | `npm run dev:web`   |
-| **Banco de Dados**  | Subir Banco (Docker)       | `npm run db:up`     |
-|                     | Parar Banco                | `npm run db:down`   |
-|                     | Rodar Migrations           | `npm run db:migrate`|
-|                     | Popular Banco (Seed)       | `npm run db:seed`   |
-|                     | Visualizar Banco (Studio)  | `npm run db:studio` |
-| **Qualidade & Build**| Compilar Tudo             | `npm run build`     |
-|                     | Rodar Testes               | `npm run test`      |
+| Categoria             | Função                    | Comando                |
+| :-------------------- | :------------------------ | :--------------------- |
+| **Desenvolvimento**   | Iniciar API (+ auto DB)   | `npm run dev:api`      |
+|                       | Iniciar Frontend Web      | `npm run dev:web`      |
+| **Banco de Dados**    | Subir Banco (Docker)      | `npm run db:up`        |
+|                       | Parar Banco               | `npm run db:down`      |
+|                       | Rodar Migrations          | `npm run db:migrate`   |
+|                       | Popular Banco (Completo)  | `npm run db:seed`      |
+|                       | Popular Usuário Demo      | `npm run db:seed:user` |
+|                       | Visualizar Banco (Studio) | `npm run db:studio`    |
+| **Qualidade & Build** | Compilar Tudo             | `npm run build`        |
+|                       | Rodar Testes              | `npm run test`         |
 
 ---
 
