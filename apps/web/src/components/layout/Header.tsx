@@ -1,14 +1,16 @@
 import { AppShell, Group, ActionIcon, Text } from '@mantine/core'
 import { type ReactNode } from 'react'
 import { ArrowLeft } from 'lucide-react'
+import { NotificationBell } from '../../features/notification/components/NotificationBell'
 
 interface HeaderProps {
 	actions?: ReactNode
 	onBack?: () => void
 	title?: string
+	hideNotifications?: boolean
 }
 
-export function Header({ actions, onBack, title }: HeaderProps) {
+export function Header({ actions, onBack, title, hideNotifications = false }: HeaderProps) {
 	return (
 		<AppShell.Header>
 			<Group h="100%" px="md" align="center" justify="space-between" style={{ position: 'relative' }}>
@@ -39,8 +41,11 @@ export function Header({ actions, onBack, title }: HeaderProps) {
 					</Text>
 				)}
 
-				{/* Right Side: Actions */}
-				<Group>{actions}</Group>
+				{/* Right Side: Notifications + Actions */}
+				<Group align="center" gap="xs">
+					{!hideNotifications && <NotificationBell />}
+					{actions}
+				</Group>
 			</Group>
 		</AppShell.Header>
 	)

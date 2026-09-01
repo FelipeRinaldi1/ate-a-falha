@@ -9,7 +9,8 @@
 		"db:migrate": "prisma migrate deploy",
 		"db:migrate:dev": "prisma migrate dev",
 		"db:studio": "prisma studio --browser none --port 51212",
-		"db:seed": "prisma db seed"
+		"db:seed": "prisma db seed",
+		"db:seed:user": "tsx src/seeds/user.seed.ts"
 	},
 	"dependencies": {
 		"@ate-a-falha/shared": "*",

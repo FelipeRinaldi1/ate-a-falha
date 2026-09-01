@@ -18,6 +18,7 @@ import { globalErrorHandler } from './middlewares/globalErrorHandler.js'
 import { userModuleRouter } from './modules/user/routers/index.js'
 import { nutritionModuleRouter } from './modules/nutrition/routers/index.js'
 import { workoutModuleRouter } from './modules/workout/routers/index.js'
+import { notificationModuleRouter } from './modules/notification/routers/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -71,6 +72,7 @@ app.use(`${BASE_API_URL}/assets/exercises`, express.static(exercisesAssetsPath))
 app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)
 app.use(`${BASE_API_URL}/workout`, workoutModuleRouter)
+app.use(`${BASE_API_URL}/notifications`, notificationModuleRouter)
 
 app.get(`${BASE_API_URL}/`, (_req, res) => {
 	res.send('Até-a-falha API On')
