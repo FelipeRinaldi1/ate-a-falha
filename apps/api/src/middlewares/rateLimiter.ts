@@ -2,7 +2,7 @@ import rateLimit from 'express-rate-limit'
 import { HTTP_STATUS } from '../constants/global/httpCodesConstants.js'
 
 export const apiRateLimiter = rateLimit({
-	windowMs: 15 * 6 * 1000, // 15min
+	windowMs: 15 * 60 * 1000, // 15min
 	max: 1000,
 	skip: () => process.env.NODE_ENV === 'test' || process.env.VITEST === 'true',
 	standardHeaders: true,

@@ -35,7 +35,7 @@
 ### 🖼️ Relação de Figuras
 
 - [ ] **Figura 4.3**: _Fluxo da pipeline de ingestão de dados._
-- [ ] **Figura 4.4**: _Interface gráfica do fluxo de autenticação._
-- [ ] **Figura 4.5**: _Gráficos de evolução de métricas e peso corporal._
-- [ ] **Figura 4.6**: _Interface do módulo de gestão e execução de treinos._
-- [ ] **Figura 4.7**: _Interface do diário alimentar e cálculo de macronutrientes._
+- [x] **Figura 4.4**: _Interface gráfica do fluxo de autenticação._
+- [x] **Figura 4.5**: _Gráficos de evolução de métricas e peso corporal._
+- [x] **Figura 4.6**: _Interface do módulo de gestão e execução de treinos._
+- [x] **Figura 4.7**: _Interface do diário alimentar e cálculo de macronutrientes._

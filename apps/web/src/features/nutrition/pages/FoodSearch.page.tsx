@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, memo, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import {
 	Container,
 	Stack,
@@ -26,6 +26,150 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
 import { type FoodDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation'
+
+const SORT_OPTIONS = [
+	{ value: 'high-protein', label: 'Maior quantidade de Proteína' },
+	{ value: 'high-carb', label: 'Maior quantidade de Carboidrato' },
+	{ value: 'low-kcal', label: 'Menor valor Calórico' },
+	{ value: 'low-fat', label: 'Menor quantidade de Gordura' },
+]
+
+const SCOPE_OPTIONS = [
+	{ label: 'Todos os Alimentos', value: 'all' },
+	{ label: 'Meus Alimentos', value: 'mine' },
+]
+
+const FoodSearchInput = memo(function FoodSearchInput({
+	onDebouncedChange,
+	isFetching,
+}: {
+	onDebouncedChange: (val: string) => void
+	isFetching: boolean
+}) {
+	const [value, setValue] = useState('')
+	const [debounced] = useDebouncedValue(value, 300)
+
+	useEffect(() => {
+		onDebouncedChange(debounced)
+	}, [debounced, onDebouncedChange])
+
+	return (
+		<TextInput
+			placeholder="Pesquisar..."
+			value={value}
+			onChange={(e) => setValue(e.currentTarget.value)}
+			rightSection={isFetching ? <Loader size={14} /> : <Search size={16} color="gray" />}
+			radius="md"
+			size="md"
+		/>
+	)
+})
+
+interface FoodCardItemProps {
+	food: FoodDTO
+	isMine: boolean
+	isDeleting: boolean
+	onSelect: (food: FoodDTO) => void
+	onDelete: (e: React.MouseEvent, food: FoodDTO) => void
+}
+
+const FoodCardItem = memo(function FoodCardItem({
+	food,
+	isMine,
+	isDeleting,
+	onSelect,
+	onDelete,
+}: FoodCardItemProps) {
+	return (
+		<Paper
+			withBorder
+			p="md"
+			radius="md"
+			shadow="xs"
+			style={{ cursor: 'pointer' }}
+			onClick={() => onSelect(food)}
+		>
+			<Stack gap="xs">
+				<Group justify="space-between" align="center">
+					<Group gap={6}>
+						<Text fw={700} size="sm">
+							{food.name}
+						</Text>
+						{isMine && (
+							<Text
+								span
+								size="10px"
+								fw={700}
+								c="teal"
+								bg="teal.9"
+								px={6}
+								py={2}
+								style={{ borderRadius: '4px' }}
+							>
+								Meu
+							</Text>
+						)}
+					</Group>
+					<Group gap="xs">
+						<Text fw={700} size="sm" c="dimmed">
+							{food.calories.toFixed(0)} Kal{' '}
+							<Text span size="xs" fw={500} c="dimmed">
+								/100g
+							</Text>
+						</Text>
+						{isMine && (
+							<ActionIcon
+								variant="subtle"
+								color="red"
+								size="sm"
+								onClick={(e) => onDelete(e, food)}
+								loading={isDeleting}
+							>
+								<Trash2 size={14} />
+							</ActionIcon>
+						)}
+					</Group>
+				</Group>
+
+				<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
+					<Stack gap={0}>
+						<Text size="xs" c="dimmed">
+							Prot
+						</Text>
+						<Text size="xs" fw={700} c="red.6">
+							{food.protein.toFixed(1)}g
+						</Text>
+					</Stack>
+					<Stack gap={0}>
+						<Text size="xs" c="dimmed">
+							Carb
+						</Text>
+						<Text size="xs" fw={700} c="yellow.5">
+							{food.carbohydrate.toFixed(1)}g
+						</Text>
+					</Stack>
+					<Stack gap={0}>
+						<Text size="xs" c="dimmed">
+							Gord
+						</Text>
+						<Text size="xs" fw={700} c="green.6">
+							{food.lipids.toFixed(1)}g
+						</Text>
+					</Stack>
+					<Stack gap={0}>
+						<Text size="xs" c="dimmed">
+							Fibr
+						</Text>
+						<Text size="xs" fw={700} c="teal.5">
+							{food.fiber.toFixed(1)}g
+						</Text>
+					</Stack>
+				</SimpleGrid>
+			</Stack>
+		</Paper>
+	)
+})
 
 export function FoodSearchPage() {
 	const navigate = useNavigate()
@@ -35,9 +179,14 @@ export function FoodSearchPage() {
 
 	const mealLogId = searchParams.get('mealLogId')
 	const mealId = searchParams.get('mealId')
+	const fallbackBackPath = mealId
+		? '/nutrition/goals'
+		: mealLogId
+			? `/nutrition/meals/${mealLogId}`
+			: '/nutrition'
+	const goBack = useGoBack(fallbackBackPath)
 
-	const [searchQuery, setSearchQuery] = useState('')
-	const [debouncedSearch] = useDebouncedValue(searchQuery, 300)
+	const [debouncedSearch, setDebouncedSearch] = useState('')
 	const [filterBy, setFilterBy] = useState<string | null>(null)
 	const [foodScope, setFoodScope] = useState<'all' | 'mine'>('all')
 
@@ -46,14 +195,20 @@ export function FoodSearchPage() {
 	const [portionGrams, setPortionGrams] = useState<number>(100)
 
 	// Fetch catalog foods
-	const { data: foods = [], isLoading } = useQuery<FoodDTO[]>({
-		queryKey: ['food-catalog', debouncedSearch],
+	const { data: foods = [], isLoading, isFetching } = useQuery<FoodDTO[]>({
+		queryKey: ['food-catalog', debouncedSearch, foodScope],
 		queryFn: async () => {
 			const res = await api.get('/nutrition/food-catalog', {
-				params: { name: debouncedSearch.trim() || undefined, take: 100 },
+				params: {
+					name: debouncedSearch.trim() || undefined,
+					onlyMine: foodScope === 'mine' ? true : undefined,
+					take: 40,
+				},
 			})
 			return res.data
 		},
+		placeholderData: keepPreviousData,
+		staleTime: 1000 * 60 * 5,
 	})
 
 	// Mutation: Log Food in Meal
@@ -77,18 +232,14 @@ export function FoodSearchPage() {
 				queryClient.invalidateQueries({ queryKey: ['diets'] })
 				setSelectedFood(null)
 				setPortionGrams(100)
-				navigate('/nutrition/goals')
+				goBack('/nutrition/goals')
 				return
 			}
 			queryClient.invalidateQueries({ queryKey: ['meal-log', mealLogId] })
 			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
 			setSelectedFood(null)
 			setPortionGrams(100)
-			if (mealLogId) {
-				navigate(`/nutrition/meals/${mealLogId}`)
-			} else {
-				navigate('/nutrition')
-			}
+			goBack(fallbackBackPath)
 		},
 	})
 
@@ -103,7 +254,7 @@ export function FoodSearchPage() {
 		},
 	})
 
-	const handleDeleteFood = (e: React.MouseEvent, food: FoodDTO) => {
+	const handleDeleteFood = useCallback((e: React.MouseEvent, food: FoodDTO) => {
 		e.stopPropagation()
 		modals.openConfirmModal({
 			title: 'Excluir Alimento',
@@ -118,16 +269,16 @@ export function FoodSearchPage() {
 			confirmProps: { color: 'red' },
 			onConfirm: () => deleteCatalogFoodMutation.mutate(food.id),
 		})
-	}
+	}, [deleteCatalogFoodMutation])
 
-	const handleFoodClick = (food: FoodDTO) => {
+	const handleFoodClick = useCallback((food: FoodDTO) => {
 		if (mealLogId || mealId) {
 			setSelectedFood(food)
 		} else {
 			// Redireciona para a página de detalhes do alimento no catálogo se acessado pela lupa geral
 			navigate(`/nutrition/food-catalog/${food.id}`)
 		}
-	}
+	}, [mealLogId, mealId, navigate])
 
 	const handleAddPortionSubmit = () => {
 		if (!selectedFood || portionGrams <= 0) return
@@ -161,15 +312,7 @@ export function FoodSearchPage() {
 	return (
 		<MainLayout
 			title="Procurar Alimento"
-			onBack={() => {
-				if (mealId) {
-					navigate('/nutrition/goals')
-				} else if (mealLogId) {
-					navigate(`/nutrition/meals/${mealLogId}`)
-				} else {
-					navigate('/nutrition')
-				}
-			}}
+			onBack={() => goBack(fallbackBackPath)}
 			actions={
 				<ActionIcon variant="filled" color="gray" size="md" onClick={() => navigate('/nutrition/create-food')}>
 					<Plus size={20} />
@@ -178,25 +321,15 @@ export function FoodSearchPage() {
 		>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
-					{/* Search Input Box */}
-					<TextInput
-						placeholder="Pesquisar..."
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.currentTarget.value)}
-						rightSection={<Search size={16} color="gray" />}
-						radius="md"
-						size="md"
-					/>
+					{/* Search Input Box isolated from parent re-renders */}
+					<FoodSearchInput onDebouncedChange={setDebouncedSearch} isFetching={isFetching} />
 
 					{/* Segmented Control Scope Filter */}
 					<SegmentedControl
 						fullWidth
 						value={foodScope}
 						onChange={(val) => setFoodScope(val as 'all' | 'mine')}
-						data={[
-							{ label: 'Todos os Alimentos', value: 'all' },
-							{ label: 'Meus Alimentos', value: 'mine' },
-						]}
+						data={SCOPE_OPTIONS}
 						radius="md"
 					/>
 
@@ -206,12 +339,7 @@ export function FoodSearchPage() {
 						value={filterBy}
 						onChange={(val) => setFilterBy(val)}
 						allowDeselect
-						data={[
-							{ value: 'high-protein', label: 'Maior quantidade de Proteína' },
-							{ value: 'high-carb', label: 'Maior quantidade de Carboidrato' },
-							{ value: 'low-kcal', label: 'Menor valor Calórico' },
-							{ value: 'low-fat', label: 'Menor quantidade de Gordura' },
-						]}
+						data={SORT_OPTIONS}
 						radius="md"
 						size="md"
 					/>
@@ -227,103 +355,24 @@ export function FoodSearchPage() {
 					</Stack>
 
 					{/* Foods List */}
-					{isLoading ? (
+					{isLoading && foods.length === 0 ? (
 						<Center style={{ height: '30vh' }}>
 							<Loader size="md" />
 						</Center>
 					) : processedFoods.length > 0 ? (
 						<Stack gap="sm">
 							{processedFoods.map((food) => (
-								<Paper
+								<FoodCardItem
 									key={food.id}
-									withBorder
-									p="md"
-									radius="md"
-									shadow="xs"
-									style={{ cursor: 'pointer' }}
-									onClick={() => handleFoodClick(food)}
-								>
-									<Stack gap="xs">
-										<Group justify="space-between" align="center">
-											<Group gap={6}>
-												<Text fw={700} size="sm">
-													{food.name}
-												</Text>
-												{food.userId === user?.id && (
-													<Text
-														span
-														size="10px"
-														fw={700}
-														c="teal"
-														bg="teal.9"
-														px={6}
-														py={2}
-														style={{ borderRadius: '4px' }}
-													>
-														Meu
-													</Text>
-												)}
-											</Group>
-											<Group gap="xs">
-												<Text fw={700} size="sm" c="dimmed">
-													{food.calories.toFixed(0)} Kal{' '}
-													<Text span size="xs" fw={500} c="dimmed">
-														/100g
-													</Text>
-												</Text>
-												{food.userId === user?.id && (
-													<ActionIcon
-														variant="subtle"
-														color="red"
-														size="sm"
-														onClick={(e) => handleDeleteFood(e, food)}
-														loading={
-															deleteCatalogFoodMutation.isPending &&
-															deleteCatalogFoodMutation.variables === food.id
-														}
-													>
-														<Trash2 size={14} />
-													</ActionIcon>
-												)}
-											</Group>
-										</Group>
-
-										<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
-											<Stack gap={0}>
-												<Text size="xs" c="dimmed">
-													Prot
-												</Text>
-												<Text size="xs" fw={700} c="red.6">
-													{food.protein.toFixed(1)}g
-												</Text>
-											</Stack>
-											<Stack gap={0}>
-												<Text size="xs" c="dimmed">
-													Carb
-												</Text>
-												<Text size="xs" fw={700} c="yellow.5">
-													{food.carbohydrate.toFixed(1)}g
-												</Text>
-											</Stack>
-											<Stack gap={0}>
-												<Text size="xs" c="dimmed">
-													Gord
-												</Text>
-												<Text size="xs" fw={700} c="green.6">
-													{food.lipids.toFixed(1)}g
-												</Text>
-											</Stack>
-											<Stack gap={0}>
-												<Text size="xs" c="dimmed">
-													Fibr
-												</Text>
-												<Text size="xs" fw={700} c="teal.5">
-													{food.fiber.toFixed(1)}g
-												</Text>
-											</Stack>
-										</SimpleGrid>
-									</Stack>
-								</Paper>
+									food={food}
+									isMine={food.userId === user?.id}
+									isDeleting={
+										deleteCatalogFoodMutation.isPending &&
+										deleteCatalogFoodMutation.variables === food.id
+									}
+									onSelect={handleFoodClick}
+									onDelete={handleDeleteFood}
+								/>
 							))}
 						</Stack>
 					) : (

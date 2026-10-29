@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Container, Stack, Paper, Group, Text, Title, Center, Loader, ActionIcon } from '@mantine/core'
 import { Trash2 } from 'lucide-react'
@@ -7,10 +7,11 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
 import { type FoodDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation'
 
 export function FoodDetailsPage() {
 	const { id } = useParams<{ id: string }>()
-	const navigate = useNavigate()
+	const goBack = useGoBack('/nutrition/search')
 	const queryClient = useQueryClient()
 	const { user } = useAuth()
 
@@ -31,7 +32,7 @@ export function FoodDetailsPage() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
-			navigate(-1)
+			goBack('/nutrition/search')
 		},
 	})
 
@@ -54,7 +55,7 @@ export function FoodDetailsPage() {
 
 	if (isLoading) {
 		return (
-			<MainLayout title="Alimento" onBack={() => navigate(-1)}>
+			<MainLayout title="Alimento" onBack={() => goBack('/nutrition/search')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -64,7 +65,7 @@ export function FoodDetailsPage() {
 
 	if (!food) {
 		return (
-			<MainLayout title="Alimento" onBack={() => navigate(-1)}>
+			<MainLayout title="Alimento" onBack={() => goBack('/nutrition/search')}>
 				<Center style={{ height: '70vh' }}>
 					<Text size="lg" c="dimmed">
 						Alimento não encontrado no catálogo.
@@ -79,7 +80,7 @@ export function FoodDetailsPage() {
 	return (
 		<MainLayout
 			title="Alimento"
-			onBack={() => navigate(-1)}
+			onBack={() => goBack('/nutrition/search')}
 			actions={
 				isOwner ? (
 					<ActionIcon

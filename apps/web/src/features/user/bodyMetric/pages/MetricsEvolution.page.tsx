@@ -15,11 +15,13 @@ import {
 	Card,
 	Badge,
 } from '@mantine/core'
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Scale, Flame, Activity } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, Scale, Flame, Activity } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AreaChart } from '@mantine/charts'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
 import { useAuth } from '../../hooks/useAuth'
+import { MainLayout } from '../../../../components/layout/MainLayout'
+import { useGoBack } from '../../../../utils/navigation'
 import dayjs from 'dayjs'
 import { useQuery } from '@tanstack/react-query'
 
@@ -35,6 +37,7 @@ interface BodyMetric {
 
 export function MetricsEvolutionPage() {
 	const navigate = useNavigate()
+	const goBack = useGoBack('/profile')
 	const { user } = useAuth()
 	const [selectedTab, setSelectedTab] = useState<'weight' | 'bmi' | 'percentages'>('weight')
 
@@ -51,28 +54,32 @@ export function MetricsEvolutionPage() {
 
 	if (isLoading || !user) {
 		return (
-			<Center style={{ height: '50vh' }}>
-				<Loader size="xl" />
-			</Center>
+			<MainLayout title="Evolução Corporal" onBack={() => goBack('/profile')}>
+				<Center style={{ height: '50vh' }}>
+					<Loader size="xl" />
+				</Center>
+			</MainLayout>
 		)
 	}
 
 	if (!metrics || metrics.length === 0) {
 		return (
-			<Center style={{ minHeight: '80vh' }}>
-				<Container size="xs">
-					<Stack align="center" gap="md" style={{ textAlign: 'center' }}>
-						<TrendingUp size={48} color="#A8AEC1" />
-						<Title order={2}>Sem histórico para exibir</Title>
-						<Text size="sm" c="dimmed">
-							Você precisa cadastrar pelo menos uma métrica corporal para ver o gráfico de evolução.
-						</Text>
-						<Button onClick={() => navigate('/profile')} variant="light">
-							Voltar ao Perfil
-						</Button>
-					</Stack>
-				</Container>
-			</Center>
+			<MainLayout title="Evolução Corporal" onBack={() => goBack('/profile')}>
+				<Center style={{ minHeight: '70vh' }}>
+					<Container size="xs">
+						<Stack align="center" gap="md" style={{ textAlign: 'center' }}>
+							<TrendingUp size={48} color="#A8AEC1" />
+							<Title order={2}>Sem histórico para exibir</Title>
+							<Text size="sm" c="dimmed">
+								Você precisa cadastrar pelo menos uma métrica corporal para ver o gráfico de evolução.
+							</Text>
+							<Button onClick={() => goBack('/profile')} variant="light">
+								Voltar ao Perfil
+							</Button>
+						</Stack>
+					</Container>
+				</Center>
+			</MainLayout>
 		)
 	}
 
@@ -137,32 +144,22 @@ export function MetricsEvolutionPage() {
 	}
 
 	return (
-		<Center style={{ minHeight: '80vh', padding: '24px 0' }}>
-			<Container size="md" w="100%">
+		<MainLayout
+			title="Evolução Corporal"
+			onBack={() => goBack('/profile')}
+			actions={
+				<Button
+					variant="light"
+					size="xs"
+					onClick={() => navigate('/profile/new-metric')}
+				>
+					Registrar Métrica
+				</Button>
+			}
+		>
+			<Container size="md" w="100%" px={0}>
 				<Stack gap="lg">
-					<Group justify="space-between" align="center">
-						<Button
-							variant="subtle"
-							leftSection={<ArrowLeft size={16} />}
-							onClick={() => navigate('/profile')}
-							size="xs"
-							color="gray"
-						>
-							Voltar ao Perfil
-						</Button>
-						<Button
-							variant="light"
-							size="xs"
-							onClick={() => navigate('/profile/metrics/new')}
-						>
-							Registrar Métrica
-						</Button>
-					</Group>
-
 					<Stack gap={4} style={{ textAlign: 'center' }}>
-						<Title order={2} style={{ letterSpacing: '-0.5px' }}>
-							Evolução Corporal
-						</Title>
 						<Text size="sm" c="dimmed">
 							Histórico e métricas registradas ao longo do tempo.
 						</Text>
@@ -287,7 +284,7 @@ export function MetricsEvolutionPage() {
 					</Paper>
 				</Stack>
 			</Container>
-		</Center>
+		</MainLayout>
 	)
 }
 

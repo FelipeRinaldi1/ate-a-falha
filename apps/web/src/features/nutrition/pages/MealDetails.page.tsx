@@ -22,10 +22,12 @@ import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { NutritionLogic, type MealLogDTO, type FoodLogDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation'
 
 export function MealDetailsPage() {
 	const { id } = useParams<{ id: string }>()
 	const navigate = useNavigate()
+	const goBack = useGoBack('/nutrition')
 	const queryClient = useQueryClient()
 
 	const [editOpened, setEditOpened] = useState(false)
@@ -89,7 +91,7 @@ export function MealDetailsPage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
 			setEditOpened(false)
-			navigate('/nutrition')
+			goBack('/nutrition')
 		},
 	})
 
@@ -136,7 +138,7 @@ export function MealDetailsPage() {
 
 	if (isLoadingMeal) {
 		return (
-			<MainLayout title="Refeição" onBack={() => navigate('/nutrition')}>
+			<MainLayout title="Refeição" onBack={() => goBack('/nutrition')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -146,7 +148,7 @@ export function MealDetailsPage() {
 
 	if (!meal) {
 		return (
-			<MainLayout title="Refeição" onBack={() => navigate('/nutrition')}>
+			<MainLayout title="Refeição" onBack={() => goBack('/nutrition')}>
 				<Center style={{ height: '70vh' }}>
 					<Text size="lg" c="dimmed">
 						Refeição não encontrada.
@@ -165,7 +167,7 @@ export function MealDetailsPage() {
 	return (
 		<MainLayout
 			title="Refeição"
-			onBack={() => navigate('/nutrition')}
+			onBack={() => goBack('/nutrition')}
 			actions={
 				<ActionIcon variant="subtle" color="gray" size="md" onClick={handleOpenEditModal}>
 					<Pencil size={20} />

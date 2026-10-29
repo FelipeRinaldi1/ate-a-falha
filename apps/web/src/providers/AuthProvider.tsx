@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { api } from '../api/axiosInstance'
 import type { UserResponseDTO } from '@ate-a-falha/shared'
 import { AuthContext } from '../features/user/hooks/useAuth'
+import { queryClient } from './queryClient'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<UserResponseDTO | null>(null)
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}, [])
 
 	const login = (loggedUser: UserResponseDTO) => {
+		queryClient.clear()
 		setUser(loggedUser)
 	}
 
@@ -30,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		} catch (error) {
 			console.error('Failed to logout in backend', error)
 		} finally {
+			queryClient.clear()
 			setUser(null)
 		}
 	}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
 	Container,
@@ -19,12 +19,26 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+import { useGoBack } from '../../../utils/navigation'
+import { useAuth } from '../../user/hooks/useAuth'
+
+function formatRestDuration(seconds: number): string {
+	if (!seconds || seconds <= 0) return '0s'
+	if (seconds < 60) return `${seconds}s`
+	const mins = Math.floor(seconds / 60)
+	const rem = seconds % 60
+	return rem > 0 ? `${mins}m ${rem}s` : `${mins} min`
+}
 
 export function ActiveWorkoutPage() {
 	const { id } = useParams<{ id: string }>()
 	const [searchParams] = useSearchParams()
 	const workoutId = searchParams.get('workoutId')
 	const navigate = useNavigate()
+	const location = useLocation()
+	const goBack = useGoBack('/workout')
+	const { user } = useAuth()
+	const [activeTimers, setActiveTimers] = useState<Record<string, number>>({})
 
 	// State for which exercise cards are expanded (key: workoutExerciseId, value: boolean)
 	const [expandedExercises, setExpandedExercises] = useState<Record<string, boolean>>(() => {
@@ -60,6 +74,23 @@ export function ActiveWorkoutPage() {
 		}
 	}, [checkedItems, workoutId])
 
+	useEffect(() => {
+		const hasRunning = Object.values(activeTimers).some((v) => v > 0)
+		if (!hasRunning) return
+
+		const interval = setInterval(() => {
+			setActiveTimers((prev) => {
+				const next: Record<string, number> = {}
+				for (const [k, v] of Object.entries(prev)) {
+					if (v > 1) next[k] = v - 1
+				}
+				return next
+			})
+		}, 1000)
+
+		return () => clearInterval(interval)
+	}, [activeTimers])
+
 	// Fetch Plan details
 	const { data: plan, isLoading } = useQuery<PlanDTO>({
 		queryKey: ['workout-plans-detail', id],
@@ -80,23 +111,32 @@ export function ActiveWorkoutPage() {
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:checked`)
 		}
 
-		// Mark today's date as completed in localStorage
+		// Mark today's date as completed in localStorage (scoped by user)
 		try {
 			const today = new Date()
 			const year = today.getFullYear()
 			const month = String(today.getMonth() + 1).padStart(2, '0')
 			const day = String(today.getDate()).padStart(2, '0')
 			const todayStr = `${year}-${month}-${day}`
+			const storageKey = user?.id
+				? `ate-a-falha:completed-workouts:${user.id}`
+				: 'ate-a-falha:completed-workouts'
 
-			const saved = localStorage.getItem('ate-a-falha:completed-workouts')
+			const saved = localStorage.getItem(storageKey)
 			const completed = saved ? JSON.parse(saved) : {}
 			completed[todayStr] = true
-			localStorage.setItem('ate-a-falha:completed-workouts', JSON.stringify(completed))
+			localStorage.setItem(storageKey, JSON.stringify(completed))
 		} catch (e) {
 			console.error('Failed to save completed workout', e)
 		}
 
-		navigate('/workout')
+		const historyIdx = window.history.state?.idx ?? 0
+		const cameFromSelect = (location.state as { fromSelect?: boolean } | null)?.fromSelect
+		if (cameFromSelect && historyIdx >= 2) {
+			navigate(-2)
+		} else {
+			goBack('/workout')
+		}
 	}
 
 	const toggleExpand = (weId: string) => {
@@ -124,7 +164,7 @@ export function ActiveWorkoutPage() {
 
 	if (isLoading) {
 		return (
-			<MainLayout title="Ficha - Exercícios" onBack={() => navigate(-1)}>
+			<MainLayout title="Ficha - Exercícios" onBack={() => goBack('/workout')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -133,7 +173,7 @@ export function ActiveWorkoutPage() {
 	}
 
 	return (
-		<MainLayout title={`${plan?.name || 'Ficha'} - Exercícios`} onBack={() => navigate(-1)}>
+		<MainLayout title={`${plan?.name || 'Ficha'} - Exercícios`} onBack={() => goBack('/workout')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md" pb={100} pt="md">
 					{/* Active Workout Info Header */}
@@ -153,9 +193,9 @@ export function ActiveWorkoutPage() {
 								const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 
 								const totalSets = we.sets?.length || 0
-								const restTimeMin = we.sets?.[0]
-									? (we.sets[0].restTimeSeconds / 60).toFixed(0)
-									: '1'
+								const restSeconds = we.sets?.[0]?.restTimeSeconds ?? 60
+								const restTimeFormatted = formatRestDuration(restSeconds)
+								const remainingTimer = activeTimers[weId] || 0
 								const isExerciseCompleted = we.sets && we.sets.length > 0 && we.sets.every((s: SetDTO) => !!checkedItems[s.id])
 
 								return (
@@ -208,7 +248,7 @@ export function ActiveWorkoutPage() {
 														</Text>
 														<Text size="xs" c="dimmed">•</Text>
 														<Text size="xs" c="dimmed" fw={600}>
-															{restTimeMin} min desc
+															{restTimeFormatted} desc
 														</Text>
 													</Group>
 												</Stack>
@@ -312,9 +352,20 @@ export function ActiveWorkoutPage() {
 															p="xs"
 															radius="sm"
 															style={{
-																backgroundColor: 'var(--mantine-color-dark-7)',
-																border: '1px solid var(--mantine-color-dark-5)',
+																backgroundColor: remainingTimer > 0 ? 'rgba(34, 139, 230, 0.15)' : 'var(--mantine-color-dark-7)',
+																border: remainingTimer > 0 ? '1px solid var(--mantine-color-blue-6)' : '1px solid var(--mantine-color-dark-5)',
 																marginTop: '4px',
+																cursor: 'pointer',
+															}}
+															onClick={() => {
+																setActiveTimers((prev) => {
+																	if (prev[weId] && prev[weId] > 0) {
+																		const copy = { ...prev }
+																		delete copy[weId]
+																		return copy
+																	}
+																	return { ...prev, [weId]: restSeconds }
+																})
 															}}
 														>
 															<Group justify="space-between" wrap="nowrap">
@@ -325,8 +376,11 @@ export function ActiveWorkoutPage() {
 																	<Text
 																		size="sm"
 																		fw={700}
+																		c={remainingTimer > 0 ? 'blue.4' : undefined}
 																	>
-																		Tempo de Descanso • {restTimeMin} Min
+																		{remainingTimer > 0
+																			? `Descansando: ${formatRestDuration(remainingTimer)} (toque p/ parar)`
+																			: `Tempo de Descanso • ${restTimeFormatted} (toque p/ iniciar)`}
 																	</Text>
 																</Group>
 															</Group>

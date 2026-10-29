@@ -14,8 +14,8 @@ const foodService = new FoodService(foodRepo, accessServ)
 const foodController = new FoodController(foodService)
 
 foodRouter.post('/food-catalog', ensureAuthenticated, foodController.create)
-foodRouter.get('/food-catalog', foodController.findAll)
-foodRouter.get('/food-catalog/:id', foodController.findById)
+foodRouter.get('/food-catalog', ensureAuthenticated, foodController.findAll)
+foodRouter.get('/food-catalog/:id', ensureAuthenticated, foodController.findById)
 foodRouter.patch('/food-catalog/:id', ensureAuthenticated, foodController.update)
 foodRouter.delete('/food-catalog/:id', ensureAuthenticated, foodController.delete)
 

@@ -11,9 +11,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 	}
 	if (user?.hasBodyMetrics != true && location.pathname !== '/setup-metrics') {
 		return <Navigate to="/setup-metrics" replace />
-	} else {
-		return <>{children}</>
 	}
+	if (user?.hasBodyMetrics === true && location.pathname === '/setup-metrics') {
+		return <Navigate to="/workout" replace />
+	}
+	return <>{children}</>
 }
 export function PublicRoute({ children }: { children: React.ReactNode }) {
 	const { isAuthenticated, isLoading } = useAuth()

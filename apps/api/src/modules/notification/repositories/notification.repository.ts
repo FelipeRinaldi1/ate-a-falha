@@ -19,7 +19,7 @@ export class NotificationRepository implements INotificationRepository {
 					message: data.message,
 					type: data.type || 'INFO',
 					link: data.link,
-					userId: data.userId || userId,
+					userId,
 				},
 			})
 		)

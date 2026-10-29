@@ -22,15 +22,20 @@ import { api } from '../../../api/axiosInstance'
 import { type PlanDTO, type ExerciseDTO, type WorkoutDTO } from '@ate-a-falha/shared'
 import { CalendarSelector } from '../../../components/CalendarSelector'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+import { useAuth } from '../../user/hooks/useAuth'
 
 export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
+	const { user } = useAuth()
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+	const storageKey = user?.id
+		? `ate-a-falha:completed-workouts:${user.id}`
+		: 'ate-a-falha:completed-workouts'
 
-	// Completed workouts state stored in localStorage (YYYY-MM-DD -> boolean)
+	// Completed workouts state stored in localStorage scoped by user (YYYY-MM-DD -> boolean)
 	const [completedWorkouts, setCompletedWorkouts] = useState<Record<string, boolean>>(() => {
 		try {
-			const saved = localStorage.getItem('ate-a-falha:completed-workouts')
+			const saved = localStorage.getItem(storageKey)
 			return saved ? JSON.parse(saved) : {}
 		} catch {
 			return {}
@@ -40,7 +45,7 @@ export function WorkoutDashboardPage() {
 	const toggleDayCompleted = (dateStr: string) => {
 		setCompletedWorkouts((prev) => {
 			const updated = { ...prev, [dateStr]: !prev[dateStr] }
-			localStorage.setItem('ate-a-falha:completed-workouts', JSON.stringify(updated))
+			localStorage.setItem(storageKey, JSON.stringify(updated))
 			return updated
 		})
 	}

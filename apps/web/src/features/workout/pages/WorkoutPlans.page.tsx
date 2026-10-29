@@ -24,6 +24,7 @@ import { api } from '../../../api/axiosInstance'
 import { type PlanDTO } from '@ate-a-falha/shared'
 import { ShareModal } from '../../../components/ShareModal'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+import { useGoBack } from '../../../utils/navigation'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -33,6 +34,7 @@ const GOAL_LABELS: Record<string, string> = {
 
 export function WorkoutPlansPage() {
 	const navigate = useNavigate()
+	const goBack = useGoBack('/workout')
 	const queryClient = useQueryClient()
 	const [createModalOpen, setCreateModalOpen] = useState(false)
 	const [shareModalOpen, setShareModalOpen] = useState(false)
@@ -120,7 +122,7 @@ export function WorkoutPlansPage() {
 
 	if (isLoading) {
 		return (
-			<MainLayout title="Minhas Fichas" onBack={() => navigate(-1)}>
+			<MainLayout title="Minhas Fichas" onBack={() => goBack('/workout')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -129,7 +131,7 @@ export function WorkoutPlansPage() {
 	}
 
 	return (
-		<MainLayout title="Minhas Fichas" onBack={() => navigate(-1)}>
+		<MainLayout title="Minhas Fichas" onBack={() => goBack('/workout')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md" pb={80}>
 					{/* Plan list matching the mockup */}

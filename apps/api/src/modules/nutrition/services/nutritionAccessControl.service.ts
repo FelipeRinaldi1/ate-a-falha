@@ -24,7 +24,8 @@ export class NutritionAccessControlService {
 		return success(true)
 	}
 
-	async canManageGlobalFoods(user: authenticatedUser): Promise<Result<boolean>> {
+	async canManageGlobalFoods(user?: authenticatedUser): Promise<Result<boolean>> {
+		if (!user) return failure(this.ForbiddenError)
 		if (user.role === 'ADMIN') return success(true)
 		return failure(this.ForbiddenError)
 	}
@@ -44,7 +45,8 @@ export class NutritionAccessControlService {
 		return this.handleAccessResult(result)
 	}
 
-	async canAccessFood(foodId: string, user: authenticatedUser): Promise<Result<boolean>> {
+	async canAccessFood(foodId: string, user?: authenticatedUser): Promise<Result<boolean>> {
+		if (!user) return failure(this.ForbiddenError)
 		if (user.role === 'ADMIN') return success(true)
 		const result = await this.accessRepo.canAccessFood(foodId, user.id)
 		return this.handleAccessResult(result)

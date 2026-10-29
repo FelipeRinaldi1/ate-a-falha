@@ -57,7 +57,7 @@ export class FoodService {
 
 	async findAll(data: FoodSearchDTO, authUser?: authenticatedUser): Promise<Result<FoodFull[]>> {
 		const isAdmin = authUser?.role === 'ADMIN'
-		const userId = isAdmin ? undefined : authUser?.id
+		const userId = isAdmin && !data.onlyMine ? undefined : authUser?.id
 		const result = await this.foodRepository.findAll(data, userId)
 
 		if (result.isFailure()) {

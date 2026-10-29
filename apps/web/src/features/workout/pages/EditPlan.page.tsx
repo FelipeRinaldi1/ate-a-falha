@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useMemo, memo } from 'react'
+import { useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useDebouncedValue } from '@mantine/hooks'
 import {
 	Container,
 	Stack,
@@ -26,6 +27,7 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO, type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+import { useGoBack } from '../../../utils/navigation'
 
 type DivisionType = 'A' | 'AB' | 'ABC' | 'ABCD' | 'ABCDE' | 'ABCDEF'
 
@@ -62,15 +64,38 @@ const MUSCLE_OPTIONS = [
 const CATEGORY_OPTIONS = [
 	{ label: 'Alongamento', value: 'alongamento' },
 	{ label: 'Cardio', value: 'cardio' },
-	{ label: 'Força', value: 'força' },
+	{ label: 'Força', value: 'forca' },
 	{ label: 'Levantamento Olímpico', value: 'levantamento-olimpico' },
 	{ label: 'Pliometria', value: 'plyometrics' },
 	{ label: 'Strongman', value: 'strongman' },
 ]
 
+const ModalExerciseSearchInput = memo(function ModalExerciseSearchInput({
+	onDebouncedChange,
+}: {
+	onDebouncedChange: (val: string) => void
+}) {
+	const [value, setValue] = useState('')
+	const [debounced] = useDebouncedValue(value, 200)
+
+	useEffect(() => {
+		onDebouncedChange(debounced)
+	}, [debounced, onDebouncedChange])
+
+	return (
+		<TextInput
+			placeholder="Buscar no catálogo..."
+			value={value}
+			onChange={(e) => setValue(e.currentTarget.value)}
+			leftSection={<Search size={16} />}
+			radius="md"
+		/>
+	)
+})
+
 export function EditPlanPage() {
 	const { id } = useParams<{ id: string }>()
-	const navigate = useNavigate()
+	const goBack = useGoBack('/workout/plans')
 	const queryClient = useQueryClient()
 
 	const [planName, setPlanName] = useState('')
@@ -164,12 +189,16 @@ export function EditPlanPage() {
 				}
 			})
 
-			await Promise.all([patchPlanPromise, ...workoutPromises])
+			// 3. Delete any existing workouts that are outside the selected division
+			const removedWorkouts = (plan?.workouts || []).filter((w: WorkoutDTO) => !activeDays.includes(w.day))
+			const deletePromises = removedWorkouts.map((w: WorkoutDTO) => api.delete(`/workout/workouts/${w.id}`))
+
+			await Promise.all([patchPlanPromise, ...workoutPromises, ...deletePromises])
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
 			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })
-			navigate('/workout/plans')
+			goBack('/workout/plans')
 		},
 	})
 
@@ -302,23 +331,27 @@ export function EditPlanPage() {
 	}
 
 	// Filter exercises in catalog
-	const filteredCatalog = catalog.filter((ex) => {
-		const matchesSearch =
-			ex.name.toLowerCase().includes(exerciseSearch.toLowerCase()) ||
-			ex.primaryMuscles.some((m) => m.toLowerCase().includes(exerciseSearch.toLowerCase())) ||
-			ex.category.toLowerCase().includes(exerciseSearch.toLowerCase())
+	const filteredCatalog = useMemo(() => {
+		const term = exerciseSearch.trim().toLowerCase()
+		return catalog.filter((ex) => {
+			const matchesSearch =
+				!term ||
+				ex.name.toLowerCase().includes(term) ||
+				ex.primaryMuscles.some((m) => m.toLowerCase().includes(term)) ||
+				ex.category.toLowerCase().includes(term)
 
-		const matchesCategory = !selectedCategory || ex.category.toLowerCase() === selectedCategory.toLowerCase()
-		const matchesMuscle = !selectedMuscle || ex.primaryMuscles.some((m) => m.toLowerCase() === selectedMuscle.toLowerCase())
+			const matchesCategory = !selectedCategory || ex.category.toLowerCase() === selectedCategory.toLowerCase()
+			const matchesMuscle = !selectedMuscle || ex.primaryMuscles.some((m) => m.toLowerCase() === selectedMuscle.toLowerCase())
 
-		return matchesSearch && matchesCategory && matchesMuscle
-	})
+			return matchesSearch && matchesCategory && matchesMuscle
+		})
+	}, [catalog, exerciseSearch, selectedCategory, selectedMuscle])
 
 	const activeDays = DIVISION_DAYS[selectedDivision]
 
 	if (isLoading || !plan) {
 		return (
-			<MainLayout title="Editar Ficha" onBack={() => navigate(-1)}>
+			<MainLayout title="Editar Ficha" onBack={() => goBack('/workout/plans')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -327,7 +360,7 @@ export function EditPlanPage() {
 	}
 
 	return (
-		<MainLayout title="Editar Ficha" onBack={() => navigate(-1)}>
+		<MainLayout title="Editar Ficha" onBack={() => goBack('/workout/plans')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md" pb={100}>
 					{/* Form Fields wrapped in Paper */}
@@ -535,13 +568,7 @@ export function EditPlanPage() {
 				size="95%"
 			>
 				<Stack gap="md" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
-					<TextInput
-						placeholder="Buscar no catálogo..."
-						value={exerciseSearch}
-						onChange={(e) => setExerciseSearch(e.currentTarget.value)}
-						leftSection={<Search size={16} />}
-						radius="md"
-					/>
+					<ModalExerciseSearchInput onDebouncedChange={setExerciseSearch} />
 
 					{/* Dropdown Filters dynamically synchronized */}
 					<SimpleGrid cols={2} spacing="xs">
