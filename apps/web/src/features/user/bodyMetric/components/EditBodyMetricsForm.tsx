@@ -4,10 +4,10 @@ import { Button, NumberInput, Paper, Select, Stack, Loader, Center, Alert } from
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../../utils/errorTranslator'
+import { useGoBack } from '../../../../utils/navigation'
 import type { AxiosError } from 'axios'
 
 interface BodyMetric {
@@ -22,7 +22,7 @@ interface BodyMetric {
 
 export function EditBodyMetricsForm() {
 	const queryClient = useQueryClient()
-	const navigate = useNavigate()
+	const goBack = useGoBack('/profile')
 	const { refreshUser } = useAuth()
 	const [metricId, setMetricId] = useState<string | null>(null)
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -70,7 +70,7 @@ export function EditBodyMetricsForm() {
 		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			navigate('/profile')
+			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao atualizar métricas corporais.'))
@@ -88,7 +88,7 @@ export function EditBodyMetricsForm() {
 		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			navigate('/profile')
+			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao excluir métricas corporais.'))

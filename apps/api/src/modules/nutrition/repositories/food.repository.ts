@@ -18,6 +18,8 @@ export class FoodRepository implements IFoodRepository {
 	}
 
 	async findAll(data: FoodSearchDTO, userId?: string): Promise<Result<FoodFull[]>> {
+		const onlyMine = Boolean(data.onlyMine)
+
 		if (data.name && data.name.trim().length > 0) {
 			const cleanTerm = data.name.trim()
 			const pattern = `%${cleanTerm}%`
@@ -40,7 +42,12 @@ export class FoodRepository implements IFoodRepository {
 						similarity(f.name, $1) AS sim,
 						(CASE WHEN f.name ILIKE $2 THEN 1 ELSE 0 END) AS exact_match
 					FROM "Food" f
-					WHERE ($3::text IS NULL OR f."userId" = $3 OR f."userId" IS NULL)
+					WHERE (
+						CASE
+							WHEN $5::boolean IS TRUE THEN f."userId" = $3
+							ELSE ($3::text IS NULL OR f."userId" = $3 OR f."userId" IS NULL)
+						END
+					)
 					  AND (
 					    f.name ILIKE $2
 					    OR similarity(f.name, $1) > 0.3
@@ -54,7 +61,8 @@ export class FoodRepository implements IFoodRepository {
 					cleanTerm,
 					pattern,
 					userId ?? null,
-					limit
+					limit,
+					onlyMine
 				)
 			)
 
@@ -69,11 +77,13 @@ export class FoodRepository implements IFoodRepository {
 				cursor: data.cursorId ? { id: data.cursorId } : undefined,
 				where: {
 					AND: [
-						userId
-							? {
-									OR: [{ userId: userId }, { userId: null }],
-								}
-							: {},
+						onlyMine
+							? { userId: userId ?? '__none__' }
+							: userId
+								? {
+										OR: [{ userId: userId }, { userId: null }],
+									}
+								: {},
 					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],

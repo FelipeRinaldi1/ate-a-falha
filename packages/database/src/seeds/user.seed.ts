@@ -353,7 +353,16 @@ export async function seedDemoUser() {
 				],
 			},
 		})
-		if (found) return found
+		if (found && found.images && found.images.length > 0) return found
+
+		const images = [`${externalId}/0.jpg`, `${externalId}/1.jpg`]
+
+		if (found) {
+			return await prisma.exercise.update({
+				where: { id: found.id },
+				data: { images },
+			})
+		}
 
 		return await prisma.exercise.create({
 			data: {
@@ -367,20 +376,20 @@ export async function seedDemoUser() {
 					'Execute o movimento mantendo controle excêntrico e concêntrico.',
 					'Mantenha a postura e expire na fase de esforço.',
 				],
-				images: [],
+				images,
 			},
 		})
 	}
 
-	const exSupino = await findOrCreateExercise('Supino Reto com Barra', 'Barbell_Bench_Press', ['peito'])
+	const exSupino = await findOrCreateExercise('Supino Reto com Barra', 'Barbell_Bench_Press_-_Medium_Grip', ['peito'])
 	const exInclinado = await findOrCreateExercise('Supino Inclinado com Halteres', 'Incline_Dumbbell_Press', ['peito', 'ombros'])
 	const exDesenv = await findOrCreateExercise('Desenvolvimento Militar com Halteres', 'Dumbbell_Shoulder_Press', ['ombros'])
 	const exElevLateral = await findOrCreateExercise('Elevação Lateral', 'Side_Lateral_Raise', ['ombros'])
-	const exTricepsPolia = await findOrCreateExercise('Tríceps Pulley na Corda', 'Triceps_Pushdown_Rope', ['triceps'])
+	const exTricepsPolia = await findOrCreateExercise('Tríceps Pulley na Corda', 'Triceps_Pushdown_-_Rope_Attachment', ['triceps'])
 
-	const exPuxada = await findOrCreateExercise('Puxada Frontal na Polia Alta', 'Lat_Pulldown', ['costas'])
+	const exPuxada = await findOrCreateExercise('Puxada Frontal na Polia Alta', 'Wide-Grip_Lat_Pulldown', ['costas'])
 	const exRemada = await findOrCreateExercise('Remada Curvada com Barra', 'Bent_Over_Barbell_Row', ['costas'])
-	const exCrucifixoInv = await findOrCreateExercise('Crucifixo Inverso com Halteres', 'Rear_Delt_Raise', ['ombros', 'costas'])
+	const exCrucifixoInv = await findOrCreateExercise('Crucifixo Inverso com Halteres', 'Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench', ['ombros', 'costas'])
 	const exRoscaDireta = await findOrCreateExercise('Rosca Direta com Barra W', 'Barbell_Curl', ['biceps'])
 	const exRoscaMartelo = await findOrCreateExercise('Rosca Martelo com Halteres', 'Hammer_Curls', ['biceps', 'antebraco'])
 
@@ -391,13 +400,15 @@ export async function seedDemoUser() {
 	const exPanturrilha = await findOrCreateExercise('Elevação de Panturrilha em Pé', 'Standing_Calf_Raises', ['panturrilhas'])
 	const exAbdominal = await findOrCreateExercise('Abdominal Supra na Prancha', 'Decline_Crunch', ['abdominais'])
 
-	// 9. Criação do Plano de Treino ABC Ativo
+	// 9. Criação do Plano de Treino ABC Ativo com Capa
 	console.log('Criando plano de treino ABC ativo...')
 	const plan = await prisma.plan.create({
 		data: {
 			name: 'Plano ABC - Hipertrofia & Progressão de Carga',
 			isActive: true,
 			goal: 'hipertrofia',
+			coverExerciseId: exSupino.id,
+			coverImageUrl: exSupino.images[0] || 'Barbell_Bench_Press_-_Medium_Grip/0.jpg',
 			isExported: false,
 			userId: user.id,
 			workouts: {
@@ -630,7 +641,7 @@ export async function seedDemoUser() {
 			message: 'Parabéns! Você atingiu sua meta diária de 3.500ml de água.',
 			type: NOTIFICATION_TYPE.DIET,
 			read: false,
-			link: '/nutrition/diet',
+			link: '/nutrition',
 			userId: user.id,
 		},
 		{
@@ -638,7 +649,7 @@ export async function seedDemoUser() {
 			message: 'Sua última avaliação física registrou 14.5% de BF. Você está no caminho certo!',
 			type: NOTIFICATION_TYPE.SUCCESS,
 			read: false,
-			link: '/user/metrics/evolution',
+			link: '/profile/evolution',
 			userId: user.id,
 		},
 		{
@@ -646,7 +657,7 @@ export async function seedDemoUser() {
 			message: 'Não se esqueça do seu Lanche Pré-Treino programado para as 16:00.',
 			type: NOTIFICATION_TYPE.INFO,
 			read: true,
-			link: '/nutrition/diet',
+			link: '/nutrition',
 			userId: user.id,
 		},
 		{

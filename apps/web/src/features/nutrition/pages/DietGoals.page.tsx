@@ -27,6 +27,7 @@ import { api } from '../../../api/axiosInstance'
 import { ShareModal } from '../../../components/ShareModal'
 import { type DietDTO, type MealDTO, type FoodInMealDTO, NutritionLogic } from '@ate-a-falha/shared'
 import { DonutChart } from '@mantine/charts'
+import { useGoBack } from '../../../utils/navigation'
 
 interface BodyMetric {
 	id: string
@@ -40,6 +41,7 @@ interface BodyMetric {
 
 export function DietGoalsPage() {
 	const navigate = useNavigate()
+	const goBack = useGoBack('/nutrition')
 	const queryClient = useQueryClient()
 	const [opened, setOpened] = useState(false)
 	const [shareModalOpen, setShareModalOpen] = useState(false)
@@ -157,16 +159,30 @@ export function DietGoalsPage() {
 	// Mutations for Reference Meals
 	const addMealMutation = useMutation({
 		mutationFn: async () => {
-			if (!activeDiet) return
+			let dietId = activeDiet?.id
+			if (!dietId) {
+				const newDietRes = await api.post('/nutrition/diets', {
+					name: 'Minha Dieta',
+					dailyKcalGoal: activeDiet?.dailyKcalGoal || 2000,
+					dailyProteinGoal: activeDiet?.dailyProteinGoal || 150,
+					dailyCarbGoal: activeDiet?.dailyCarbGoal || 200,
+					dailyFatGoal: activeDiet?.dailyFatGoal || 60,
+					dailyFiberGoal: activeDiet?.dailyFiberGoal || 25,
+					dailyWaterGoal: 3000,
+					dailyWater: 0,
+				})
+				dietId = newDietRes.data.id
+			}
 			const orderIndex = targetMeals.length
-			return api.post(`/nutrition/diets/${activeDiet.id}/meals`, {
+			return api.post(`/nutrition/diets/${dietId}/meals`, {
 				name: newMealName,
 				time: newMealTime,
 				orderIndex,
 			})
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['target-meals', activeDiet?.id] })
+			queryClient.invalidateQueries({ queryKey: ['diets'] })
+			queryClient.invalidateQueries({ queryKey: ['target-meals'] })
 			setNewMealName('')
 			setNewMealTime('08:00')
 			setNewMealOpened(false)
@@ -257,7 +273,7 @@ export function DietGoalsPage() {
 
 	if (isLoadingDiets || isLoadingMetrics || (!!activeDiet && isLoadingMeals)) {
 		return (
-			<MainLayout title="Meta Diária" onBack={() => navigate('/nutrition')}>
+			<MainLayout title="Meta Diária" onBack={() => goBack('/nutrition')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -320,7 +336,7 @@ export function DietGoalsPage() {
 	const fatGoalPercent = totalCalGoal > 0 ? Math.round((fCalGoal / totalCalGoal) * 100) : 0
 
 	return (
-		<MainLayout title="Meta Diária" onBack={() => navigate('/nutrition')}>
+		<MainLayout title="Meta Diária" onBack={() => goBack('/nutrition')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					{weight === 0 ? (

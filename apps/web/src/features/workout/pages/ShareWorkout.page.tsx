@@ -20,6 +20,7 @@ import { ArrowLeft, Download, Info } from 'lucide-react'
 import { api } from '../../../api/axiosInstance.js'
 import { useAuth } from '../../user/hooks/useAuth.js'
 import { type WorkoutDTO, type WorkoutExerciseDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation.js'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -30,6 +31,7 @@ const GOAL_LABELS: Record<string, string> = {
 export function ShareWorkoutPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const goBack = useGoBack('/workout')
 	const { isAuthenticated } = useAuth()
 
 	const {
@@ -84,7 +86,11 @@ export function ShareWorkoutPage() {
 		<Container size="xs" py="xl">
 			<Stack gap="lg">
 				<Group justify="space-between" align="center">
-					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/workout')}>
+					<Button
+						variant="subtle"
+						leftSection={<ArrowLeft size={16} />}
+						onClick={() => goBack(isAuthenticated ? '/workout' : '/login')}
+					>
 						Voltar
 					</Button>
 					<Badge color="blue" size="lg" variant="light">

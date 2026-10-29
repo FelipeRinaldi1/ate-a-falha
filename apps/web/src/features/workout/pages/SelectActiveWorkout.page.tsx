@@ -5,10 +5,12 @@ import { Dumbbell } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO, type WorkoutDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation'
 
 export function SelectActiveWorkoutPage() {
 	const { id } = useParams<{ id: string }>()
 	const navigate = useNavigate()
+	const goBack = useGoBack('/workout')
 
 	const { data: plan, isLoading } = useQuery<PlanDTO>({
 		queryKey: ['workout-plans-detail', id],
@@ -24,12 +26,12 @@ export function SelectActiveWorkoutPage() {
 	const sortedWorkouts = [...workouts].sort((a: WorkoutDTO, b: WorkoutDTO) => a.day.localeCompare(b.day))
 
 	const handleStartWorkout = (workout: WorkoutDTO) => {
-		navigate(`/workout/active/${id}?workoutId=${workout.id}`)
+		navigate(`/workout/active/${id}?workoutId=${workout.id}`, { state: { fromSelect: true } })
 	}
 
 	if (isLoading) {
 		return (
-			<MainLayout title="Iniciar Treino" onBack={() => navigate(-1)}>
+			<MainLayout title="Iniciar Treino" onBack={() => goBack('/workout')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -38,7 +40,7 @@ export function SelectActiveWorkoutPage() {
 	}
 
 	return (
-		<MainLayout title="Iniciar Treino" onBack={() => navigate(-1)}>
+		<MainLayout title="Iniciar Treino" onBack={() => goBack('/workout')}>
 			<Container size="xs" px={0}>
 				<Stack gap="xl" align="center" pt="xl" pb="xl">
 					{/* Plan Selector Header */}

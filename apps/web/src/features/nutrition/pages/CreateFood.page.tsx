@@ -2,12 +2,12 @@ import { api } from '../../../api/axiosInstance'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { useForm } from '@mantine/form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import { Paper, Stack, Group, Text, Title, TextInput, NumberInput, Button, Container, Alert } from '@mantine/core'
 import { NutritionLogic, type CreateFoodDTO } from '@ate-a-falha/shared'
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../utils/errorTranslator'
+import { useGoBack } from '../../../utils/navigation'
 import type { AxiosError } from 'axios'
 
 interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
@@ -15,7 +15,7 @@ interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
 }
 
 export function CreateFoodPage() {
-	const navigate = useNavigate()
+	const goBack = useGoBack('/nutrition/search')
 	const queryClient = useQueryClient()
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -61,7 +61,7 @@ export function CreateFoodPage() {
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
-			navigate(-1)
+			goBack('/nutrition/search')
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao criar alimento.'))
@@ -69,7 +69,7 @@ export function CreateFoodPage() {
 	})
 
 	return (
-		<MainLayout title="Criar Alimento" onBack={() => navigate(-1)}>
+		<MainLayout title="Criar Alimento" onBack={() => goBack('/nutrition/search')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					<Paper withBorder p="md" shadow="sm" radius="md">

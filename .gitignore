@@ -155,3 +155,6 @@ vite.config.ts.timestamp-*
 packages/database/src/generated/*
 **/__pycache__/*
 **/*.pyc
+
+# TCC Documentation
+tcc-docs/

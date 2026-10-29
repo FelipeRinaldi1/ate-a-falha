@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Container, Stack, Paper, Group, Text, Title, Center, Loader, Image, Badge, List } from '@mantine/core'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO } from '@ate-a-falha/shared'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
+import { useGoBack } from '../../../utils/navigation'
 
 export function ExerciseDetailsPage() {
 	const { id } = useParams<{ id: string }>()
-	const navigate = useNavigate()
+	const goBack = useGoBack('/workout/exercises')
 
 	// Fetch exercise details from catalog
 	const { data: exercise, isLoading } = useQuery<ExerciseDTO>({
@@ -36,7 +37,7 @@ export function ExerciseDetailsPage() {
 
 	if (isLoading) {
 		return (
-			<MainLayout title="Exercício" onBack={() => navigate(-1)}>
+			<MainLayout title="Exercício" onBack={() => goBack('/workout/exercises')}>
 				<Center style={{ height: '70vh' }}>
 					<Loader size="lg" />
 				</Center>
@@ -46,7 +47,7 @@ export function ExerciseDetailsPage() {
 
 	if (!exercise) {
 		return (
-			<MainLayout title="Exercício" onBack={() => navigate(-1)}>
+			<MainLayout title="Exercício" onBack={() => goBack('/workout/exercises')}>
 				<Center style={{ height: '70vh' }}>
 					<Text size="lg" c="dimmed">
 						Exercício não encontrado no catálogo.
@@ -61,7 +62,7 @@ export function ExerciseDetailsPage() {
 		: ['placeholder']
 
 	return (
-		<MainLayout title="Exercício" onBack={() => navigate(-1)}>
+		<MainLayout title="Exercício" onBack={() => goBack('/workout/exercises')}>
 			<Container size="xs" px={0}>
 				<Stack gap="md">
 					{/* Image Section wrapped in Paper */}

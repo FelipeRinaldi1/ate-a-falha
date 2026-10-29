@@ -77,7 +77,7 @@ export class UserService {
 	}
 
 	async updateMe(id: string, data: UpdateUserDTO): Promise<Result<UserResponseDTO>> {
-		const { auth, ...userData } = data
+		const { auth, role: _ignoredRole, ...userData } = data
 
 		const userResult = await this.userRepository.update(id, userData)
 		if (userResult.isFailure()) return failure(userResult.error)
@@ -135,6 +135,7 @@ export class UserService {
 
 		const userWithHashedAuth: CreateUserWithAuthDTO = {
 			...data,
+			role: 'USER',
 			auth: {
 				...data.auth,
 				password: passwordHash,

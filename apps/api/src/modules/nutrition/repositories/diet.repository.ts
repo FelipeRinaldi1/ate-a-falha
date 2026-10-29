@@ -206,9 +206,37 @@ export class DietRepository implements IDietRepository, IDietLogRepository {
 					})
 
 					for (const f of m.foods || []) {
+						let targetFoodId = f.foodId
+
+						// If the food is a custom item belonging to another user, clone it for the importing user
+						if (f.food && f.food.userId && f.food.userId !== userId) {
+							const existingClone = await tx.food.findFirst({
+								where: {
+									userId: userId,
+									name: f.food.name,
+								},
+							})
+							if (existingClone) {
+								targetFoodId = existingClone.id
+							} else {
+								const clonedFood = await tx.food.create({
+									data: {
+										name: f.food.name,
+										calories: f.food.calories,
+										carbohydrate: f.food.carbohydrate,
+										protein: f.food.protein,
+										lipids: f.food.lipids,
+										fiber: f.food.fiber,
+										userId: userId,
+									},
+								})
+								targetFoodId = clonedFood.id
+							}
+						}
+
 						await tx.foodInMeal.create({
 							data: {
-								foodId: f.foodId,
+								foodId: targetFoodId,
 								mealId: newMeal.id,
 								quantity: f.quantity,
 							},

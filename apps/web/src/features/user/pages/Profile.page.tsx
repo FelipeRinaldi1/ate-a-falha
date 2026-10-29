@@ -1,6 +1,25 @@
-import { Center, Container, Paper, Stack, Group, Text, Title, Avatar, Button, Loader, RingProgress } from '@mantine/core'
+import { useState } from 'react'
+import {
+	Center,
+	Container,
+	Paper,
+	Stack,
+	Group,
+	Text,
+	Title,
+	Avatar,
+	Button,
+	Loader,
+	RingProgress,
+	Modal,
+	TextInput,
+	PasswordInput,
+	Select,
+	Tabs,
+	Alert,
+} from '@mantine/core'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp, LogOut } from 'lucide-react'
+import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp, LogOut, UserCheck, Lock } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../../../api/axiosInstance'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
@@ -27,8 +46,18 @@ const getBmiCategory = (bmi: number) => {
 }
 
 export function ProfilePage() {
-	const { user, logout } = useAuth()
+	const { user, logout, refreshUser } = useAuth()
 	const navigate = useNavigate()
+
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+	const [editName, setEditName] = useState('')
+	const [editGender, setEditGender] = useState<string>('MALE')
+	const [editBirthDate, setEditBirthDate] = useState('')
+	const [oldPassword, setOldPassword] = useState('')
+	const [newPassword, setNewPassword] = useState('')
+	const [modalMessage, setModalMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+	const [isSavingProfile, setIsSavingProfile] = useState(false)
+	const [isSavingPassword, setIsSavingPassword] = useState(false)
 
 	const { data: metrics = [], isLoading } = useQuery<BodyMetric[]>({
 		queryKey: ['body-metrics'],
@@ -47,6 +76,76 @@ export function ProfilePage() {
 				</Center>
 			</MainLayout>
 		)
+	}
+
+	const openEditProfileModal = () => {
+		setEditName(user.name)
+		setEditGender(user.gender || 'MALE')
+		const formattedBirth = user.birthDate
+			? new Date(user.birthDate).toISOString().split('T')[0]
+			: ''
+		setEditBirthDate(formattedBirth)
+		setOldPassword('')
+		setNewPassword('')
+		setModalMessage(null)
+		setIsEditModalOpen(true)
+	}
+
+	const handleSaveProfile = async () => {
+		if (!editName.trim()) {
+			setModalMessage({ type: 'error', text: 'O nome é obrigatório.' })
+			return
+		}
+		setIsSavingProfile(true)
+		setModalMessage(null)
+		try {
+			await api.put('/users/me', {
+				name: editName.trim(),
+				gender: editGender,
+				...(editBirthDate ? { birthDate: new Date(editBirthDate).toISOString() } : {}),
+			})
+			await refreshUser()
+			setModalMessage({ type: 'success', text: 'Dados da conta atualizados com sucesso!' })
+		} catch (err: unknown) {
+			const errorResponse = err as { response?: { data?: { message?: string } } }
+			setModalMessage({
+				type: 'error',
+				text: errorResponse?.response?.data?.message || 'Não foi possível atualizar os dados da conta.',
+			})
+		} finally {
+			setIsSavingProfile(false)
+		}
+	}
+
+	const handleChangePassword = async () => {
+		if (!oldPassword || !newPassword) {
+			setModalMessage({ type: 'error', text: 'Preencha a senha atual e a nova senha.' })
+			return
+		}
+		setIsSavingPassword(true)
+		setModalMessage(null)
+		try {
+			await api.patch('/users/me/password', {
+				oldPassword,
+				newPassword,
+			})
+			setOldPassword('')
+			setNewPassword('')
+			setModalMessage({ type: 'success', text: 'Senha alterada com sucesso!' })
+		} catch (err: unknown) {
+			const errorResponse = err as {
+				response?: { data?: { message?: string; details?: Array<{ message?: string }> } }
+			}
+			setModalMessage({
+				type: 'error',
+				text:
+					errorResponse?.response?.data?.details?.[0]?.message ||
+					errorResponse?.response?.data?.message ||
+					'Verifique a senha atual e tente novamente (mín. 8 caracteres, maiúscula, minúscula, número e símbolo).',
+			})
+		} finally {
+			setIsSavingPassword(false)
+		}
 	}
 
 	const latestMetric = metrics && metrics.length > 0 ? metrics[0] : null
@@ -104,6 +203,15 @@ export function ProfilePage() {
 									{user.email}
 								</Text>
 							</Stack>
+							<Button
+								variant="subtle"
+								size="xs"
+								radius="md"
+								leftSection={<Edit size={14} />}
+								onClick={openEditProfileModal}
+							>
+								Editar Conta
+							</Button>
 						</Stack>
 					</Paper>
 
@@ -344,6 +452,95 @@ export function ProfilePage() {
 					</Button>
 				</Stack>
 			</Container>
+
+			{/* Modal de Edição de Conta e Senha */}
+			<Modal
+				opened={isEditModalOpen}
+				onClose={() => setIsEditModalOpen(false)}
+				title={<Text fw={700}>Configurações da Conta</Text>}
+				centered
+			>
+				<Stack gap="md">
+					{modalMessage && (
+						<Alert color={modalMessage.type === 'success' ? 'green' : 'red'} radius="md">
+							{modalMessage.text}
+						</Alert>
+					)}
+
+					<Tabs defaultValue="profile">
+						<Tabs.List grow mb="md">
+							<Tabs.Tab value="profile" leftSection={<UserCheck size={14} />}>
+								Meus Dados
+							</Tabs.Tab>
+							<Tabs.Tab value="password" leftSection={<Lock size={14} />}>
+								Alterar Senha
+							</Tabs.Tab>
+						</Tabs.List>
+
+						<Tabs.Panel value="profile">
+							<Stack gap="sm">
+								<TextInput
+									label="Nome"
+									value={editName}
+									onChange={(e) => setEditName(e.currentTarget.value)}
+									required
+								/>
+								<TextInput
+									label="Data de Nascimento"
+									type="date"
+									value={editBirthDate}
+									onChange={(e) => setEditBirthDate(e.currentTarget.value)}
+								/>
+								<Select
+									label="Gênero"
+									value={editGender}
+									onChange={(val) => setEditGender(val || 'MALE')}
+									data={[
+										{ value: 'MALE', label: 'Masculino' },
+										{ value: 'FEMALE', label: 'Feminino' },
+										{ value: 'OTHER', label: 'Outro' },
+									]}
+								/>
+								<Button
+									fullWidth
+									mt="xs"
+									loading={isSavingProfile}
+									onClick={handleSaveProfile}
+								>
+									Salvar Alterações
+								</Button>
+							</Stack>
+						</Tabs.Panel>
+
+						<Tabs.Panel value="password">
+							<Stack gap="sm">
+								<PasswordInput
+									label="Senha Atual"
+									value={oldPassword}
+									onChange={(e) => setOldPassword(e.currentTarget.value)}
+									required
+								/>
+								<PasswordInput
+									label="Nova Senha"
+									description="Mín. 8 caracteres, letra maiúscula, minúscula, número e símbolo"
+									value={newPassword}
+									onChange={(e) => setNewPassword(e.currentTarget.value)}
+									required
+								/>
+								<Button
+									fullWidth
+									mt="xs"
+									color="blue"
+									loading={isSavingPassword}
+									onClick={handleChangePassword}
+								>
+									Atualizar Senha
+								</Button>
+							</Stack>
+						</Tabs.Panel>
+					</Tabs>
+				</Stack>
+			</Modal>
 		</MainLayout>
 	)
 }

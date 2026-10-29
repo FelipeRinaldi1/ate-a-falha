@@ -34,7 +34,7 @@ export function BodyMetricRegisterForm() {
 		},
 		onSuccess: async () => {
 			await refreshUser()
-			navigate('/workout')
+			navigate('/workout', { replace: true })
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao registrar métricas corporais.'))

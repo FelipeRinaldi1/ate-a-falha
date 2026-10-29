@@ -39,7 +39,7 @@ export function RegisterForm() {
 		},
 		onSuccess: (response) => {
 			login(response.data.user)
-			navigate('/workout')
+			navigate('/setup-metrics', { replace: true })
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao registrar usuário. Tente novamente.'))

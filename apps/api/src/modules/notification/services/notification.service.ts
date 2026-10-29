@@ -14,7 +14,7 @@ export class NotificationService {
 	constructor(private readonly notificationRepository: INotificationRepository) {}
 
 	async create(data: CreateNotificationDTO, authUser: authenticatedUser): Promise<Result<NotificationFull>> {
-		const targetUserId = data.userId || authUser.id
+		const targetUserId = authUser.role === 'ADMIN' && data.userId ? data.userId : authUser.id
 		const result = await this.notificationRepository.create(data, targetUserId)
 		return result
 	}

@@ -5,10 +5,12 @@ import { ArrowLeft, Download, Info } from 'lucide-react'
 import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
 import { type MealDTO, type FoodInMealDTO } from '@ate-a-falha/shared'
+import { useGoBack } from '../../../utils/navigation'
 
 export function ShareDietPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const goBack = useGoBack('/nutrition')
 	const { isAuthenticated } = useAuth()
 
 	const { data: diet, isLoading, isError } = useQuery({
@@ -58,7 +60,11 @@ export function ShareDietPage() {
 		<Container size="xs" py="xl">
 			<Stack gap="lg">
 				<Group justify="space-between" align="center">
-					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/nutrition')}>
+					<Button
+						variant="subtle"
+						leftSection={<ArrowLeft size={16} />}
+						onClick={() => goBack(isAuthenticated ? '/nutrition' : '/login')}
+					>
 						Voltar
 					</Button>
 					<Badge color="green" size="lg" variant="light">

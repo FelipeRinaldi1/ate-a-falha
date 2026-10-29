@@ -31,6 +31,7 @@ export const foodSearchSchema = z.object({
 	name: z.string().optional(),
 	cursorId: z.string().optional(),
 	take: z.coerce.number().min(1).max(100).default(10),
+	onlyMine: z.preprocess((val) => val === 'true' || val === true, z.boolean()).optional(),
 })
 
 export type CreateFoodDTO = z.infer<typeof createFoodSchema>
