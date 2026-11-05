@@ -98,6 +98,7 @@ export function EditPlanPage() {
 	const goBack = useGoBack('/workout/plans')
 	const queryClient = useQueryClient()
 
+	const [initializedPlanId, setInitializedPlanId] = useState<string | null>(null)
 	const [planName, setPlanName] = useState('')
 	const [selectedDivision, setSelectedDivision] = useState<DivisionType>('ABC')
 	const [workoutNames, setWorkoutNames] = useState<Record<string, string>>({}) // key: day, value: name
@@ -139,33 +140,32 @@ export function EditPlanPage() {
 	})
 
 	// Initialize states when plan is loaded
-	useEffect(() => {
-		if (plan) {
-			setPlanName(plan.name)
-			setCoverImageUrl(plan.coverImageUrl || null)
-			setCoverExerciseId(plan.coverExerciseId || null)
-			
-			// Detect division based on existing workouts
-			const days = plan.workouts?.map((w: WorkoutDTO) => w.day) || []
-			let maxDiv: DivisionType = 'A'
-			if (days.includes('F')) maxDiv = 'ABCDEF'
-			else if (days.includes('E')) maxDiv = 'ABCDE'
-			else if (days.includes('D')) maxDiv = 'ABCD'
-			else if (days.includes('C')) maxDiv = 'ABC'
-			else if (days.includes('B')) maxDiv = 'AB'
-			
-			setSelectedDivision(maxDiv)
+	if (plan && initializedPlanId !== plan.id) {
+		setInitializedPlanId(plan.id)
+		setPlanName(plan.name)
+		setCoverImageUrl(plan.coverImageUrl || null)
+		setCoverExerciseId(plan.coverExerciseId || null)
 
-			const names: Record<string, string> = {}
-			const weekDays: Record<string, string | null> = {}
-			plan.workouts?.forEach((w: WorkoutDTO) => {
-				names[w.day] = w.name || ''
-				weekDays[w.day] = w.weekDay || null
-			})
-			setWorkoutNames(names)
-			setWorkoutWeekDays(weekDays)
-		}
-	}, [plan])
+		// Detect division based on existing workouts
+		const days = plan.workouts?.map((w: WorkoutDTO) => w.day) || []
+		let maxDiv: DivisionType = 'A'
+		if (days.includes('F')) maxDiv = 'ABCDEF'
+		else if (days.includes('E')) maxDiv = 'ABCDE'
+		else if (days.includes('D')) maxDiv = 'ABCD'
+		else if (days.includes('C')) maxDiv = 'ABC'
+		else if (days.includes('B')) maxDiv = 'AB'
+
+		setSelectedDivision(maxDiv)
+
+		const names: Record<string, string> = {}
+		const weekDays: Record<string, string | null> = {}
+		plan.workouts?.forEach((w: WorkoutDTO) => {
+			names[w.day] = w.name || ''
+			weekDays[w.day] = w.weekDay || null
+		})
+		setWorkoutNames(names)
+		setWorkoutWeekDays(weekDays)
+	}
 
 	const savePlanMutation = useMutation({
 		mutationFn: async () => {

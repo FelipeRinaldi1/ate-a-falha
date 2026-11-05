@@ -1,11 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { notificationApi } from '../api/notificationApi'
-import type { NotificationSearchDTO } from '@ate-a-falha/shared'
+import type { CreateNotificationDTO, NotificationSearchDTO } from '@ate-a-falha/shared'
 
 export const NOTIFICATION_QUERY_KEYS = {
 	all: ['notifications'] as const,
 	list: (params?: NotificationSearchDTO) => ['notifications', 'list', params] as const,
 	unreadCount: ['notifications', 'unread-count'] as const,
+}
+
+export function useCreateNotification() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: (data: CreateNotificationDTO) => notificationApi.create(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEYS.all })
+		},
+	})
 }
 
 export function useNotifications(params?: NotificationSearchDTO) {

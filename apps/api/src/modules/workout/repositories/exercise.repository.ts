@@ -10,6 +10,28 @@ import {
 
 import type { IExerciseRepository } from '../interfaces/exercise.interface.js'
 
+function rankExercisesByTermRelevance<T extends { name: string }>(items: T[], term: string): T[] {
+	const normalizedTerm = term.trim().toLowerCase()
+	return [...items].sort((a, b) => {
+		const aName = a.name.toLowerCase()
+		const bName = b.name.toLowerCase()
+
+		const aExact = aName === normalizedTerm ? 1 : 0
+		const bExact = bName === normalizedTerm ? 1 : 0
+		if (aExact !== bExact) return bExact - aExact
+
+		const aStarts = aName.startsWith(normalizedTerm) ? 1 : 0
+		const bStarts = bName.startsWith(normalizedTerm) ? 1 : 0
+		if (aStarts !== bStarts) return bStarts - aStarts
+
+		const aContains = aName.includes(normalizedTerm) ? 1 : 0
+		const bContains = bName.includes(normalizedTerm) ? 1 : 0
+		if (aContains !== bContains) return bContains - aContains
+
+		return aName.localeCompare(bName)
+	})
+}
+
 export class ExerciseRepository implements IExerciseRepository {
 	async create(data: CreateExerciseDTO): Promise<Result<ExerciseFull>> {
 		const result = await safeCall(
@@ -48,7 +70,7 @@ export class ExerciseRepository implements IExerciseRepository {
 		if (data.name && data.name.trim().length > 0 && !data.random) {
 			const cleanTerm = data.name.trim()
 			const pattern = `%${cleanTerm}%`
-			const limit = data.take || 10
+			const limit = Number(data.take || 10)
 			const category = data.category ? data.category.toLowerCase() : null
 			const muscle = data.primaryMuscles ? data.primaryMuscles.toLowerCase() : null
 
@@ -66,20 +88,20 @@ export class ExerciseRepository implements IExerciseRepository {
 						e.images,
 						e."createdAt",
 						e."updatedAt",
-						similarity(e.name, $1) AS sim,
-						(CASE WHEN e.name ILIKE $2 THEN 1 ELSE 0 END) AS exact_match
+						similarity(e.name, $1::text) AS sim,
+						(CASE WHEN e.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
 					FROM "Exercise" e
-					WHERE ($3::text IS NULL OR LOWER(e.category) = $3)
-					  AND ($4::text IS NULL OR $4 = ANY(e."primaryMuscles"))
+					WHERE ($3::text IS NULL OR LOWER(e.category) = $3::text)
+					  AND ($4::text IS NULL OR $4::text = ANY(e."primaryMuscles"))
 					  AND (
-					    e.name ILIKE $2
-					    OR similarity(e.name, $1) > 0.32
+					    e.name ILIKE $2::text
+					    OR similarity(e.name, $1::text) > 0.32
 					  )
 					ORDER BY 
 					  exact_match DESC,
 					  sim DESC,
 					  e.name ASC
-					LIMIT $5;
+					LIMIT $5::int;
 					`,
 					cleanTerm,
 					pattern,
@@ -89,8 +111,39 @@ export class ExerciseRepository implements IExerciseRepository {
 				)
 			)
 
-			if (rawResult.isFailure()) return rawResult
-			return success(rawResult.value)
+			if (rawResult.isSuccess()) {
+				return success(rawResult.value)
+			}
+
+			// Fallback resiliente caso a extensão pg_trgm não esteja habilitada no banco de produção (ex: Render)
+			const words = cleanTerm.split(/\s+/).filter(Boolean)
+			const fallbackResult = await safeCall(
+				prisma.exercise.findMany({
+					take: Math.max(limit * 3, 60),
+					where: {
+						AND: [
+							...words.map((word) => ({
+								name: { contains: word, mode: 'insensitive' as const },
+							})),
+							data.category
+								? {
+										category: { equals: data.category, mode: 'insensitive' as const },
+									}
+								: {},
+							data.primaryMuscles
+								? {
+										primaryMuscles: { has: data.primaryMuscles.toLowerCase() },
+									}
+								: {},
+						],
+					},
+					orderBy: [{ name: 'asc' }, { id: 'asc' }],
+					include: { usedInWorkouts: true },
+				})
+			)
+
+			if (fallbackResult.isFailure()) return fallbackResult
+			return success(rankExercisesByTermRelevance(fallbackResult.value, cleanTerm).slice(0, limit))
 		}
 
 		let skip = data.cursorId ? 1 : 0

@@ -12,12 +12,15 @@ import { type BodyMetricFull } from '@ate-a-falha/database'
 import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import { UserAccessControlService } from './userAccessControl.service.js'
+import type { INotificationRepository } from '../../notification/interfaces/notification.interface.js'
+import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
 
 export class BodyMetricService {
 	constructor(
 		private readonly bodyMetricRepository: IBodyMetricRepository,
 		private readonly userRepository: IUserRepository,
-		private readonly accessControl: UserAccessControlService
+		private readonly accessControl: UserAccessControlService,
+		private readonly notificationRepository: INotificationRepository = new NotificationRepository()
 	) {}
 
 	private calculateAge(birthDate: Date): number {
@@ -52,6 +55,17 @@ export class BodyMetricService {
 		if (result.isFailure()) {
 			return failure(result.error)
 		}
+
+		await this.notificationRepository.create(
+			{
+				title: 'Evolução Física Atualizada',
+				message: `Nova avaliação registrada: ${data.weight}kg (IMC: ${bmi.toFixed(1)}).`,
+				type: 'SUCCESS',
+				link: '/profile/evolution',
+			},
+			authUser.id
+		)
+
 		return success(result.value)
 	}
 

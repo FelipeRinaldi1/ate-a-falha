@@ -19,10 +19,12 @@ import { userModuleRouter } from './modules/user/routers/index.js'
 import { nutritionModuleRouter } from './modules/nutrition/routers/index.js'
 import { workoutModuleRouter } from './modules/workout/routers/index.js'
 import { notificationModuleRouter } from './modules/notification/routers/index.js'
+import { shareModuleRouter } from './modules/share/routers/index.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 
+app.set('trust proxy', 1)
 app.use(pinoHttp({ logger }))
 app.use(helmet({ crossOriginResourcePolicy: false }))
 app.use(cors(corsOptions))
@@ -73,6 +75,7 @@ app.use(`${BASE_API_URL}/users`, userModuleRouter)
 app.use(`${BASE_API_URL}/nutrition`, nutritionModuleRouter)
 app.use(`${BASE_API_URL}/workout`, workoutModuleRouter)
 app.use(`${BASE_API_URL}/notifications`, notificationModuleRouter)
+app.use(`${BASE_API_URL}/share`, shareModuleRouter)
 
 app.get(`${BASE_API_URL}/`, (_req, res) => {
 	res.send('Até-a-falha API On')

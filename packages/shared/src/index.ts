@@ -30,3 +30,9 @@ export * from './schemas/notification/notification.schema.js'
 // Logic
 export { BodyMetricLogic } from './logic/bodyMetric.logic.js'
 export { NutritionLogic } from './logic/nutrition.logic.js'
+export {
+	ShareLogic,
+	type ShareResourceType,
+	type ParsedShareInput,
+	type ShareLookupResponseDTO,
+} from './logic/share.logic.js'

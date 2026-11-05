@@ -7,28 +7,38 @@
 ![TypeScript](https://img.shields.io/badge/typescript-%23007acc.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-Sistema de gerenciamento de dietas e treinos. Projetado com foco na experiência do usuário final e no fluxo de trabalho de profissionais de educação física e nutrição.
+Sistema web *mobile-first* de gerenciamento integrado de dietas, treinos de musculação e evolução antropométrica. Projetado com foco na experiência do praticante na academia e no compartilhamento ágil de rotinas.
+
+---
+
+## Principais Funcionalidades
+
+- **Gestão e Execução de Treinos (`Workout`):** Divisões de `A` a `F`, execução interativa com ajuste dinâmico de cargas/repetições, cronômetro de descanso por série, persistência em `localStorage` e marcação automática no calendário semanal.
+- **Diário Alimentar e Hidratação (`Nutrition`):** Base fundamentada na Tabela TACO (NEPA/UNICAMP), cálculo energético automático pelos fatores de Atwater, normalização para $100\text{g}$ em alimentos personalizados e controle de ingestão hídrica diária.
+- **Avaliação Antropométrica (`BodyMetric`):** Histórico de peso, percentual de gordura e massa muscular com cálculo automatizado de IMC, TMB (Mifflin-St Jeor) e TDEE.
+- **Compartilhamento e Importação (`Share`):** Exportação pública (`isExported`) e importação por clonagem profunda (*deep copy*) via **Link Público**, **Código Curto (`T-XXXXXX` / `D-XXXXXX`)** ou **Leitor de QR Code integrado à câmera (`jsQR`)**.
+- **Central de Notificações Reativa (`Notification`):** Alertas automáticos disparados ao concluir treinos, registrar novas medidas corporais, atingir 100% da meta diária de água e importar fichas de treino ou planos alimentares.
 
 ---
 
 ## Arquitetura de Pastas
 
-O projeto utiliza uma estrutura de **Monorepo** para compartilhamento de dados via packages.
+O projeto utiliza uma estrutura de **Monorepo** (NPM Workspaces) para compartilhamento de contratos, validações e regras de negócio entre cliente e servidor.
 
 ```text
 .
 ├── apps/
-│   ├── api/          # Backend
-│   └── web/          # Frontend
+│   ├── api/          # Backend REST (Express 5 + Prisma + Pino)
+│   └── web/          # Frontend SPA Mobile-First (React 19 + Mantine v9)
 ├── packages/
-│   ├── database/     # Schema Prisma, Migrations e Client
-│   └── shared/       # Schemas Zod e Tipos compartilhados
-├── pipeline/         # ETL para ingestão de dados
+│   ├── database/     # Schema Prisma, Migrations, Seeds e Client PostgreSQL
+│   └── shared/       # Schemas Zod, DTOs e Lógica de Domínio (Nutrition, BodyMetric, Share)
+├── pipeline/         # Pipeline ETL em Python (Arquitetura Medalhão)
 ├── data/
-│   ├── bronze/       # Dados brutos
-│   ├── silver/       # Dados processados
-│   └── gold/         # Dados para uso
-├── docs/
+│   ├── bronze/       # Dados brutos (TACO e Free Exercise DB)
+│   ├── silver/       # Dados higienizados e traduzidos
+│   └── gold/         # Dados otimizados (.json e imagens .webp / thumbnails)
+├── tcc-docs/         # Documentação de apoio e revisão da monografia
 └── docker-compose.yml
 ```
 
@@ -36,15 +46,15 @@ O projeto utiliza uma estrutura de **Monorepo** para compartilhamento de dados v
 
 ## Como Executar
 
-O projeto é totalmente conteinerizado via Docker para garantir que o ambiente de execução seja consistente.
+O projeto é conteinerizado via Docker para garantir consistência no ambiente de execução.
 
 ### 1. Pré-requisitos
 
-- [Docker](https://www.docker.com/) instalado.
+- [Docker](https://www.docker.com/) e Node.js (v20+) instalados.
 
 ### 2. Configuração
 
-Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
+Crie os arquivos `.env` em `apps/api/.env` e `apps/web/.env` baseados nos respectivos arquivos `.env.example`.
 
 ### 3. Inicialização
 
@@ -54,7 +64,7 @@ Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
     npm run db:up
     ```
 
-2. **Rodar migrations e seeds (se for a primeira vez):**
+2. **Rodar migrations e seeds (na primeira execução):**
 
     ```bash
     npm run db:migrate
@@ -67,46 +77,49 @@ Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
 ---
 
-### 👤 Usuário de Demonstração / Testes
+### Usuário de Demonstração / Testes
 
-Ao executar os seeds do banco (`npm run db:seed` ou `npm run db:seed:user`), um usuário demo completo é criado automaticamente:
+Ao executar os seeds do banco (`npm run db:seed` ou `npm run db:seed:user`), um usuário de demonstração completo é criado automaticamente:
 
-| Campo        | Valor                                                             |
-| :----------- | :---------------------------------------------------------------- |
-| **E-mail**   | `demo@ateafalha.com.br`                                           |
-| **Senha**    | `Senha123!`                                                       |
-| **Perfil**   | Felipe Rinaldi                                                    |
-| **Métricas** | 5 avaliações corporais históricas                                 |
-| **Dieta**    | Dieta Limpa                                                       |
-| **Treinos**  | Plano ABC Ativo                                                   |
-| **Avisos**   | Central de notificações com 5 alertas de treino, dieta e evolução |
+| Campo        | Valor                                                                          |
+| :----------- | :----------------------------------------------------------------------------- |
+| **E-mail**   | `demo@ateafalha.com.br`                                                        |
+| **Senha**    | `Senha123!`                                                                    |
+| **Perfil**   | Felipe Rinaldi                                                                 |
+| **Métricas** | 5 avaliações corporais históricas                                              |
+| **Dieta**    | Dieta Limpa (com registro diário e hidratação)                                 |
+| **Treinos**  | Plano ABC Ativo (Empurrar, Puxar e Pernas Completo)                            |
+| **Avisos**   | Central de notificações com 6 alertas de treino, dieta, hidratação e evolução  |
 
 ---
 
 ### 4. Comandos Disponíveis
 
-| Categoria             | Função                    | Comando                |
-| :-------------------- | :------------------------ | :--------------------- |
-| **Desenvolvimento**   | Iniciar API (+ auto DB)   | `npm run dev:api`      |
-|                       | Iniciar Frontend Web      | `npm run dev:web`      |
-| **Banco de Dados**    | Subir Banco (Docker)      | `npm run db:up`        |
-|                       | Parar Banco               | `npm run db:down`      |
-|                       | Rodar Migrations          | `npm run db:migrate`   |
-|                       | Popular Banco (Completo)  | `npm run db:seed`      |
-|                       | Popular Usuário Demo      | `npm run db:seed:user` |
-|                       | Visualizar Banco (Studio) | `npm run db:studio`    |
-| **Qualidade & Build** | Compilar Tudo             | `npm run build`        |
-|                       | Rodar Testes              | `npm run test`         |
+| Categoria             | Função                             | Comando                                   |
+| :-------------------- | :--------------------------------- | :---------------------------------------- |
+| **Desenvolvimento**   | Iniciar API (+ auto DB)            | `npm run dev:api`                         |
+|                       | Iniciar Frontend Web               | `npm run dev:web`                         |
+| **Banco de Dados**    | Subir Banco (Docker)               | `npm run db:up`                           |
+|                       | Parar Banco                        | `npm run db:down`                         |
+|                       | Rodar Migrations                   | `npm run db:migrate`                      |
+|                       | Popular Banco (Completo)           | `npm run db:seed`                         |
+|                       | Popular Usuário Demo               | `npm run db:seed:user`                    |
+|                       | Visualizar Banco (Studio)          | `npm run db:studio`                       |
+| **Qualidade & Build** | Compilar Todos os Pacotes          | `npm run build`                           |
+|                       | Rodar Todos os Testes (259 testes) | `npm run test`                            |
+|                       | Rodar Testes Unitários (Shared)    | `npm run test:unit`                       |
+|                       | Verificar Linting (ESLint)         | `npm run lint`                            |
 
 ---
 
 ## Tecnologias Principais
 
-- **Backend:** Express 5
-- **Frontend:** React 19 & Mantine v9
-- **ORM:** Prisma
-- **Validação:** Zod
+- **Backend:** Node.js, Express 5, Pino Logger, Express Rate Limit, Helmet & JWT (HttpOnly Cookies)
+- **Frontend:** React 19, Mantine UI v9, Recharts, Lucide Icons, `qrcode.react` & `jsqr`
+- **Banco de Dados & ORM:** PostgreSQL 15 (`pg_trgm` com fallback resiliente) & Prisma ORM v7
+- **Validação & Contratos:** TypeScript & Zod v4
 - **Gerenciamento de Estado:** TanStack React Query v5
+- **Testes Automatizados:** Vitest & Supertest (259 testes: 45 unitários + 214 de integração)
 
 ---
 

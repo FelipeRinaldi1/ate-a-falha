@@ -10,11 +10,14 @@ import {
 } from '@ate-a-falha/shared'
 import { type DietFull, type DietLogFull } from '@ate-a-falha/database'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
+import type { INotificationRepository } from '../../notification/interfaces/notification.interface.js'
+import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
 
 export class DietService {
 	constructor(
 		private readonly dietRepo: IDietRepository & IDietLogRepository,
-		private readonly accessControl: NutritionAccessControlService
+		private readonly accessControl: NutritionAccessControlService,
+		private readonly notificationRepo: INotificationRepository = new NotificationRepository()
 	) {}
 
 	// Diet Plan CRUD
@@ -60,7 +63,32 @@ export class DietService {
 
 		if (access.isFailure()) return failure(access.error)
 
-		return await this.dietRepo.updateLog(id, data, authUser.id)
+		const previousLog =
+			data.waterIntake !== undefined ? await this.dietRepo.findLogById(id, authUser.id) : null
+
+		const result = await this.dietRepo.updateLog(id, data, authUser.id)
+
+		if (result.isSuccess() && data.waterIntake !== undefined && previousLog?.isSuccess()) {
+			const dietsResult = await this.dietRepo.findAll(authUser.id)
+			const waterGoal =
+				dietsResult.isSuccess() && dietsResult.value[0]?.dailyWaterGoal
+					? dietsResult.value[0].dailyWaterGoal
+					: 4000
+
+			if (previousLog.value.waterIntake < waterGoal && data.waterIntake >= waterGoal) {
+				await this.notificationRepo.create(
+					{
+						title: 'Meta de Hidratação Atingida',
+						message: `Parabéns! Você alcançou sua meta diária de ${waterGoal}ml de água hoje.`,
+						type: 'DIET',
+						link: '/nutrition',
+					},
+					authUser.id
+				)
+			}
+		}
+
+		return result
 	}
 
 	async deleteLog(id: string, authUser: authenticatedUser): Promise<Result<void>> {
@@ -88,6 +116,18 @@ export class DietService {
 	}
 
 	async import(id: string, authUser: authenticatedUser): Promise<Result<DietFull>> {
-		return await this.dietRepo.importDiet(id, authUser.id)
+		const result = await this.dietRepo.importDiet(id, authUser.id)
+		if (result.isSuccess()) {
+			await this.notificationRepo.create(
+				{
+					title: 'Dieta Importada com Sucesso',
+					message: `A dieta "${result.value.name}" foi adicionada ao seu planejamento.`,
+					type: 'SYSTEM',
+					link: '/nutrition',
+				},
+				authUser.id
+			)
+		}
+		return result
 	}
 }

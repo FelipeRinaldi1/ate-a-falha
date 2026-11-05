@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Container, Paper, Stack, Text, Title, Button, Center, Loader, Card, Badge, Group, List, Alert, Divider, SimpleGrid } from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
 import { api } from '../../../api/axiosInstance'
@@ -10,6 +10,7 @@ import { useGoBack } from '../../../utils/navigation'
 export function ShareDietPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
 	const goBack = useGoBack('/nutrition')
 	const { isAuthenticated } = useAuth()
 
@@ -28,6 +29,7 @@ export function ShareDietPage() {
 			return res.data
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			navigate('/nutrition/goals')
 		},
 	})

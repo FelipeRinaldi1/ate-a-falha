@@ -627,46 +627,63 @@ export async function seedDemoUser() {
 
 	// 10. Criação de Notificações do Sistema para o Usuário
 	console.log('Criando notificações de exemplo...')
+	const minutesAgo = (mins: number) => new Date(now.getTime() - mins * 60 * 1000)
+	const hoursAgo = (hours: number) => new Date(now.getTime() - hours * 60 * 60 * 1000)
+
 	const notifications = [
 		{
-			title: 'Treino de Peito Concluído! 🔥',
-			message: 'Você completou o Treino A com progressão de carga no supino (+5kg). Excelente trabalho!',
+			title: 'Treino Concluído',
+			message: 'Você finalizou o Treino A - Peito, Ombros e Tríceps. Bom descanso!',
 			type: NOTIFICATION_TYPE.WORKOUT,
 			read: false,
 			link: '/workout',
 			userId: user.id,
+			createdAt: minutesAgo(15),
 		},
 		{
-			title: 'Meta de Hidratação Atingida 💧',
-			message: 'Parabéns! Você atingiu sua meta diária de 3.500ml de água.',
+			title: 'Meta de Hidratação Atingida',
+			message: 'Parabéns! Você alcançou sua meta diária de 3500ml de água hoje.',
 			type: NOTIFICATION_TYPE.DIET,
 			read: false,
 			link: '/nutrition',
 			userId: user.id,
+			createdAt: minutesAgo(50),
 		},
 		{
-			title: 'Redução de Percentual de Gordura 📊',
-			message: 'Sua última avaliação física registrou 14.5% de BF. Você está no caminho certo!',
+			title: 'Evolução Física Atualizada',
+			message: 'Nova avaliação registrada: 78.5kg (IMC: 24.8).',
 			type: NOTIFICATION_TYPE.SUCCESS,
 			read: false,
 			link: '/profile/evolution',
 			userId: user.id,
+			createdAt: hoursAgo(2),
 		},
 		{
-			title: 'Lembrete de Refeição ⏰',
-			message: 'Não se esqueça do seu Lanche Pré-Treino programado para as 16:00.',
-			type: NOTIFICATION_TYPE.INFO,
+			title: 'Plano de Treino Importado',
+			message: 'O treino "Plano ABC - Hipertrofia & Progressão de Carga" foi clonado para o seu perfil.',
+			type: NOTIFICATION_TYPE.SYSTEM,
+			read: false,
+			link: '/workout',
+			userId: user.id,
+			createdAt: hoursAgo(5),
+		},
+		{
+			title: 'Dieta Importada com Sucesso',
+			message: 'A dieta "Dieta de Hipertrofia Limpa (Lean Bulk)" foi adicionada ao seu planejamento.',
+			type: NOTIFICATION_TYPE.SYSTEM,
 			read: true,
 			link: '/nutrition',
 			userId: user.id,
+			createdAt: hoursAgo(8),
 		},
 		{
-			title: 'Bem-vindo ao Até a Falha! 🚀',
-			message: 'Sua conta está configurada com métricas, dieta personalizada e rotina de treinos.',
-			type: NOTIFICATION_TYPE.SYSTEM,
+			title: 'Treino Concluído',
+			message: 'Você finalizou o Treino C - Pernas Completo e Abdômen. Bom descanso!',
+			type: NOTIFICATION_TYPE.WORKOUT,
 			read: true,
 			link: '/workout',
 			userId: user.id,
+			createdAt: daysAgo(1),
 		},
 	]
 
@@ -682,12 +699,14 @@ export async function seedDemoUser() {
 
 if (process.argv[1] && (process.argv[1].endsWith('user.seed.ts') || process.argv[1].endsWith('user.seed.js'))) {
 	seedDemoUser()
-		.catch((e) => {
-			console.error(e)
-			process.exit(1)
-		})
-		.finally(async () => {
+		.then(async () => {
 			await prisma.$disconnect()
+			process.exit(0)
+		})
+		.catch(async (e) => {
+			console.error(e)
+			await prisma.$disconnect()
+			process.exit(1)
 		})
 }
 

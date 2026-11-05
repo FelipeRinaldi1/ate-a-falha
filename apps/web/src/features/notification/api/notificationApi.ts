@@ -1,11 +1,17 @@
 import { api } from '../../../api/axiosInstance'
 import type {
+	CreateNotificationDTO,
 	NotificationDTO,
 	NotificationListResponseDTO,
 	NotificationSearchDTO,
 } from '@ate-a-falha/shared'
 
 export const notificationApi = {
+	create: async (data: CreateNotificationDTO): Promise<NotificationDTO> => {
+		const res = await api.post<NotificationDTO>('/notifications', data)
+		return res.data
+	},
+
 	getNotifications: async (params?: NotificationSearchDTO): Promise<NotificationListResponseDTO> => {
 		const res = await api.get<NotificationListResponseDTO>('/notifications', { params })
 		return res.data

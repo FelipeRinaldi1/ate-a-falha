@@ -65,6 +65,7 @@ export function NewBodyMetricForm() {
 		onSuccess: async () => {
 			await refreshUser()
 			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
+			await queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
