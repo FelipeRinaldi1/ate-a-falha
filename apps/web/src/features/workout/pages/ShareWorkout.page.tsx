@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	Container,
 	Paper,
@@ -31,6 +31,7 @@ const GOAL_LABELS: Record<string, string> = {
 export function ShareWorkoutPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
 	const goBack = useGoBack('/workout')
 	const { isAuthenticated } = useAuth()
 
@@ -53,6 +54,7 @@ export function ShareWorkoutPage() {
 			return res.data
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			navigate('/workout/plans')
 		},
 	})

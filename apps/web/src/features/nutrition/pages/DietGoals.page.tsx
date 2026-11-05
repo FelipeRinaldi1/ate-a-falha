@@ -18,13 +18,14 @@ import {
 	Divider,
 	Badge,
 } from '@mantine/core'
-import { Pencil, PlusCircle, Trash2, Share2 } from 'lucide-react'
+import { Pencil, PlusCircle, Trash2, Share2, QrCode } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { ShareModal } from '../../../components/ShareModal'
+import { ImportRoutineModal } from '../../../components/ImportRoutineModal'
 import { type DietDTO, type MealDTO, type FoodInMealDTO, NutritionLogic } from '@ate-a-falha/shared'
 import { DonutChart } from '@mantine/charts'
 import { useGoBack } from '../../../utils/navigation'
@@ -45,6 +46,7 @@ export function DietGoalsPage() {
 	const queryClient = useQueryClient()
 	const [opened, setOpened] = useState(false)
 	const [shareModalOpen, setShareModalOpen] = useState(false)
+	const [importModalOpen, setImportModalOpen] = useState(false)
 
 	// Fetch active diet plans
 	const { data: diets = [], isLoading: isLoadingDiets } = useQuery<DietDTO[]>({
@@ -364,6 +366,15 @@ export function DietGoalsPage() {
 											Macronutrientes
 										</Text>
 										<Group gap="xs">
+											<Button
+												size="xs"
+												variant="light"
+												color="gray"
+												leftSection={<QrCode size={12} />}
+												onClick={() => setImportModalOpen(true)}
+											>
+												Importar
+											</Button>
 											{activeDiet && (
 												<Button
 													size="xs"
@@ -980,6 +991,11 @@ export function DietGoalsPage() {
 					</Button>
 				</Stack>
 			</Modal>
+
+			<ImportRoutineModal
+				opened={importModalOpen}
+				onClose={() => setImportModalOpen(false)}
+			/>
 
 			{activeDiet && (
 				<ShareModal

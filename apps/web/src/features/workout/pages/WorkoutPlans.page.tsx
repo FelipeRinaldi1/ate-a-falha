@@ -15,7 +15,7 @@ import {
 	Badge,
 	Image,
 } from '@mantine/core'
-import { ChevronRight, Plus, Trash2, Share2 } from 'lucide-react'
+import { ChevronRight, Plus, Trash2, Share2, QrCode } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
@@ -23,6 +23,7 @@ import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
 import { type PlanDTO } from '@ate-a-falha/shared'
 import { ShareModal } from '../../../components/ShareModal'
+import { ImportRoutineModal } from '../../../components/ImportRoutineModal'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
 
@@ -38,6 +39,7 @@ export function WorkoutPlansPage() {
 	const queryClient = useQueryClient()
 	const [createModalOpen, setCreateModalOpen] = useState(false)
 	const [shareModalOpen, setShareModalOpen] = useState(false)
+	const [importModalOpen, setImportModalOpen] = useState(false)
 	const [selectedPlanForShare, setSelectedPlanForShare] = useState<PlanDTO | null>(null)
 	const [newPlanName, setNewPlanName] = useState('')
 	const [newPlanGoal, setNewPlanGoal] = useState<'forca' | 'hipertrofia' | 'resistencia'>('hipertrofia')
@@ -248,24 +250,42 @@ export function WorkoutPlansPage() {
 						)}
 					</Stack>
 
-					{/* Bottom Nova Ficha Button */}
-					<Button
-						leftSection={<Plus size={20} />}
-						size="lg"
-						radius="xl"
-						color="blue"
-						fullWidth
-						mt="md"
-						onClick={() => setCreateModalOpen(true)}
-						style={{
-							boxShadow: '0 8px 24px rgba(34, 139, 230, 0.3)',
-							fontWeight: 800,
-						}}
-					>
-						Nova Ficha
-					</Button>
+					{/* Bottom Action Buttons */}
+					<Stack gap="sm" mt="md">
+						<Button
+							leftSection={<Plus size={20} />}
+							size="lg"
+							radius="xl"
+							color="blue"
+							fullWidth
+							onClick={() => setCreateModalOpen(true)}
+							style={{
+								boxShadow: '0 8px 24px rgba(34, 139, 230, 0.3)',
+								fontWeight: 800,
+							}}
+						>
+							Nova Ficha
+						</Button>
+
+						<Button
+							leftSection={<QrCode size={18} />}
+							size="md"
+							radius="xl"
+							variant="light"
+							color="gray"
+							fullWidth
+							onClick={() => setImportModalOpen(true)}
+						>
+							Importar via Código ou QR Code
+						</Button>
+					</Stack>
 				</Stack>
 			</Container>
+
+			<ImportRoutineModal
+				opened={importModalOpen}
+				onClose={() => setImportModalOpen(false)}
+			/>
 
 			{/* Create Plan Modal */}
 			<Modal

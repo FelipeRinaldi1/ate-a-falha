@@ -6,6 +6,13 @@ const PORT = ENV.PORT
 
 async function main() {
 	await prisma.$connect()
+	try {
+		await prisma.$executeRawUnsafe('CREATE EXTENSION IF NOT EXISTS pg_trgm;')
+	} catch {
+		// Se o banco gerenciado (ex: Render/Supabase) restringir CREATE EXTENSION ao superuser,
+		// os repositórios de busca possuem fallback automático com ILIKE/Prisma.
+	}
+
 	const server = app.listen(PORT, () => {
 		console.log(`Server running on port ${PORT}`)
 	})

@@ -4,6 +4,28 @@ import { Result, success, failure } from '@ate-a-falha/shared'
 import type { CreateFoodDTO, FoodSearchDTO, UpdateFoodDTO } from '@ate-a-falha/shared'
 import type { FoodFull } from '@ate-a-falha/database'
 
+function rankByTermRelevance<T extends { name: string }>(items: T[], term: string): T[] {
+	const normalizedTerm = term.trim().toLowerCase()
+	return [...items].sort((a, b) => {
+		const aName = a.name.toLowerCase()
+		const bName = b.name.toLowerCase()
+
+		const aExact = aName === normalizedTerm ? 1 : 0
+		const bExact = bName === normalizedTerm ? 1 : 0
+		if (aExact !== bExact) return bExact - aExact
+
+		const aStarts = aName.startsWith(normalizedTerm) ? 1 : 0
+		const bStarts = bName.startsWith(normalizedTerm) ? 1 : 0
+		if (aStarts !== bStarts) return bStarts - aStarts
+
+		const aContains = aName.includes(normalizedTerm) ? 1 : 0
+		const bContains = bName.includes(normalizedTerm) ? 1 : 0
+		if (aContains !== bContains) return bContains - aContains
+
+		return aName.localeCompare(bName)
+	})
+}
+
 export class FoodRepository implements IFoodRepository {
 	async create(data: CreateFoodDTO, userId?: string): Promise<Result<FoodFull>> {
 		const result = await safeCall(
@@ -23,7 +45,7 @@ export class FoodRepository implements IFoodRepository {
 		if (data.name && data.name.trim().length > 0) {
 			const cleanTerm = data.name.trim()
 			const pattern = `%${cleanTerm}%`
-			const limit = data.take || 20
+			const limit = Number(data.take || 20)
 
 			const rawResult = await safeCall(
 				prisma.$queryRawUnsafe<FoodFull[]>(
@@ -39,24 +61,24 @@ export class FoodRepository implements IFoodRepository {
 						f."userId",
 						f."createdAt",
 						f."updatedAt",
-						similarity(f.name, $1) AS sim,
-						(CASE WHEN f.name ILIKE $2 THEN 1 ELSE 0 END) AS exact_match
+						similarity(f.name, $1::text) AS sim,
+						(CASE WHEN f.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
 					FROM "Food" f
 					WHERE (
 						CASE
-							WHEN $5::boolean IS TRUE THEN f."userId" = $3
-							ELSE ($3::text IS NULL OR f."userId" = $3 OR f."userId" IS NULL)
+							WHEN $5::boolean IS TRUE THEN f."userId" = $3::text
+							ELSE ($3::text IS NULL OR f."userId" = $3::text OR f."userId" IS NULL)
 						END
 					)
 					  AND (
-					    f.name ILIKE $2
-					    OR similarity(f.name, $1) > 0.3
+					    f.name ILIKE $2::text
+					    OR similarity(f.name, $1::text) > 0.3
 					  )
 					ORDER BY 
 					  exact_match DESC,
 					  sim DESC,
 					  f.name ASC
-					LIMIT $4;
+					LIMIT $4::int;
 					`,
 					cleanTerm,
 					pattern,
@@ -66,8 +88,36 @@ export class FoodRepository implements IFoodRepository {
 				)
 			)
 
-			if (rawResult.isFailure()) return rawResult
-			return success(rawResult.value)
+			if (rawResult.isSuccess()) {
+				return success(rawResult.value)
+			}
+
+			// Fallback resiliente caso a extensão pg_trgm não esteja habilitada no banco de produção (ex: Render)
+			const words = cleanTerm.split(/\s+/).filter(Boolean)
+			const fallbackResult = await safeCall(
+				prisma.food.findMany({
+					take: Math.max(limit * 3, 60),
+					where: {
+						AND: [
+							onlyMine
+								? { userId: userId ?? '__none__' }
+								: userId
+									? {
+											OR: [{ userId: userId }, { userId: null }],
+										}
+									: {},
+							...words.map((word) => ({
+								name: { contains: word, mode: 'insensitive' as const },
+							})),
+						],
+					},
+					orderBy: [{ name: 'asc' }, { id: 'asc' }],
+					include: { foodInMeals: true },
+				})
+			)
+
+			if (fallbackResult.isFailure()) return fallbackResult
+			return success(rankByTermRelevance(fallbackResult.value, cleanTerm).slice(0, limit))
 		}
 
 		const result = await safeCall(

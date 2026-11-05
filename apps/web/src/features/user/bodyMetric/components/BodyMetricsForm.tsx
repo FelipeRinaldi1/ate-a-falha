@@ -2,7 +2,7 @@ import { api } from '../../../../api/axiosInstance'
 import { Button, NumberInput, Paper, Select, Stack, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useState } from 'react'
@@ -11,6 +11,7 @@ import { translateError } from '../../../../utils/errorTranslator'
 import type { AxiosError } from 'axios'
 
 export function BodyMetricRegisterForm() {
+	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -34,6 +35,7 @@ export function BodyMetricRegisterForm() {
 		},
 		onSuccess: async () => {
 			await refreshUser()
+			await queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			navigate('/workout', { replace: true })
 		},
 		onError: (error: AxiosError) => {

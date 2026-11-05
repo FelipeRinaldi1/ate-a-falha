@@ -21,6 +21,7 @@ import { type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } f
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
 import { useAuth } from '../../user/hooks/useAuth'
+import { useCreateNotification } from '../../notification/hooks/useNotifications'
 
 function formatRestDuration(seconds: number): string {
 	if (!seconds || seconds <= 0) return '0s'
@@ -38,6 +39,7 @@ export function ActiveWorkoutPage() {
 	const location = useLocation()
 	const goBack = useGoBack('/workout')
 	const { user } = useAuth()
+	const createNotificationMutation = useCreateNotification()
 	const [activeTimers, setActiveTimers] = useState<Record<string, number>>({})
 
 	// State for which exercise cards are expanded (key: workoutExerciseId, value: boolean)
@@ -110,6 +112,14 @@ export function ActiveWorkoutPage() {
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:expanded`)
 			localStorage.removeItem(`ate-a-falha:active-workout:${workoutId}:checked`)
 		}
+
+		const workoutLabel = activeWorkout?.name || `Treino ${activeWorkout?.day || ''}`.trim()
+		createNotificationMutation.mutate({
+			title: 'Treino Concluído',
+			message: `Você finalizou o ${workoutLabel}. Bom descanso!`,
+			type: 'WORKOUT',
+			link: '/workout',
+		})
 
 		// Mark today's date as completed in localStorage (scoped by user)
 		try {

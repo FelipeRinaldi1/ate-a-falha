@@ -120,6 +120,7 @@ export function DietLogPage() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: ['notifications'] })
 		},
 	})
 

@@ -13,6 +13,7 @@
 
 - [x] **Exercícios**: Imagem não carrega no detalhe/card do exercício
 - [x] **Alimentos**: Pesquisa de alimentos trazendo resultados incorretos/inconsistentes
+- [x] **Pesquisa no Render (Produção)**: Fallback automático resiliente (`ILIKE`/Prisma + criação segura de `pg_trgm` no boot + `trust proxy` + timeout SSL) quando a extensão `pg_trgm` não está habilitada no banco gerenciado
 
 ---
 
@@ -21,6 +22,10 @@
 - [x] **Performance**: Otimizar imagens pesadas na busca/listagem de exercícios
 - [x] **Acesso & Segurança**: Uniformizar controle de acesso entre módulos
 - [x] **UI/UX**: Melhoria visual nos componentes de gráficos
+- [x] **Compartilhamento & Acessibilidade**: Leitor de QR Code via câmera integrada na aplicação (`jsQR`)
+- [x] **Compartilhamento & Acessibilidade**: Importação e exportação alternativa via código alfanumérico curto (`T-XXXXXX` e `D-XXXXXX`, evitando obrigatoriedade de câmera/link)
+- [x] **Notificações Reativas**: Gatilhos automáticos reais (conclusão de treino, nova métrica corporal, meta de água atingida e importação de treino/dieta) e limpeza de notificações do seed
+- [x] **Qualidade de Código**: `npm run lint` com 0 erros e 0 warnings, `npm run build` limpo e 259 testes automatizados passando (45 unitários + 214 de integração)
 
 ---
 
@@ -29,7 +34,7 @@
 ### ✍️ Escrita e Conteúdo
 
 - [ ] Escrever texto descritivo das seções
-- [ ] Redigir a seção de testes
+- [ ] Redigir a seção de testes (259 testes: 45 unitários + 214 de integração)
 - [ ] Inserir figuras e redigir seus respectivos textos de contextualização
 
 ### 🖼️ Relação de Figuras

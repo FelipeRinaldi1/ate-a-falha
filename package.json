@@ -17,7 +17,8 @@
 		"build": "npm run db:generate -w @ate-a-falha/database && npm run build --workspaces --if-present",
 		"start": "npm run start -w apps/api",
 		"data:pipeline": "docker compose run --rm -v ./pipeline:/app pipeline",
-		"test": "npm run test -w apps/api -- --run",
+		"test": "npm run test -w @ate-a-falha/shared -- --run && npm run test -w apps/api -- --run",
+		"test:unit": "npm run test -w @ate-a-falha/shared -- --run",
 		"lint": "npm run lint --workspaces --if-present",
 		"format": "prettier --write ."
 	},
