@@ -25,7 +25,7 @@
 - [x] **Compartilhamento & Acessibilidade**: Leitor de QR Code via câmera integrada na aplicação (`jsQR`)
 - [x] **Compartilhamento & Acessibilidade**: Importação e exportação alternativa via código alfanumérico curto (`T-XXXXXX` e `D-XXXXXX`, evitando obrigatoriedade de câmera/link)
 - [x] **Notificações Reativas**: Gatilhos automáticos reais (conclusão de treino, nova métrica corporal, meta de água atingida e importação de treino/dieta) e limpeza de notificações do seed
-- [x] **Qualidade de Código**: `npm run lint` com 0 erros e 0 warnings, `npm run build` limpo e 259 testes automatizados passando (45 unitários + 214 de integração)
+- [x] **Qualidade de Código**: `npm run lint` com 0 erros e 0 warnings, `npm run build` limpo e 265 testes automatizados passando (45 unitários + 214 de integração + 6 suítes E2E no Playwright)
 
 ---
 
@@ -34,7 +34,7 @@
 ### ✍️ Escrita e Conteúdo
 
 - [ ] Escrever texto descritivo das seções
-- [ ] Redigir a seção de testes (259 testes: 45 unitários + 214 de integração)
+- [ ] Redigir a seção de testes (265 testes: 45 unitários + 214 de integração + 6 suítes E2E no Playwright substituindo o teste SUS na Seção 5.4)
 - [ ] Inserir figuras e redigir seus respectivos textos de contextualização
 
 ### 🖼️ Relação de Figuras
