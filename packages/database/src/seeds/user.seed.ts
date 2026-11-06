@@ -170,7 +170,10 @@ export async function seedDemoUser() {
 	})
 
 	// 5. Busca ou Criação de Alimentos Base para a Dieta
-	const findOrCreateFood = async (name: string, fallback: { calories: number; protein: number; carbohydrate: number; lipids: number; fiber: number }) => {
+	const findOrCreateFood = async (
+		name: string,
+		fallback: { calories: number; protein: number; carbohydrate: number; lipids: number; fiber: number }
+	) => {
 		const found = await prisma.food.findFirst({
 			where: {
 				name: { contains: name, mode: 'insensitive' },
@@ -187,16 +190,76 @@ export async function seedDemoUser() {
 		})
 	}
 
-	const foodOvo = await findOrCreateFood('Ovo, de galinha, inteiro, cozido', { calories: 146, protein: 13.3, carbohydrate: 0.6, lipids: 9.5, fiber: 0 })
-	const foodPao = await findOrCreateFood('Pão, trigo, forma, integral', { calories: 253, protein: 9.4, carbohydrate: 49.9, lipids: 3.7, fiber: 6.9 })
-	const foodBanana = await findOrCreateFood('Banana, prata, crua', { calories: 98, protein: 1.3, carbohydrate: 26.0, lipids: 0.1, fiber: 2.0 })
-	const foodAveia = await findOrCreateFood('Aveia, flocos', { calories: 394, protein: 13.9, carbohydrate: 66.6, lipids: 8.5, fiber: 9.1 })
-	const foodArroz = await findOrCreateFood('Arroz, tipo 1, cozido', { calories: 128, protein: 2.5, carbohydrate: 28.1, lipids: 0.2, fiber: 1.6 })
-	const foodFeijao = await findOrCreateFood('Feijão, carioca, cozido', { calories: 76, protein: 4.8, carbohydrate: 13.6, lipids: 0.5, fiber: 8.5 })
-	const foodFrango = await findOrCreateFood('Frango, peito, sem pele, grelhado', { calories: 159, protein: 32.0, carbohydrate: 0, lipids: 2.5, fiber: 0 })
-	const foodBatataDoce = await findOrCreateFood('Batata, doce, cozida', { calories: 77, protein: 0.6, carbohydrate: 18.4, lipids: 0.1, fiber: 2.2 })
-	const foodCarne = await findOrCreateFood('Carne, bovina, patinho, sem gordura, grelhado', { calories: 219, protein: 35.9, carbohydrate: 0, lipids: 7.3, fiber: 0 })
-	const foodAzeite = await findOrCreateFood('Azeite, de oliva, extra virgem', { calories: 884, protein: 0, carbohydrate: 0, lipids: 100, fiber: 0 })
+	const foodOvo = await findOrCreateFood('Ovo, de galinha, inteiro, cozido', {
+		calories: 146,
+		protein: 13.3,
+		carbohydrate: 0.6,
+		lipids: 9.5,
+		fiber: 0,
+	})
+	const foodPao = await findOrCreateFood('Pão, trigo, forma, integral', {
+		calories: 253,
+		protein: 9.4,
+		carbohydrate: 49.9,
+		lipids: 3.7,
+		fiber: 6.9,
+	})
+	const foodBanana = await findOrCreateFood('Banana, prata, crua', {
+		calories: 98,
+		protein: 1.3,
+		carbohydrate: 26.0,
+		lipids: 0.1,
+		fiber: 2.0,
+	})
+	const foodAveia = await findOrCreateFood('Aveia, flocos', {
+		calories: 394,
+		protein: 13.9,
+		carbohydrate: 66.6,
+		lipids: 8.5,
+		fiber: 9.1,
+	})
+	const foodArroz = await findOrCreateFood('Arroz, tipo 1, cozido', {
+		calories: 128,
+		protein: 2.5,
+		carbohydrate: 28.1,
+		lipids: 0.2,
+		fiber: 1.6,
+	})
+	const foodFeijao = await findOrCreateFood('Feijão, carioca, cozido', {
+		calories: 76,
+		protein: 4.8,
+		carbohydrate: 13.6,
+		lipids: 0.5,
+		fiber: 8.5,
+	})
+	const foodFrango = await findOrCreateFood('Frango, peito, sem pele, grelhado', {
+		calories: 159,
+		protein: 32.0,
+		carbohydrate: 0,
+		lipids: 2.5,
+		fiber: 0,
+	})
+	const foodBatataDoce = await findOrCreateFood('Batata, doce, cozida', {
+		calories: 77,
+		protein: 0.6,
+		carbohydrate: 18.4,
+		lipids: 0.1,
+		fiber: 2.2,
+	})
+	const foodCarne = await findOrCreateFood('Carne, bovina, patinho, sem gordura, grelhado', {
+		calories: 219,
+		protein: 35.9,
+		carbohydrate: 0,
+		lipids: 7.3,
+		fiber: 0,
+	})
+	const foodAzeite = await findOrCreateFood('Azeite, de oliva, extra virgem', {
+		calories: 884,
+		protein: 0,
+		carbohydrate: 0,
+		lipids: 100,
+		fiber: 0,
+	})
 
 	// 6. Criação de Dieta Completa com 5 Refeições Estruturadas
 	console.log('Criando plano de dieta e refeições estruturadas...')
@@ -344,13 +407,15 @@ export async function seedDemoUser() {
 
 	// 8. Busca ou Criação de Exercícios para o Módulo de Treinos
 	console.log('Configurando exercícios do plano de treino...')
-	const findOrCreateExercise = async (name: string, externalId: string, primaryMuscles: string[], category = 'forca') => {
+	const findOrCreateExercise = async (
+		name: string,
+		externalId: string,
+		primaryMuscles: string[],
+		category = 'forca'
+	) => {
 		const found = await prisma.exercise.findFirst({
 			where: {
-				OR: [
-					{ name: { contains: name, mode: 'insensitive' } },
-					{ externalId: externalId },
-				],
+				OR: [{ name: { contains: name, mode: 'insensitive' } }, { externalId: externalId }],
 			},
 		})
 		if (found && found.images && found.images.length > 0) return found
@@ -382,22 +447,41 @@ export async function seedDemoUser() {
 	}
 
 	const exSupino = await findOrCreateExercise('Supino Reto com Barra', 'Barbell_Bench_Press_-_Medium_Grip', ['peito'])
-	const exInclinado = await findOrCreateExercise('Supino Inclinado com Halteres', 'Incline_Dumbbell_Press', ['peito', 'ombros'])
-	const exDesenv = await findOrCreateExercise('Desenvolvimento Militar com Halteres', 'Dumbbell_Shoulder_Press', ['ombros'])
+	const exInclinado = await findOrCreateExercise('Supino Inclinado com Halteres', 'Incline_Dumbbell_Press', [
+		'peito',
+		'ombros',
+	])
+	const exDesenv = await findOrCreateExercise('Desenvolvimento Militar com Halteres', 'Dumbbell_Shoulder_Press', [
+		'ombros',
+	])
 	const exElevLateral = await findOrCreateExercise('Elevação Lateral', 'Side_Lateral_Raise', ['ombros'])
-	const exTricepsPolia = await findOrCreateExercise('Tríceps Pulley na Corda', 'Triceps_Pushdown_-_Rope_Attachment', ['triceps'])
+	const exTricepsPolia = await findOrCreateExercise('Tríceps Pulley na Corda', 'Triceps_Pushdown_-_Rope_Attachment', [
+		'triceps',
+	])
 
 	const exPuxada = await findOrCreateExercise('Puxada Frontal na Polia Alta', 'Wide-Grip_Lat_Pulldown', ['costas'])
 	const exRemada = await findOrCreateExercise('Remada Curvada com Barra', 'Bent_Over_Barbell_Row', ['costas'])
-	const exCrucifixoInv = await findOrCreateExercise('Crucifixo Inverso com Halteres', 'Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench', ['ombros', 'costas'])
+	const exCrucifixoInv = await findOrCreateExercise(
+		'Crucifixo Inverso com Halteres',
+		'Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench',
+		['ombros', 'costas']
+	)
 	const exRoscaDireta = await findOrCreateExercise('Rosca Direta com Barra W', 'Barbell_Curl', ['biceps'])
-	const exRoscaMartelo = await findOrCreateExercise('Rosca Martelo com Halteres', 'Hammer_Curls', ['biceps', 'antebraco'])
+	const exRoscaMartelo = await findOrCreateExercise('Rosca Martelo com Halteres', 'Hammer_Curls', [
+		'biceps',
+		'antebraco',
+	])
 
-	const exAgachamento = await findOrCreateExercise('Agachamento Livre com Barra', 'Barbell_Squat', ['quadriceps', 'gluteos'])
+	const exAgachamento = await findOrCreateExercise('Agachamento Livre com Barra', 'Barbell_Squat', [
+		'quadriceps',
+		'gluteos',
+	])
 	const exLegPress = await findOrCreateExercise('Leg Press 45 Graus', 'Leg_Press', ['quadriceps', 'gluteos'])
 	const exExtensora = await findOrCreateExercise('Cadeira Extensora', 'Leg_Extensions', ['quadriceps'])
 	const exFlexora = await findOrCreateExercise('Mesa Flexora', 'Lying_Leg_Curls', ['isquiotibiais'])
-	const exPanturrilha = await findOrCreateExercise('Elevação de Panturrilha em Pé', 'Standing_Calf_Raises', ['panturrilhas'])
+	const exPanturrilha = await findOrCreateExercise('Elevação de Panturrilha em Pé', 'Standing_Calf_Raises', [
+		'panturrilhas',
+	])
 	const exAbdominal = await findOrCreateExercise('Abdominal Supra na Prancha', 'Decline_Crunch', ['abdominais'])
 
 	// 9. Criação do Plano de Treino ABC Ativo com Capa
@@ -623,7 +707,9 @@ export async function seedDemoUser() {
 			},
 		},
 	})
-	console.log(`Plano de treino criado: ${plan.name} com 3 dias de treino (A, B, C) e 16 exercícios com séries completas.`)
+	console.log(
+		`Plano de treino criado: ${plan.name} com 3 dias de treino (A, B, C) e 16 exercícios com séries completas.`
+	)
 
 	// 10. Criação de Notificações do Sistema para o Usuário
 	console.log('Criando notificações de exemplo...')
@@ -709,4 +795,3 @@ if (process.argv[1] && (process.argv[1].endsWith('user.seed.ts') || process.argv
 			process.exit(1)
 		})
 }
-

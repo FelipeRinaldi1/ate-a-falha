@@ -92,9 +92,7 @@ describe('Notification Module Integration Tests', () => {
 		})
 
 		test('Should return 401 when request is not authenticated', async () => {
-			const res = await request(app)
-				.post(`${BASE_API_URL}/notifications`)
-				.send(overrideNotificationMock())
+			const res = await request(app).post(`${BASE_API_URL}/notifications`).send(overrideNotificationMock())
 
 			expect(res.status).toBe(401)
 		})

@@ -57,9 +57,7 @@ export function ExerciseDetailsPage() {
 		)
 	}
 
-	const imagesList = exercise.images && exercise.images.length > 0
-		? exercise.images
-		: ['placeholder']
+	const imagesList = exercise.images && exercise.images.length > 0 ? exercise.images : ['placeholder']
 
 	return (
 		<MainLayout title="Exercício" onBack={() => goBack('/workout/exercises')}>
@@ -68,18 +66,25 @@ export function ExerciseDetailsPage() {
 					{/* Image Section wrapped in Paper */}
 					<Paper withBorder p="md" shadow="sm" radius="md">
 						<Stack gap="xs" align="center">
-							<Text fw={700} size="sm" c="dimmed" style={{ letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+							<Text
+								fw={700}
+								size="sm"
+								c="dimmed"
+								style={{ letterSpacing: '0.5px', textTransform: 'uppercase' }}
+							>
 								Imagens do Exercício
 							</Text>
-							
-							<Center style={{
-								width: '100%',
-								height: 240,
-								position: 'relative',
-								overflow: 'hidden',
-								borderRadius: '8px',
-								backgroundColor: 'var(--mantine-color-dark-8)'
-							}}>
+
+							<Center
+								style={{
+									width: '100%',
+									height: 240,
+									position: 'relative',
+									overflow: 'hidden',
+									borderRadius: '8px',
+									backgroundColor: 'var(--mantine-color-dark-8)',
+								}}
+							>
 								{imagesList.map((img, index) => {
 									const exerciseImageUrl = getExerciseImageUrl(img, false)
 

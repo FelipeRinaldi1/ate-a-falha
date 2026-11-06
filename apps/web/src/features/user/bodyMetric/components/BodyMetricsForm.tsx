@@ -47,7 +47,12 @@ export function BodyMetricRegisterForm() {
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack>
 					{errorMsg && (
-						<Alert variant="light" color="red" title="Erro ao salvar métricas" icon={<AlertCircle size={16} />}>
+						<Alert
+							variant="light"
+							color="red"
+							title="Erro ao salvar métricas"
+							icon={<AlertCircle size={16} />}
+						>
 							{errorMsg}
 						</Alert>
 					)}

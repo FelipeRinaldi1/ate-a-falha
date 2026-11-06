@@ -20,7 +20,13 @@ export const corsOptions: CorsOptions = {
 
 		const isVercelPreview = origin && origin.endsWith('.vercel.app')
 
-		if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(cleanOrigin) || isLocalDev || isVercelPreview) {
+		if (
+			!origin ||
+			allowedOrigins.includes('*') ||
+			allowedOrigins.includes(cleanOrigin) ||
+			isLocalDev ||
+			isVercelPreview
+		) {
 			callback(null, true)
 		} else {
 			console.warn(`[CORS] Blocked request. Origin not allowed: ${origin}`)

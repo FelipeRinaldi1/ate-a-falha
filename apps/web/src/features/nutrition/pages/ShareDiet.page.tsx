@@ -1,6 +1,22 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Container, Paper, Stack, Text, Title, Button, Center, Loader, Card, Badge, Group, List, Alert, Divider, SimpleGrid } from '@mantine/core'
+import {
+	Container,
+	Paper,
+	Stack,
+	Text,
+	Title,
+	Button,
+	Center,
+	Loader,
+	Card,
+	Badge,
+	Group,
+	List,
+	Alert,
+	Divider,
+	SimpleGrid,
+} from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
 import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
@@ -14,7 +30,11 @@ export function ShareDietPage() {
 	const goBack = useGoBack('/nutrition')
 	const { isAuthenticated } = useAuth()
 
-	const { data: diet, isLoading, isError } = useQuery({
+	const {
+		data: diet,
+		isLoading,
+		isError,
+	} = useQuery({
 		queryKey: ['share-diet', id],
 		queryFn: async () => {
 			const res = await api.get(`/nutrition/diets/${id}/export`)
@@ -48,7 +68,8 @@ export function ShareDietPage() {
 			<Container size="xs" py="xl">
 				<Stack gap="lg" align="center" style={{ minHeight: '80vh', justifyContent: 'center' }}>
 					<Alert color="red" title="Dieta Indisponível" icon={<Info size={16} />}>
-						Este link de compartilhamento de dieta é inválido ou o criador desativou o compartilhamento público.
+						Este link de compartilhamento de dieta é inválido ou o criador desativou o compartilhamento
+						público.
 					</Alert>
 					<Button variant="subtle" leftSection={<ArrowLeft size={16} />} onClick={() => navigate('/login')}>
 						Voltar para a Tela Inicial
@@ -85,30 +106,50 @@ export function ShareDietPage() {
 
 						<Divider />
 
-						<Title order={4} c="dimmed">Metas de Macronutrientes</Title>
+						<Title order={4} c="dimmed">
+							Metas de Macronutrientes
+						</Title>
 
 						<SimpleGrid cols={2} spacing="xs">
 							<Card withBorder p="xs" radius="sm" style={{ textAlign: 'center' }}>
-								<Text size="xs" fw={700} c="red">Proteínas</Text>
-								<Text size="sm" fw={700}>{diet.dailyProteinGoal}g</Text>
+								<Text size="xs" fw={700} c="red">
+									Proteínas
+								</Text>
+								<Text size="sm" fw={700}>
+									{diet.dailyProteinGoal}g
+								</Text>
 							</Card>
 							<Card withBorder p="xs" radius="sm" style={{ textAlign: 'center' }}>
-								<Text size="xs" fw={700} c="yellow">Carboidratos</Text>
-								<Text size="sm" fw={700}>{diet.dailyCarbGoal}g</Text>
+								<Text size="xs" fw={700} c="yellow">
+									Carboidratos
+								</Text>
+								<Text size="sm" fw={700}>
+									{diet.dailyCarbGoal}g
+								</Text>
 							</Card>
 							<Card withBorder p="xs" radius="sm" style={{ textAlign: 'center' }}>
-								<Text size="xs" fw={700} c="green">Gorduras</Text>
-								<Text size="sm" fw={700}>{diet.dailyFatGoal}g</Text>
+								<Text size="xs" fw={700} c="green">
+									Gorduras
+								</Text>
+								<Text size="sm" fw={700}>
+									{diet.dailyFatGoal}g
+								</Text>
 							</Card>
 							<Card withBorder p="xs" radius="sm" style={{ textAlign: 'center' }}>
-								<Text size="xs" fw={700} c="blue">Água</Text>
-								<Text size="sm" fw={700}>{(diet.dailyWaterGoal / 1000).toFixed(1)}L</Text>
+								<Text size="xs" fw={700} c="blue">
+									Água
+								</Text>
+								<Text size="sm" fw={700}>
+									{(diet.dailyWaterGoal / 1000).toFixed(1)}L
+								</Text>
 							</Card>
 						</SimpleGrid>
 
 						<Divider />
 
-						<Title order={4} c="dimmed">Refeições Planejadas</Title>
+						<Title order={4} c="dimmed">
+							Refeições Planejadas
+						</Title>
 
 						<Stack gap="md">
 							{diet.meals && diet.meals.length > 0 ? (
@@ -116,7 +157,9 @@ export function ShareDietPage() {
 									<Card key={m.id} withBorder p="md" radius="sm" bg="var(--mantine-color-dark-8)">
 										<Stack gap="xs">
 											<Group justify="space-between">
-												<Text fw={700} size="sm">{m.name}</Text>
+												<Text fw={700} size="sm">
+													{m.name}
+												</Text>
 												<Badge color="gray">{m.time}</Badge>
 											</Group>
 
@@ -127,20 +170,28 @@ export function ShareDietPage() {
 															<Text size="xs" fw={600} style={{ display: 'inline' }}>
 																{f.food.name}
 															</Text>
-															<Text size="xs" c="dimmed" style={{ display: 'inline', marginLeft: '6px' }}>
+															<Text
+																size="xs"
+																c="dimmed"
+																style={{ display: 'inline', marginLeft: '6px' }}
+															>
 																({f.quantity}g)
 															</Text>
 														</List.Item>
 													))
 												) : (
-													<Text size="xs" c="dimmed">Nenhum alimento cadastrado.</Text>
+													<Text size="xs" c="dimmed">
+														Nenhum alimento cadastrado.
+													</Text>
 												)}
 											</List>
 										</Stack>
 									</Card>
 								))
 							) : (
-								<Text size="sm" c="dimmed">Nenhuma refeição cadastrada nesta dieta.</Text>
+								<Text size="sm" c="dimmed">
+									Nenhuma refeição cadastrada nesta dieta.
+								</Text>
 							)}
 						</Stack>
 

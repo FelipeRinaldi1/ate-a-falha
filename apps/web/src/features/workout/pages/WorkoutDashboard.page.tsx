@@ -28,9 +28,7 @@ export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
 	const { user } = useAuth()
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-	const storageKey = user?.id
-		? `ate-a-falha:completed-workouts:${user.id}`
-		: 'ate-a-falha:completed-workouts'
+	const storageKey = user?.id ? `ate-a-falha:completed-workouts:${user.id}` : 'ate-a-falha:completed-workouts'
 
 	// Completed workouts state stored in localStorage scoped by user (YYYY-MM-DD -> boolean)
 	const [completedWorkouts, setCompletedWorkouts] = useState<Record<string, boolean>>(() => {
@@ -138,7 +136,11 @@ export function WorkoutDashboardPage() {
 										Treino do Dia
 									</Text>
 									<Text size="xs" c="dimmed" style={{ textTransform: 'capitalize' }}>
-										{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'short' })}
+										{selectedDate.toLocaleDateString('pt-BR', {
+											weekday: 'long',
+											day: 'numeric',
+											month: 'short',
+										})}
 									</Text>
 								</Stack>
 
@@ -148,7 +150,9 @@ export function WorkoutDashboardPage() {
 										size="xs"
 										variant={isTodayCompleted ? 'filled' : 'light'}
 										color={isTodayCompleted ? 'green' : 'gray'}
-										leftSection={isTodayCompleted ? <CheckCircle2 size={15} /> : <Circle size={15} />}
+										leftSection={
+											isTodayCompleted ? <CheckCircle2 size={15} /> : <Circle size={15} />
+										}
 										onClick={() => toggleDayCompleted(selectedDateStr)}
 										style={{ transition: 'all 0.2s ease' }}
 									>
@@ -158,7 +162,12 @@ export function WorkoutDashboardPage() {
 							</Group>
 
 							{todaysWorkout ? (
-								<Card withBorder p="sm" radius="md" style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}>
+								<Card
+									withBorder
+									p="sm"
+									radius="md"
+									style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}
+								>
 									<Group justify="space-between" align="center">
 										<Stack gap={2}>
 											<Group gap="xs">
@@ -179,14 +188,24 @@ export function WorkoutDashboardPage() {
 											color="blue"
 											variant="light"
 											leftSection={<Play size={14} fill="currentColor" />}
-											onClick={() => activePlan && navigate(`/workout/active/${activePlan.id}?workoutId=${todaysWorkout.id}`)}
+											onClick={() =>
+												activePlan &&
+												navigate(
+													`/workout/active/${activePlan.id}?workoutId=${todaysWorkout.id}`
+												)
+											}
 										>
 											Iniciar
 										</Button>
 									</Group>
 								</Card>
 							) : (
-								<Card withBorder p="sm" radius="md" style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}>
+								<Card
+									withBorder
+									p="sm"
+									radius="md"
+									style={{ backgroundColor: 'var(--mantine-color-dark-7)' }}
+								>
 									<Group justify="space-between" align="center">
 										<Text size="xs" c="dimmed">
 											Nenhum treino agendado para este dia da semana.
@@ -214,18 +233,37 @@ export function WorkoutDashboardPage() {
 								<Text fw={700} size="md">
 									Ficha de Treino Principal
 								</Text>
-								<UnstyledButton onClick={() => activePlan && navigate(`/workout/plans/${activePlan.id}/edit`)}>
+								<UnstyledButton
+									onClick={() => activePlan && navigate(`/workout/plans/${activePlan.id}/edit`)}
+								>
 									<Group gap={4} c="blue">
-										<Text size="xs" fw={700}>Ver todos</Text>
+										<Text size="xs" fw={700}>
+											Ver todos
+										</Text>
 										<ArrowRight size={14} />
 									</Group>
 								</UnstyledButton>
 							</Group>
 
 							{activePlan ? (
-								<Card withBorder p="md" radius="md" shadow="sm" style={{ backgroundColor: 'var(--mantine-color-dark-6)', overflow: 'hidden' }}>
+								<Card
+									withBorder
+									p="md"
+									radius="md"
+									shadow="sm"
+									style={{ backgroundColor: 'var(--mantine-color-dark-6)', overflow: 'hidden' }}
+								>
 									{/* Premium Cover Banner */}
-									<div style={{ height: '110px', overflow: 'hidden', borderTopLeftRadius: '7px', borderTopRightRadius: '7px', position: 'relative', margin: '-16px -16px 12px -16px' }}>
+									<div
+										style={{
+											height: '110px',
+											overflow: 'hidden',
+											borderTopLeftRadius: '7px',
+											borderTopRightRadius: '7px',
+											position: 'relative',
+											margin: '-16px -16px 12px -16px',
+										}}
+									>
 										{activeCoverUrl ? (
 											<Image
 												src={activeCoverUrl}
@@ -234,19 +272,25 @@ export function WorkoutDashboardPage() {
 												fallbackSrc="https://placehold.co/400x110?text=Treino"
 											/>
 										) : (
-											<div style={{
-												height: '100%',
-												background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
-											}} />
+											<div
+												style={{
+													height: '100%',
+													background:
+														'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+												}}
+											/>
 										)}
-										<div style={{
-											position: 'absolute',
-											top: 0,
-											left: 0,
-											right: 0,
-											bottom: 0,
-											background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.65))',
-										}} />
+										<div
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												right: 0,
+												bottom: 0,
+												background:
+													'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.65))',
+											}}
+										/>
 									</div>
 
 									<Stack gap="xs">
@@ -290,7 +334,9 @@ export function WorkoutDashboardPage() {
 								</Text>
 								<UnstyledButton onClick={() => navigate('/workout/plans')}>
 									<Group gap={4} c="blue">
-										<Text size="xs" fw={700}>Ver todos</Text>
+										<Text size="xs" fw={700}>
+											Ver todos
+										</Text>
 										<ArrowRight size={14} />
 									</Group>
 								</UnstyledButton>
@@ -312,8 +358,12 @@ export function WorkoutDashboardPage() {
 														width: 140,
 														flexShrink: 0,
 														overflow: 'hidden',
-														backgroundColor: plan.isActive ? 'var(--mantine-color-dark-5)' : 'var(--mantine-color-dark-6)',
-														border: plan.isActive ? '1.5px solid var(--mantine-primary-color-filled)' : '1px solid var(--mantine-color-dark-4)',
+														backgroundColor: plan.isActive
+															? 'var(--mantine-color-dark-5)'
+															: 'var(--mantine-color-dark-6)',
+														border: plan.isActive
+															? '1.5px solid var(--mantine-primary-color-filled)'
+															: '1px solid var(--mantine-color-dark-4)',
 														cursor: 'pointer',
 													}}
 													onClick={() => navigate(`/workout/active/${plan.id}/select`)}
@@ -329,14 +379,27 @@ export function WorkoutDashboardPage() {
 																loading="lazy"
 															/>
 														) : (
-															<div style={{
-																height: '60px',
-																background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
-															}} />
+															<div
+																style={{
+																	height: '60px',
+																	background:
+																		'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+																}}
+															/>
 														)}
 													</Card.Section>
-													<Stack gap="xs" justify="space-between" mt="xs" style={{ height: 70 }}>
-														<Text fw={700} size="sm" lineClamp={2} style={{ whiteSpace: 'normal' }}>
+													<Stack
+														gap="xs"
+														justify="space-between"
+														mt="xs"
+														style={{ height: 70 }}
+													>
+														<Text
+															fw={700}
+															size="sm"
+															lineClamp={2}
+															style={{ whiteSpace: 'normal' }}
+														>
 															{plan.name}
 														</Text>
 														<Badge size="xs" color={plan.isActive ? 'blue' : 'gray'}>
@@ -347,7 +410,9 @@ export function WorkoutDashboardPage() {
 											)
 										})
 									) : (
-										<Text size="xs" c="dimmed">Nenhuma ficha criada</Text>
+										<Text size="xs" c="dimmed">
+											Nenhuma ficha criada
+										</Text>
 									)}
 								</Group>
 							</ScrollArea>
@@ -363,7 +428,9 @@ export function WorkoutDashboardPage() {
 								</Text>
 								<UnstyledButton onClick={() => navigate('/workout/exercises')}>
 									<Group gap={4} c="blue">
-										<Text size="xs" fw={700}>Ver todos</Text>
+										<Text size="xs" fw={700}>
+											Ver todos
+										</Text>
 										<ArrowRight size={14} />
 									</Group>
 								</UnstyledButton>
@@ -383,7 +450,12 @@ export function WorkoutDashboardPage() {
 													withBorder
 													p="xs"
 													radius="md"
-													style={{ width: 140, flexShrink: 0, overflow: 'hidden', cursor: 'pointer' }}
+													style={{
+														width: 140,
+														flexShrink: 0,
+														overflow: 'hidden',
+														cursor: 'pointer',
+													}}
 													onClick={() => navigate(`/workout/exercises/${exercise.id}`)}
 												>
 													<Card.Section>
@@ -397,7 +469,12 @@ export function WorkoutDashboardPage() {
 														/>
 													</Card.Section>
 													<Stack gap={4} mt="xs">
-														<Text fw={700} size="xs" style={{ whiteSpace: 'normal' }} lineClamp={1}>
+														<Text
+															fw={700}
+															size="xs"
+															style={{ whiteSpace: 'normal' }}
+															lineClamp={1}
+														>
 															{exercise.name}
 														</Text>
 														<Badge size="xs" color="red.6" variant="light">
@@ -408,7 +485,9 @@ export function WorkoutDashboardPage() {
 											)
 										})
 									) : (
-										<Text size="xs" c="dimmed">Nenhum exercício catalogado</Text>
+										<Text size="xs" c="dimmed">
+											Nenhum exercício catalogado
+										</Text>
 									)}
 								</Group>
 							</ScrollArea>

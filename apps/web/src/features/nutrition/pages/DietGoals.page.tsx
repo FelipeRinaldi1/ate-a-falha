@@ -95,7 +95,9 @@ export function DietGoalsPage() {
 	const calculatedProtein = Number((proteinGPerKg * weight).toFixed(0))
 	const calculatedFat = Number((fatGPerKg * weight).toFixed(0))
 	const calculatedCarb = Number((carbGPerKg * weight).toFixed(0))
-	const calculatedKcal = Math.round(NutritionLogic.calculateCalories(calculatedProtein, calculatedCarb, calculatedFat))
+	const calculatedKcal = Math.round(
+		NutritionLogic.calculateCalories(calculatedProtein, calculatedCarb, calculatedFat)
+	)
 
 	// Mutation: Save Diet Goals (Create or Update)
 	const saveDietGoalsMutation = useMutation({
@@ -144,8 +146,6 @@ export function DietGoalsPage() {
 		},
 		enabled: !!activeDiet?.id,
 	})
-
-
 
 	const [newMealOpened, setNewMealOpened] = useState(false)
 	const [newMealName, setNewMealName] = useState('')
@@ -239,7 +239,10 @@ export function DietGoalsPage() {
 			title: 'Excluir Refeição de Referência',
 			centered: true,
 			children: (
-				<Text size="sm">Tem certeza que deseja excluir a refeição "{meal.name}"? Todos os alimentos cadastrados nela serão removidos do planejamento.</Text>
+				<Text size="sm">
+					Tem certeza que deseja excluir a refeição "{meal.name}"? Todos os alimentos cadastrados nela serão
+					removidos do planejamento.
+				</Text>
 			),
 			labels: { confirm: 'Excluir', cancel: 'Cancelar' },
 			confirmProps: { color: 'red' },
@@ -319,13 +322,14 @@ export function DietGoalsPage() {
 	}
 
 	const kcalPercent = targetKcal > 0 ? Math.min(Math.round((plannedTotals.calories / targetKcal) * 100), 100) : 0
-	
+
 	const kcalDiff = plannedTotals.calories - targetKcal
-	const kcalWarningText = Math.abs(kcalDiff) < 15 
-		? "Meta de Calorias atingida! 🎉"
-		: kcalDiff < 0 
-			? `Faltam planejar ${Math.abs(kcalDiff).toFixed(0)} Kcal`
-			: `Excedeu a meta de calorias em ${kcalDiff.toFixed(0)} Kcal! ⚠️`
+	const kcalWarningText =
+		Math.abs(kcalDiff) < 15
+			? 'Meta de Calorias atingida! 🎉'
+			: kcalDiff < 0
+				? `Faltam planejar ${Math.abs(kcalDiff).toFixed(0)} Kcal`
+				: `Excedeu a meta de calorias em ${kcalDiff.toFixed(0)} Kcal! ⚠️`
 	const kcalWarningColor = Math.abs(kcalDiff) < 15 ? 'green' : kcalDiff < 0 ? 'blue' : 'orange'
 
 	const pCalGoal = targetProtein * 4
@@ -587,34 +591,77 @@ export function DietGoalsPage() {
 													Calorias Planejadas vs. Meta
 												</Text>
 												<Text fw={800} size="sm" c={kcalWarningColor}>
-													{plannedTotals.calories.toFixed(0)} / {targetKcal} Kcal ({kcalPercent}%)
+													{plannedTotals.calories.toFixed(0)} / {targetKcal} Kcal (
+													{kcalPercent}%)
 												</Text>
 											</Group>
-											<Progress value={(plannedTotals.calories / targetKcal) * 100} color={kcalWarningColor} size="md" radius="xl" animated={kcalPercent < 100 && plannedTotals.calories > 0} />
-											
+											<Progress
+												value={(plannedTotals.calories / targetKcal) * 100}
+												color={kcalWarningColor}
+												size="md"
+												radius="xl"
+												animated={kcalPercent < 100 && plannedTotals.calories > 0}
+											/>
+
 											<Text size="xs" fw={700} c={kcalWarningColor}>
 												{kcalWarningText}
 											</Text>
 
 											<Divider my={4} color="dark.4" />
-											
+
 											<Text fw={700} size="xs" c="dimmed">
 												Validação de Macronutrientes
 											</Text>
 
 											<SimpleGrid cols={2} spacing="xs">
 												{[
-													{ ...getMacroWarning(plannedTotals.proteins, targetProtein, 'Proteína'), targetVal: targetProtein, plannedVal: plannedTotals.proteins },
-													{ ...getMacroWarning(plannedTotals.carbohydrates, targetCarb, 'Carboidratos'), targetVal: targetCarb, plannedVal: plannedTotals.carbohydrates },
-													{ ...getMacroWarning(plannedTotals.fats, targetFat, 'Gorduras'), targetVal: targetFat, plannedVal: plannedTotals.fats },
-													{ ...getMacroWarning(plannedTotals.fiber, targetFiber, 'Fibras'), targetVal: targetFiber, plannedVal: plannedTotals.fiber },
+													{
+														...getMacroWarning(
+															plannedTotals.proteins,
+															targetProtein,
+															'Proteína'
+														),
+														targetVal: targetProtein,
+														plannedVal: plannedTotals.proteins,
+													},
+													{
+														...getMacroWarning(
+															plannedTotals.carbohydrates,
+															targetCarb,
+															'Carboidratos'
+														),
+														targetVal: targetCarb,
+														plannedVal: plannedTotals.carbohydrates,
+													},
+													{
+														...getMacroWarning(plannedTotals.fats, targetFat, 'Gorduras'),
+														targetVal: targetFat,
+														plannedVal: plannedTotals.fats,
+													},
+													{
+														...getMacroWarning(plannedTotals.fiber, targetFiber, 'Fibras'),
+														targetVal: targetFiber,
+														plannedVal: plannedTotals.fiber,
+													},
 												].map((warn, i) => (
-													<Paper key={i} p="xs" radius="sm" bg="var(--mantine-color-dark-6)" style={{ borderLeft: `3px solid var(--mantine-color-${warn.color}-6)`, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+													<Paper
+														key={i}
+														p="xs"
+														radius="sm"
+														bg="var(--mantine-color-dark-6)"
+														style={{
+															borderLeft: `3px solid var(--mantine-color-${warn.color}-6)`,
+															display: 'flex',
+															flexDirection: 'column',
+															gap: '2px',
+														}}
+													>
 														<Text size="11px" fw={700} c={warn.color}>
 															{warn.text}
 														</Text>
 														<Text size="9px" c="dimmed" fw={600}>
-															Planejado: {warn.plannedVal.toFixed(0)}g / Meta: {warn.targetVal.toFixed(0)}g
+															Planejado: {warn.plannedVal.toFixed(0)}g / Meta:{' '}
+															{warn.targetVal.toFixed(0)}g
 														</Text>
 													</Paper>
 												))}
@@ -627,11 +674,19 @@ export function DietGoalsPage() {
 											targetMeals.map((meal: MealDTO) => {
 												const mealFoods = meal.foods || []
 												const mealTotals = NutritionLogic.calculateMealMacros(
-													mealFoods as unknown as Parameters<typeof NutritionLogic.calculateMealMacros>[0]
+													mealFoods as unknown as Parameters<
+														typeof NutritionLogic.calculateMealMacros
+													>[0]
 												)
 
 												return (
-													<Card key={meal.id} withBorder p="sm" radius="md" bg="var(--mantine-color-dark-7)">
+													<Card
+														key={meal.id}
+														withBorder
+														p="sm"
+														radius="md"
+														bg="var(--mantine-color-dark-7)"
+													>
 														<Stack gap="xs">
 															<Group justify="space-between" align="center">
 																<Group gap="xs" align="center">
@@ -669,13 +724,40 @@ export function DietGoalsPage() {
 															<Stack gap={4} mt={2}>
 																{mealFoods.length > 0 ? (
 																	mealFoods.map((fim: FoodInMealDTO) => (
-																		<Group key={fim.id} justify="space-between" wrap="nowrap" style={{ borderBottom: '1px solid var(--mantine-color-dark-5)', paddingBottom: '4px' }}>
+																		<Group
+																			key={fim.id}
+																			justify="space-between"
+																			wrap="nowrap"
+																			style={{
+																				borderBottom:
+																					'1px solid var(--mantine-color-dark-5)',
+																				paddingBottom: '4px',
+																			}}
+																		>
 																			<Stack gap={0} style={{ flex: 1 }}>
 																				<Text size="xs" fw={700}>
 																					{fim.food.name}
 																				</Text>
 																				<Text size="10px" c="dimmed">
-																					{fim.quantity}g • {((fim.food.protein * fim.quantity)/100).toFixed(0)}g P • {((fim.food.carbohydrate * fim.quantity)/100).toFixed(0)}g C • {((fim.food.lipids * fim.quantity)/100).toFixed(0)}g G
+																					{fim.quantity}g •{' '}
+																					{(
+																						(fim.food.protein *
+																							fim.quantity) /
+																						100
+																					).toFixed(0)}
+																					g P •{' '}
+																					{(
+																						(fim.food.carbohydrate *
+																							fim.quantity) /
+																						100
+																					).toFixed(0)}
+																					g C •{' '}
+																					{(
+																						(fim.food.lipids *
+																							fim.quantity) /
+																						100
+																					).toFixed(0)}
+																					g G
 																				</Text>
 																			</Stack>
 																			<Group gap="xs" wrap="nowrap">
@@ -683,7 +765,9 @@ export function DietGoalsPage() {
 																					variant="subtle"
 																					color="gray"
 																					size="xs"
-																					onClick={() => handleOpenEditFood(fim)}
+																					onClick={() =>
+																						handleOpenEditFood(fim)
+																					}
 																				>
 																					<Pencil size={10} />
 																				</ActionIcon>
@@ -691,7 +775,12 @@ export function DietGoalsPage() {
 																					variant="subtle"
 																					color="red"
 																					size="xs"
-																					onClick={() => handleRemoveFoodConfirm(fim.id, fim.food.name)}
+																					onClick={() =>
+																						handleRemoveFoodConfirm(
+																							fim.id,
+																							fim.food.name
+																						)
+																					}
 																				>
 																					<Trash2 size={10} />
 																				</ActionIcon>
@@ -699,7 +788,14 @@ export function DietGoalsPage() {
 																		</Group>
 																	))
 																) : (
-																	<Text size="xs" c="dimmed" style={{ textAlign: 'center', padding: '6px 0' }}>
+																	<Text
+																		size="xs"
+																		c="dimmed"
+																		style={{
+																			textAlign: 'center',
+																			padding: '6px 0',
+																		}}
+																	>
 																		Nenhum alimento de referência.
 																	</Text>
 																)}
@@ -711,7 +807,9 @@ export function DietGoalsPage() {
 																size="xs"
 																fullWidth
 																mt="xs"
-																onClick={() => navigate(`/nutrition/search?mealId=${meal.id}`)}
+																onClick={() =>
+																	navigate(`/nutrition/search?mealId=${meal.id}`)
+																}
 															>
 																+ Adicionar Alimento de Referência
 															</Button>
@@ -720,8 +818,13 @@ export function DietGoalsPage() {
 												)
 											})
 										) : (
-											<Text size="xs" c="dimmed" style={{ textAlign: 'center', padding: '10px 0' }}>
-												Nenhuma refeição planejada. Crie uma para começar a montar o seu plano alimentar de referência.
+											<Text
+												size="xs"
+												c="dimmed"
+												style={{ textAlign: 'center', padding: '10px 0' }}
+											>
+												Nenhuma refeição planejada. Crie uma para começar a montar o seu plano
+												alimentar de referência.
 											</Text>
 										)}
 									</Stack>
@@ -945,25 +1048,33 @@ export function DietGoalsPage() {
 								</Center>
 								<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">P</Text>
+										<Text size="xs" c="dimmed">
+											P
+										</Text>
 										<Text size="xs" fw={700} c="red.6">
 											{((editingFood.food.protein * editFoodQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">C</Text>
+										<Text size="xs" c="dimmed">
+											C
+										</Text>
 										<Text size="xs" fw={700} c="yellow.5">
 											{((editingFood.food.carbohydrate * editFoodQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">G</Text>
+										<Text size="xs" c="dimmed">
+											G
+										</Text>
 										<Text size="xs" fw={700} c="green.6">
 											{((editingFood.food.lipids * editFoodQuantity) / 100).toFixed(1)}g
 										</Text>
 									</Stack>
 									<Stack gap={0}>
-										<Text size="xs" c="dimmed">F</Text>
+										<Text size="xs" c="dimmed">
+											F
+										</Text>
 										<Text size="xs" fw={700} c="teal.5">
 											{((editingFood.food.fiber * editFoodQuantity) / 100).toFixed(1)}g
 										</Text>
@@ -992,10 +1103,7 @@ export function DietGoalsPage() {
 				</Stack>
 			</Modal>
 
-			<ImportRoutineModal
-				opened={importModalOpen}
-				onClose={() => setImportModalOpen(false)}
-			/>
+			<ImportRoutineModal opened={importModalOpen} onClose={() => setImportModalOpen(false)} />
 
 			{activeDiet && (
 				<ShareModal

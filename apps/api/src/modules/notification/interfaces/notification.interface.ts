@@ -1,9 +1,4 @@
-import {
-	CreateNotificationDTO,
-	NotificationSearchDTO,
-	NotificationListResponseDTO,
-	Result,
-} from '@ate-a-falha/shared'
+import { CreateNotificationDTO, NotificationSearchDTO, NotificationListResponseDTO, Result } from '@ate-a-falha/shared'
 import { NotificationFull } from '@ate-a-falha/database'
 
 export interface INotificationRepository {

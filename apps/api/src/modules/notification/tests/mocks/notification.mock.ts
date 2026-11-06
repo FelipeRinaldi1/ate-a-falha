@@ -7,9 +7,7 @@ export const baseNotificationMock: CreateNotificationDTO = {
 	link: '/workouts',
 }
 
-export const overrideNotificationMock = (
-	overrides: Partial<CreateNotificationDTO> = {}
-): CreateNotificationDTO => ({
+export const overrideNotificationMock = (overrides: Partial<CreateNotificationDTO> = {}): CreateNotificationDTO => ({
 	...baseNotificationMock,
 	...overrides,
 })

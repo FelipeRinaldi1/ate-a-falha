@@ -56,7 +56,11 @@ export function MealCard({ meal, isTemplate = false, isLogged = false, onToggle,
 							</ActionIcon>
 						)}
 						<Group gap="xs" align="center" style={{ flex: 1, minWidth: 0 }}>
-							<Title order={4} size="h5" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+							<Title
+								order={4}
+								size="h5"
+								style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}
+							>
 								{meal.name}
 							</Title>
 							<Text size="xs" c="dimmed" fw={500} style={{ alignSelf: 'center', marginTop: '2px' }}>

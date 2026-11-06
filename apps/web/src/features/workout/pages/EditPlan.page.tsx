@@ -25,7 +25,13 @@ import {
 import { Plus, Trash2, Search, Star } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
-import { type ExerciseDTO, type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
+import {
+	type ExerciseDTO,
+	type PlanDTO,
+	type WorkoutDTO,
+	type WorkoutExerciseDTO,
+	type SetDTO,
+} from '@ate-a-falha/shared'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
 
@@ -116,7 +122,9 @@ export function EditPlanPage() {
 	// Sets modal states
 	const [setsModalOpen, setSetsModalOpen] = useState(false)
 	const [editingWorkoutExerciseId, setEditingWorkoutExerciseId] = useState<string | null>(null)
-	const [editingSets, setEditingSets] = useState<{ id?: string; setNumber: number; repetitions: number; weight: number; restTimeSeconds: number }[]>([])
+	const [editingSets, setEditingSets] = useState<
+		{ id?: string; setNumber: number; repetitions: number; weight: number; restTimeSeconds: number }[]
+	>([])
 
 	// Fetch Plan details (includes workouts, exercises, sets)
 	const { data: plan, isLoading } = useQuery<PlanDTO>({
@@ -170,7 +178,7 @@ export function EditPlanPage() {
 	const savePlanMutation = useMutation({
 		mutationFn: async () => {
 			// 1. Update plan name & cover images
-			const patchPlanPromise = api.patch(`/workout/plans/${id}`, { 
+			const patchPlanPromise = api.patch(`/workout/plans/${id}`, {
 				name: planName,
 				coverImageUrl,
 				coverExerciseId,
@@ -206,7 +214,7 @@ export function EditPlanPage() {
 	const addExerciseMutation = useMutation({
 		mutationFn: async ({ day, exerciseId }: { day: string; exerciseId: string }) => {
 			let workout = plan?.workouts?.find((w: WorkoutDTO) => w.day === day)
-			
+
 			// If workout doesn't exist yet, create it first
 			if (!workout) {
 				const res = await api.post(`/workout/plans/${id}/workouts`, {
@@ -284,13 +292,14 @@ export function EditPlanPage() {
 
 	const handleOpenSetsModal = (workoutExercise: WorkoutExerciseDTO) => {
 		setEditingWorkoutExerciseId(workoutExercise.id)
-		const sets = workoutExercise.sets?.map((s: SetDTO) => ({
-			id: s.id,
-			setNumber: s.setNumber,
-			repetitions: s.repetitions,
-			weight: s.weight || 0,
-			restTimeSeconds: s.restTimeSeconds,
-		})) || []
+		const sets =
+			workoutExercise.sets?.map((s: SetDTO) => ({
+				id: s.id,
+				setNumber: s.setNumber,
+				repetitions: s.repetitions,
+				weight: s.weight || 0,
+				restTimeSeconds: s.restTimeSeconds,
+			})) || []
 
 		// Default to 3 sets if empty
 		if (sets.length === 0) {
@@ -341,7 +350,8 @@ export function EditPlanPage() {
 				ex.category.toLowerCase().includes(term)
 
 			const matchesCategory = !selectedCategory || ex.category.toLowerCase() === selectedCategory.toLowerCase()
-			const matchesMuscle = !selectedMuscle || ex.primaryMuscles.some((m) => m.toLowerCase() === selectedMuscle.toLowerCase())
+			const matchesMuscle =
+				!selectedMuscle || ex.primaryMuscles.some((m) => m.toLowerCase() === selectedMuscle.toLowerCase())
 
 			return matchesSearch && matchesCategory && matchesMuscle
 		})
@@ -408,9 +418,15 @@ export function EditPlanPage() {
 											<TextInput
 												placeholder="Foco (Ex: Peito e Tríceps)"
 												value={currentWorkoutName}
-												onChange={(e) => setWorkoutNames({ ...workoutNames, [day]: e.currentTarget.value })}
+												onChange={(e) =>
+													setWorkoutNames({ ...workoutNames, [day]: e.currentTarget.value })
+												}
 												variant="unstyled"
-												style={{ textAlign: 'right', fontWeight: 600, borderBottom: '1px dashed var(--mantine-color-dark-4)' }}
+												style={{
+													textAlign: 'right',
+													fontWeight: 600,
+													borderBottom: '1px dashed var(--mantine-color-dark-4)',
+												}}
 											/>
 										</Group>
 
@@ -439,7 +455,7 @@ export function EditPlanPage() {
 												exercises.map((we: WorkoutExerciseDTO) => {
 													const imagePath = we.exercise?.images?.[0]
 													const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
-													
+
 													const totalSets = we.sets?.length || 0
 													const reps = we.sets?.[0]?.repetitions || 10
 													const rest = we.sets?.[0]?.restTimeSeconds || 60
@@ -450,12 +466,27 @@ export function EditPlanPage() {
 															withBorder
 															p="md"
 															radius="sm"
-															style={{ cursor: 'pointer', backgroundColor: 'var(--mantine-color-dark-6)' }}
+															style={{
+																cursor: 'pointer',
+																backgroundColor: 'var(--mantine-color-dark-6)',
+															}}
 															onClick={() => handleOpenSetsModal(we)}
 														>
 															<Group justify="space-between" wrap="nowrap">
-																<Group gap="md" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-																	<div style={{ width: '80px', height: '80px', flexShrink: 0, overflow: 'hidden', borderRadius: '6px' }}>
+																<Group
+																	gap="md"
+																	wrap="nowrap"
+																	style={{ flex: 1, minWidth: 0 }}
+																>
+																	<div
+																		style={{
+																			width: '80px',
+																			height: '80px',
+																			flexShrink: 0,
+																			overflow: 'hidden',
+																			borderRadius: '6px',
+																		}}
+																	>
 																		<Image
 																			src={exerciseImageUrl}
 																			w={80}
@@ -469,14 +500,19 @@ export function EditPlanPage() {
 																			{we.exercise?.name}
 																		</Text>
 																		<Text size="11px" c="dimmed" fw={600}>
-																			{totalSets} séries x {reps} reps ({rest}s desc.)
+																			{totalSets} séries x {reps} reps ({rest}s
+																			desc.)
 																		</Text>
 																	</Stack>
 																</Group>
 																<Group gap="xs">
 																	<ActionIcon
 																		variant="subtle"
-																		color={coverExerciseId === we.exercise?.id ? 'yellow' : 'gray'}
+																		color={
+																			coverExerciseId === we.exercise?.id
+																				? 'yellow'
+																				: 'gray'
+																		}
 																		size="sm"
 																		onClick={(e) => {
 																			e.stopPropagation()
@@ -484,15 +520,27 @@ export function EditPlanPage() {
 																				setCoverExerciseId(null)
 																				setCoverImageUrl(null)
 																			} else {
-																				setCoverExerciseId(we.exercise?.id || null)
-																				setCoverImageUrl(we.exercise?.images?.[0] || null)
+																				setCoverExerciseId(
+																					we.exercise?.id || null
+																				)
+																				setCoverImageUrl(
+																					we.exercise?.images?.[0] || null
+																				)
 																			}
 																		}}
-																		title={coverExerciseId === we.exercise?.id ? 'Remover foto de capa' : 'Definir como foto de capa'}
+																		title={
+																			coverExerciseId === we.exercise?.id
+																				? 'Remover foto de capa'
+																				: 'Definir como foto de capa'
+																		}
 																	>
 																		<Star
 																			size={15}
-																			fill={coverExerciseId === we.exercise?.id ? 'currentColor' : 'none'}
+																			fill={
+																				coverExerciseId === we.exercise?.id
+																					? 'currentColor'
+																					: 'none'
+																			}
 																		/>
 																	</ActionIcon>
 																	<ActionIcon
@@ -512,7 +560,11 @@ export function EditPlanPage() {
 													)
 												})
 											) : (
-												<Text size="xs" c="dimmed" style={{ textAlign: 'center', padding: '10px 0' }}>
+												<Text
+													size="xs"
+													c="dimmed"
+													style={{ textAlign: 'center', padding: '10px 0' }}
+												>
 													Nenhum exercício neste treino.
 												</Text>
 											)}
@@ -589,7 +641,7 @@ export function EditPlanPage() {
 							radius="md"
 						/>
 					</SimpleGrid>
-					
+
 					<Stack gap="xs">
 						{filteredCatalog.slice(0, 15).map((ex) => {
 							const imagePath = ex.images?.[0]
@@ -602,10 +654,21 @@ export function EditPlanPage() {
 									p="sm"
 									radius="sm"
 									style={{ cursor: 'pointer' }}
-									onClick={() => targetDayForExercise && addExerciseMutation.mutate({ day: targetDayForExercise, exerciseId: ex.id })}
+									onClick={() =>
+										targetDayForExercise &&
+										addExerciseMutation.mutate({ day: targetDayForExercise, exerciseId: ex.id })
+									}
 								>
 									<Group gap="md" wrap="nowrap" align="center">
-										<div style={{ width: '70px', height: '70px', flexShrink: 0, overflow: 'hidden', borderRadius: '6px' }}>
+										<div
+											style={{
+												width: '70px',
+												height: '70px',
+												flexShrink: 0,
+												overflow: 'hidden',
+												borderRadius: '6px',
+											}}
+										>
 											<Image src={exerciseImageUrl} w={70} h={70} fit="cover" loading="lazy" />
 										</div>
 										<Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
@@ -621,7 +684,7 @@ export function EditPlanPage() {
 													textTransform: 'none',
 													height: 'auto',
 													padding: '3px 8px',
-													width: 'fit-content'
+													width: 'fit-content',
 												}}
 											>
 												{ex.primaryMuscles?.[0] || 'Músculo'}
@@ -673,7 +736,9 @@ export function EditPlanPage() {
 											value={set.repetitions}
 											min={1}
 											max={100}
-											onChange={(val) => handleUpdateSetField(index, 'repetitions', Number(val) || 10)}
+											onChange={(val) =>
+												handleUpdateSetField(index, 'repetitions', Number(val) || 10)
+											}
 											size="xs"
 										/>
 										<NumberInput
@@ -689,7 +754,9 @@ export function EditPlanPage() {
 											value={set.restTimeSeconds}
 											min={0}
 											max={600}
-											onChange={(val) => handleUpdateSetField(index, 'restTimeSeconds', Number(val) || 60)}
+											onChange={(val) =>
+												handleUpdateSetField(index, 'restTimeSeconds', Number(val) || 60)
+											}
 											size="xs"
 										/>
 									</SimpleGrid>
@@ -698,12 +765,7 @@ export function EditPlanPage() {
 						))}
 					</Stack>
 
-					<Button
-						variant="outline"
-						color="blue"
-						size="xs"
-						onClick={handleAddSet}
-					>
+					<Button variant="outline" color="blue" size="xs" onClick={handleAddSet}>
 						+ Adicionar Série
 					</Button>
 

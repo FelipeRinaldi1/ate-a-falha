@@ -74,22 +74,9 @@ interface FoodCardItemProps {
 	onDelete: (e: React.MouseEvent, food: FoodDTO) => void
 }
 
-const FoodCardItem = memo(function FoodCardItem({
-	food,
-	isMine,
-	isDeleting,
-	onSelect,
-	onDelete,
-}: FoodCardItemProps) {
+const FoodCardItem = memo(function FoodCardItem({ food, isMine, isDeleting, onSelect, onDelete }: FoodCardItemProps) {
 	return (
-		<Paper
-			withBorder
-			p="md"
-			radius="md"
-			shadow="xs"
-			style={{ cursor: 'pointer' }}
-			onClick={() => onSelect(food)}
-		>
+		<Paper withBorder p="md" radius="md" shadow="xs" style={{ cursor: 'pointer' }} onClick={() => onSelect(food)}>
 			<Stack gap="xs">
 				<Group justify="space-between" align="center">
 					<Group gap={6}>
@@ -179,11 +166,7 @@ export function FoodSearchPage() {
 
 	const mealLogId = searchParams.get('mealLogId')
 	const mealId = searchParams.get('mealId')
-	const fallbackBackPath = mealId
-		? '/nutrition/goals'
-		: mealLogId
-			? `/nutrition/meals/${mealLogId}`
-			: '/nutrition'
+	const fallbackBackPath = mealId ? '/nutrition/goals' : mealLogId ? `/nutrition/meals/${mealLogId}` : '/nutrition'
 	const goBack = useGoBack(fallbackBackPath)
 
 	const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -195,7 +178,11 @@ export function FoodSearchPage() {
 	const [portionGrams, setPortionGrams] = useState<number>(100)
 
 	// Fetch catalog foods
-	const { data: foods = [], isLoading, isFetching } = useQuery<FoodDTO[]>({
+	const {
+		data: foods = [],
+		isLoading,
+		isFetching,
+	} = useQuery<FoodDTO[]>({
 		queryKey: ['food-catalog', debouncedSearch, foodScope],
 		queryFn: async () => {
 			const res = await api.get('/nutrition/food-catalog', {
@@ -254,31 +241,37 @@ export function FoodSearchPage() {
 		},
 	})
 
-	const handleDeleteFood = useCallback((e: React.MouseEvent, food: FoodDTO) => {
-		e.stopPropagation()
-		modals.openConfirmModal({
-			title: 'Excluir Alimento',
-			centered: true,
-			children: (
-				<Text size="sm">
-					Tem certeza que deseja excluir o alimento <strong>{food.name}</strong> permanentemente do seu
-					catálogo? Esta ação não pode ser desfeita.
-				</Text>
-			),
-			labels: { confirm: 'Excluir', cancel: 'Cancelar' },
-			confirmProps: { color: 'red' },
-			onConfirm: () => deleteCatalogFoodMutation.mutate(food.id),
-		})
-	}, [deleteCatalogFoodMutation])
+	const handleDeleteFood = useCallback(
+		(e: React.MouseEvent, food: FoodDTO) => {
+			e.stopPropagation()
+			modals.openConfirmModal({
+				title: 'Excluir Alimento',
+				centered: true,
+				children: (
+					<Text size="sm">
+						Tem certeza que deseja excluir o alimento <strong>{food.name}</strong> permanentemente do seu
+						catálogo? Esta ação não pode ser desfeita.
+					</Text>
+				),
+				labels: { confirm: 'Excluir', cancel: 'Cancelar' },
+				confirmProps: { color: 'red' },
+				onConfirm: () => deleteCatalogFoodMutation.mutate(food.id),
+			})
+		},
+		[deleteCatalogFoodMutation]
+	)
 
-	const handleFoodClick = useCallback((food: FoodDTO) => {
-		if (mealLogId || mealId) {
-			setSelectedFood(food)
-		} else {
-			// Redireciona para a página de detalhes do alimento no catálogo se acessado pela lupa geral
-			navigate(`/nutrition/food-catalog/${food.id}`)
-		}
-	}, [mealLogId, mealId, navigate])
+	const handleFoodClick = useCallback(
+		(food: FoodDTO) => {
+			if (mealLogId || mealId) {
+				setSelectedFood(food)
+			} else {
+				// Redireciona para a página de detalhes do alimento no catálogo se acessado pela lupa geral
+				navigate(`/nutrition/food-catalog/${food.id}`)
+			}
+		},
+		[mealLogId, mealId, navigate]
+	)
 
 	const handleAddPortionSubmit = () => {
 		if (!selectedFood || portionGrams <= 0) return
@@ -428,21 +421,37 @@ export function FoodSearchPage() {
 								</Center>
 								<SimpleGrid cols={4} spacing="xs" style={{ textAlign: 'center' }}>
 									<Stack gap={0}>
-									<Text size="xs" c="dimmed">P</Text>
-									<Text size="xs" fw={700} c="red.6">{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g</Text>
-								</Stack>
-								<Stack gap={0}>
-									<Text size="xs" c="dimmed">C</Text>
-									<Text size="xs" fw={700} c="yellow.5">{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g</Text>
-								</Stack>
-								<Stack gap={0}>
-									<Text size="xs" c="dimmed">G</Text>
-									<Text size="xs" fw={700} c="green.6">{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g</Text>
-								</Stack>
-								<Stack gap={0}>
-									<Text size="xs" c="dimmed">F</Text>
-									<Text size="xs" fw={700} c="teal.5">{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g</Text>
-								</Stack>
+										<Text size="xs" c="dimmed">
+											P
+										</Text>
+										<Text size="xs" fw={700} c="red.6">
+											{((selectedFood.protein * portionGrams) / 100).toFixed(1)}g
+										</Text>
+									</Stack>
+									<Stack gap={0}>
+										<Text size="xs" c="dimmed">
+											C
+										</Text>
+										<Text size="xs" fw={700} c="yellow.5">
+											{((selectedFood.carbohydrate * portionGrams) / 100).toFixed(1)}g
+										</Text>
+									</Stack>
+									<Stack gap={0}>
+										<Text size="xs" c="dimmed">
+											G
+										</Text>
+										<Text size="xs" fw={700} c="green.6">
+											{((selectedFood.lipids * portionGrams) / 100).toFixed(1)}g
+										</Text>
+									</Stack>
+									<Stack gap={0}>
+										<Text size="xs" c="dimmed">
+											F
+										</Text>
+										<Text size="xs" fw={700} c="teal.5">
+											{((selectedFood.fiber * portionGrams) / 100).toFixed(1)}g
+										</Text>
+									</Stack>
 								</SimpleGrid>
 							</Stack>
 						</Paper>

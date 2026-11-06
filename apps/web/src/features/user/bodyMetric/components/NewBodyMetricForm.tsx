@@ -43,7 +43,7 @@ export function NewBodyMetricForm() {
 			const response = await api.get('/users/body-metrics')
 			const latest = response.data[0]
 			if (latest) {
-			form.setValues({
+				form.setValues({
 					weight: 0,
 					height: latest.height,
 					activityLevel: latest.activityLevel,
@@ -86,7 +86,12 @@ export function NewBodyMetricForm() {
 			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 				<Stack gap="md">
 					{errorMsg && (
-						<Alert variant="light" color="red" title="Erro ao registrar pesagem" icon={<AlertCircle size={16} />}>
+						<Alert
+							variant="light"
+							color="red"
+							title="Erro ao registrar pesagem"
+							icon={<AlertCircle size={16} />}
+						>
 							{errorMsg}
 						</Alert>
 					)}
@@ -142,4 +147,3 @@ export function NewBodyMetricForm() {
 		</Paper>
 	)
 }
-

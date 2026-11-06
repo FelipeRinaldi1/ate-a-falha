@@ -20,14 +20,14 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 export function PublicRoute({ children }: { children: React.ReactNode }) {
 	const { isAuthenticated, isLoading } = useAuth()
 	const location = useLocation()
-	
+
 	if (isLoading) return <div>Loading...</div>
-	
+
 	if (isAuthenticated) {
 		const searchParams = new URLSearchParams(location.search)
 		const redirect = searchParams.get('redirect')
-		return <Navigate to={redirect || "/workout"} replace />
+		return <Navigate to={redirect || '/workout'} replace />
 	}
-	
+
 	return <>{children}</>
 }

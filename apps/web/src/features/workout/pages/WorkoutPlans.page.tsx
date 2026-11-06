@@ -83,7 +83,7 @@ export function WorkoutPlansPage() {
 		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
 			if (selectedPlanForShare && selectedPlanForShare.id === variables.id) {
-				setSelectedPlanForShare((prev) => prev ? { ...prev, isExported: variables.isExported } : null)
+				setSelectedPlanForShare((prev) => (prev ? { ...prev, isExported: variables.isExported } : null))
 			}
 		},
 	})
@@ -113,7 +113,8 @@ export function WorkoutPlansPage() {
 			centered: true,
 			children: (
 				<Text size="sm">
-					Tem certeza que deseja excluir a ficha <strong>{plan.name}</strong> permanentemente? Esta ação excluirá todos os treinos vinculados a ela.
+					Tem certeza que deseja excluir a ficha <strong>{plan.name}</strong> permanentemente? Esta ação
+					excluirá todos os treinos vinculados a ela.
 				</Text>
 			),
 			labels: { confirm: 'Excluir', cancel: 'Cancelar' },
@@ -153,12 +154,23 @@ export function WorkoutPlansPage() {
 											cursor: 'pointer',
 											position: 'relative',
 											overflow: 'hidden',
-											border: plan.isActive ? '1.5px solid var(--mantine-primary-color-filled)' : undefined,
+											border: plan.isActive
+												? '1.5px solid var(--mantine-primary-color-filled)'
+												: undefined,
 										}}
 										onClick={() => navigate(`/workout/plans/${plan.id}/edit`)}
 									>
 										{/* Premium Gradient/Cover Image Header */}
-										<div style={{ height: '80px', overflow: 'hidden', borderTopLeftRadius: '7px', borderTopRightRadius: '7px', position: 'relative', margin: '-16px -16px 12px -16px' }}>
+										<div
+											style={{
+												height: '80px',
+												overflow: 'hidden',
+												borderTopLeftRadius: '7px',
+												borderTopRightRadius: '7px',
+												position: 'relative',
+												margin: '-16px -16px 12px -16px',
+											}}
+										>
 											{coverUrl ? (
 												<Image
 													src={coverUrl}
@@ -168,19 +180,25 @@ export function WorkoutPlansPage() {
 													fallbackSrc="https://placehold.co/400x80?text=Treino"
 												/>
 											) : (
-												<div style={{
-													height: '100%',
-													background: 'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
-												}} />
+												<div
+													style={{
+														height: '100%',
+														background:
+															'linear-gradient(135deg, var(--mantine-color-dark-8) 0%, var(--mantine-color-dark-5) 100%)',
+													}}
+												/>
 											)}
-											<div style={{
-												position: 'absolute',
-												top: 0,
-												left: 0,
-												right: 0,
-												bottom: 0,
-												background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6))',
-											}} />
+											<div
+												style={{
+													position: 'absolute',
+													top: 0,
+													left: 0,
+													right: 0,
+													bottom: 0,
+													background:
+														'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6))',
+												}}
+											/>
 										</div>
 
 										<Group justify="space-between" align="center" wrap="nowrap">
@@ -207,9 +225,15 @@ export function WorkoutPlansPage() {
 													color={plan.isActive ? 'red' : 'blue'}
 													onClick={(e) => {
 														e.stopPropagation()
-														togglePlanActiveMutation.mutate({ id: plan.id, isActive: !plan.isActive })
+														togglePlanActiveMutation.mutate({
+															id: plan.id,
+															isActive: !plan.isActive,
+														})
 													}}
-													loading={togglePlanActiveMutation.isPending && togglePlanActiveMutation.variables?.id === plan.id}
+													loading={
+														togglePlanActiveMutation.isPending &&
+														togglePlanActiveMutation.variables?.id === plan.id
+													}
 												>
 													{plan.isActive ? 'Desativar' : 'Ativar'}
 												</Button>
@@ -282,10 +306,7 @@ export function WorkoutPlansPage() {
 				</Stack>
 			</Container>
 
-			<ImportRoutineModal
-				opened={importModalOpen}
-				onClose={() => setImportModalOpen(false)}
-			/>
+			<ImportRoutineModal opened={importModalOpen} onClose={() => setImportModalOpen(false)} />
 
 			{/* Create Plan Modal */}
 			<Modal

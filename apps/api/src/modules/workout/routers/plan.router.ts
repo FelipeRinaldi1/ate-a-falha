@@ -30,4 +30,3 @@ planRouter.delete('/plans/:id', planController.delete)
 planRouter.post('/plans/:id/import', planController.import)
 
 export { planRouter }
-

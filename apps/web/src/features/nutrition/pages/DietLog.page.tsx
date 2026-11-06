@@ -353,8 +353,6 @@ export function DietLogPage() {
 
 	const weekDays = getWeekDays()
 
-
-
 	// Fallback/Default targets if no active diet is registered
 	const targets = {
 		kcal: activeDiet?.dailyKcalGoal || 2000,

@@ -15,17 +15,7 @@ import {
 	ThemeIcon,
 	Tooltip,
 } from '@mantine/core'
-import {
-	Bell,
-	CheckCheck,
-	Trash2,
-	Dumbbell,
-	Utensils,
-	Info,
-	AlertTriangle,
-	CheckCircle2,
-	Sparkles,
-} from 'lucide-react'
+import { Bell, CheckCheck, Trash2, Dumbbell, Utensils, Info, AlertTriangle, CheckCircle2, Sparkles } from 'lucide-react'
 import {
 	useNotifications,
 	useUnreadNotificationCount,
@@ -128,14 +118,7 @@ export function NotificationBell() {
 	}
 
 	return (
-		<Popover
-			opened={opened}
-			onChange={setOpened}
-			position="bottom-end"
-			withArrow
-			shadow="md"
-			width={360}
-		>
+		<Popover opened={opened} onChange={setOpened} position="bottom-end" withArrow shadow="md" width={360}>
 			<Popover.Target>
 				<Indicator
 					disabled={unreadCount === 0}

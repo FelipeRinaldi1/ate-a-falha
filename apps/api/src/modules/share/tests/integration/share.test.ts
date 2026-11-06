@@ -4,7 +4,10 @@ import app from '../../../../app.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 import { setupTestUser, cleanupTestUser } from '../../../../tests/auth.helper.js'
 import { setupTestWorkoutContext, cleanupTestWorkoutContext } from '../../../workout/tests/helpers/workout.helper.js'
-import { setupTestStandardContext, cleanupTestStandardContext } from '../../../nutrition/tests/helpers/nutrition.helper.js'
+import {
+	setupTestStandardContext,
+	cleanupTestStandardContext,
+} from '../../../nutrition/tests/helpers/nutrition.helper.js'
 import { prisma } from '@ate-a-falha/database'
 import { ShareLogic } from '@ate-a-falha/shared'
 

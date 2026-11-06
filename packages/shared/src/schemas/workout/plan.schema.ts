@@ -25,14 +25,16 @@ export const createPlanSchema = planSchema.pick({
 	isExported: true,
 })
 
-export const updatePlanSchema = planSchema.pick({
-	name: true,
-	goal: true,
-	isActive: true,
-	coverImageUrl: true,
-	coverExerciseId: true,
-	isExported: true,
-}).partial()
+export const updatePlanSchema = planSchema
+	.pick({
+		name: true,
+		goal: true,
+		isActive: true,
+		coverImageUrl: true,
+		coverExerciseId: true,
+		isExported: true,
+	})
+	.partial()
 
 export type PlanDTO = z.infer<typeof planSchema>
 export type CreatePlanDTO = z.infer<typeof createPlanSchema>

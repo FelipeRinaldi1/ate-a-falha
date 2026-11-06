@@ -11,7 +11,7 @@ const brandOrange: MantineColorsTuple = [
 	'#df6418',
 	'#c7500e',
 	'#9e3f0b',
-	'#7e3309'
+	'#7e3309',
 ]
 
 // N2 (6C5F5B), N3 (4F4A45), N4 (F6F1EE) incorporated into dark scale
@@ -25,7 +25,7 @@ const darkThemeScale: MantineColorsTuple = [
 	'#4F4A45', // 6: Card / elevated backgrounds (N3)
 	'#3B3733', // 7: Base dark container
 	'#2A2724', // 8: Deep background
-	'#1C1A18'  // 9: Deepest dark background
+	'#1C1A18', // 9: Deepest dark background
 ]
 
 export const theme = createTheme({
@@ -33,8 +33,8 @@ export const theme = createTheme({
 	primaryShade: { light: 5, dark: 5 },
 	colors: {
 		brand: brandOrange,
-		dark: darkThemeScale
+		dark: darkThemeScale,
 	},
 	fontFamily: 'Outfit, Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-	defaultRadius: 'md'
+	defaultRadius: 'md',
 })

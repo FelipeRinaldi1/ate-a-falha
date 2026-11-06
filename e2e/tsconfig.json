@@ -1,0 +1,14 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"strict": false,
+		"strictPropertyInitialization": false,
+		"strictNullChecks": false,
+		"noUncheckedIndexedAccess": false,
+		"types": ["node", "@playwright/test"]
+	},
+	"include": ["specs/**/*.ts", "fixtures/**/*.ts"]
+}

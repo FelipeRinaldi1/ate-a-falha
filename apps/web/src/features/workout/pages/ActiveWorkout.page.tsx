@@ -1,19 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import {
-	Container,
-	Stack,
-	Text,
-	Button,
-	Center,
-	Loader,
-	Paper,
-	Group,
-	Image,
-	Checkbox,
-	Divider,
-} from '@mantine/core'
+import { Container, Stack, Text, Button, Center, Loader, Paper, Group, Image, Checkbox, Divider } from '@mantine/core'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { api } from '../../../api/axiosInstance'
@@ -128,9 +116,7 @@ export function ActiveWorkoutPage() {
 			const month = String(today.getMonth() + 1).padStart(2, '0')
 			const day = String(today.getDate()).padStart(2, '0')
 			const todayStr = `${year}-${month}-${day}`
-			const storageKey = user?.id
-				? `ate-a-falha:completed-workouts:${user.id}`
-				: 'ate-a-falha:completed-workouts'
+			const storageKey = user?.id ? `ate-a-falha:completed-workouts:${user.id}` : 'ate-a-falha:completed-workouts'
 
 			const saved = localStorage.getItem(storageKey)
 			const completed = saved ? JSON.parse(saved) : {}
@@ -163,7 +149,7 @@ export function ActiveWorkoutPage() {
 		}
 		const sets = we.sets || []
 		if (sets.length === 0) return
-		
+
 		const allChecked = sets.every((s) => !!checkedItems[s.id])
 		const newChecked = { ...checkedItems }
 		sets.forEach((s) => {
@@ -206,7 +192,8 @@ export function ActiveWorkoutPage() {
 								const restSeconds = we.sets?.[0]?.restTimeSeconds ?? 60
 								const restTimeFormatted = formatRestDuration(restSeconds)
 								const remainingTimer = activeTimers[weId] || 0
-								const isExerciseCompleted = we.sets && we.sets.length > 0 && we.sets.every((s: SetDTO) => !!checkedItems[s.id])
+								const isExerciseCompleted =
+									we.sets && we.sets.length > 0 && we.sets.every((s: SetDTO) => !!checkedItems[s.id])
 
 								return (
 									<Paper
@@ -215,8 +202,12 @@ export function ActiveWorkoutPage() {
 										radius="md"
 										style={{
 											overflow: 'hidden',
-											backgroundColor: isExerciseCompleted ? 'rgba(40, 167, 69, 0.1)' : 'var(--mantine-color-dark-6)',
-											borderColor: isExerciseCompleted ? 'var(--mantine-color-green-7)' : 'var(--mantine-color-dark-4)',
+											backgroundColor: isExerciseCompleted
+												? 'rgba(40, 167, 69, 0.1)'
+												: 'var(--mantine-color-dark-6)',
+											borderColor: isExerciseCompleted
+												? 'var(--mantine-color-green-7)'
+												: 'var(--mantine-color-dark-4)',
 											transition: 'background-color 0.2s ease, border-color 0.2s ease',
 										}}
 									>
@@ -239,7 +230,16 @@ export function ActiveWorkoutPage() {
 													size="md"
 													styles={{ input: { cursor: 'pointer' } }}
 												/>
-												<div style={{ width: '60px', height: '60px', flexShrink: 0, overflow: 'hidden', borderRadius: '8px', backgroundColor: 'var(--mantine-color-dark-8)' }}>
+												<div
+													style={{
+														width: '60px',
+														height: '60px',
+														flexShrink: 0,
+														overflow: 'hidden',
+														borderRadius: '8px',
+														backgroundColor: 'var(--mantine-color-dark-8)',
+													}}
+												>
 													<Image
 														src={exerciseImageUrl}
 														w={60}
@@ -256,13 +256,21 @@ export function ActiveWorkoutPage() {
 														<Text size="xs" c="dimmed" fw={600}>
 															{totalSets} séries
 														</Text>
-														<Text size="xs" c="dimmed">•</Text>
+														<Text size="xs" c="dimmed">
+															•
+														</Text>
 														<Text size="xs" c="dimmed" fw={600}>
 															{restTimeFormatted} desc
 														</Text>
 													</Group>
 												</Stack>
-												<div style={{ color: 'var(--mantine-color-dark-2)', display: 'flex', alignItems: 'center' }}>
+												<div
+													style={{
+														color: 'var(--mantine-color-dark-2)',
+														display: 'flex',
+														alignItems: 'center',
+													}}
+												>
 													{isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
 												</div>
 											</Group>
@@ -272,29 +280,79 @@ export function ActiveWorkoutPage() {
 												<Stack gap="xs" px="md" pb="md">
 													<Divider color="dark.4" />
 
-													{we.exercise?.instructions && we.exercise.instructions.length > 0 && (
-														<div style={{ backgroundColor: 'var(--mantine-color-dark-8)', padding: '10px', borderRadius: '6px', border: '1px solid var(--mantine-color-dark-5)', marginBottom: '4px' }}>
-															<Text size="xs" fw={800} c="blue.4" mb={6}>
-																Instruções / Execução:
-															</Text>
-															<Stack gap={4}>
-																{we.exercise.instructions.map((step: string, i: number) => (
-																	<Text key={i} size="11px" style={{ lineHeight: 1.35 }}>
-																		<strong>{i + 1}.</strong> {step}
-																	</Text>
-																))}
-															</Stack>
-														</div>
-													)}
-													
+													{we.exercise?.instructions &&
+														we.exercise.instructions.length > 0 && (
+															<div
+																style={{
+																	backgroundColor: 'var(--mantine-color-dark-8)',
+																	padding: '10px',
+																	borderRadius: '6px',
+																	border: '1px solid var(--mantine-color-dark-5)',
+																	marginBottom: '4px',
+																}}
+															>
+																<Text size="xs" fw={800} c="blue.4" mb={6}>
+																	Instruções / Execução:
+																</Text>
+																<Stack gap={4}>
+																	{we.exercise.instructions.map(
+																		(step: string, i: number) => (
+																			<Text
+																				key={i}
+																				size="11px"
+																				style={{ lineHeight: 1.35 }}
+																			>
+																				<strong>{i + 1}.</strong> {step}
+																			</Text>
+																		)
+																	)}
+																</Stack>
+															</div>
+														)}
+
 													{/* Sets Table Header */}
-													<Group justify="space-between" px="xs" py={4} style={{ color: 'var(--mantine-color-gray-5)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+													<Group
+														justify="space-between"
+														px="xs"
+														py={4}
+														style={{
+															color: 'var(--mantine-color-gray-5)',
+															fontSize: '11px',
+															fontWeight: 700,
+															textTransform: 'uppercase',
+															letterSpacing: '0.5px',
+														}}
+													>
 														<Group gap="md" style={{ flex: 1 }} wrap="nowrap">
-															<Text size="11px" fw={700} style={{ width: '40px', textAlign: 'center' }}>Série</Text>
-															<Text size="11px" fw={700} style={{ width: '70px', textAlign: 'center' }}>Repetições</Text>
-															<Text size="11px" fw={700} style={{ width: '60px', textAlign: 'center' }}>Carga</Text>
+															<Text
+																size="11px"
+																fw={700}
+																style={{ width: '40px', textAlign: 'center' }}
+															>
+																Série
+															</Text>
+															<Text
+																size="11px"
+																fw={700}
+																style={{ width: '70px', textAlign: 'center' }}
+															>
+																Repetições
+															</Text>
+															<Text
+																size="11px"
+																fw={700}
+																style={{ width: '60px', textAlign: 'center' }}
+															>
+																Carga
+															</Text>
 														</Group>
-														<Text size="11px" fw={700} style={{ width: '40px', textAlign: 'center' }}>Feito</Text>
+														<Text
+															size="11px"
+															fw={700}
+															style={{ width: '40px', textAlign: 'center' }}
+														>
+															Feito
+														</Text>
 													</Group>
 
 													{we.sets?.map((s: SetDTO, idx: number) => {
@@ -306,7 +364,9 @@ export function ActiveWorkoutPage() {
 																p="xs"
 																radius="sm"
 																style={{
-																	backgroundColor: isChecked ? 'var(--mantine-color-dark-8)' : 'var(--mantine-color-dark-7)',
+																	backgroundColor: isChecked
+																		? 'var(--mantine-color-dark-8)'
+																		: 'var(--mantine-color-dark-7)',
 																	border: '1px solid var(--mantine-color-dark-5)',
 																	cursor: 'pointer',
 																	opacity: isChecked ? 0.6 : 1,
@@ -317,25 +377,51 @@ export function ActiveWorkoutPage() {
 																<Group justify="space-between" wrap="nowrap">
 																	<Group gap="md" style={{ flex: 1 }} wrap="nowrap">
 																		{/* Set Badge */}
-																		<Center style={{
-																			width: '40px',
-																			height: '24px',
-																			borderRadius: '4px',
-																			backgroundColor: isChecked ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-blue-9)',
-																			color: isChecked ? 'var(--mantine-color-dark-3)' : 'var(--mantine-color-blue-0)',
-																			fontWeight: 800,
-																			fontSize: '12px'
-																		}}>
+																		<Center
+																			style={{
+																				width: '40px',
+																				height: '24px',
+																				borderRadius: '4px',
+																				backgroundColor: isChecked
+																					? 'var(--mantine-color-dark-7)'
+																					: 'var(--mantine-color-blue-9)',
+																				color: isChecked
+																					? 'var(--mantine-color-dark-3)'
+																					: 'var(--mantine-color-blue-0)',
+																				fontWeight: 800,
+																				fontSize: '12px',
+																			}}
+																		>
 																			{idx + 1}
 																		</Center>
 
 																		{/* Reps */}
-																		<Text size="sm" fw={700} style={{ width: '70px', textAlign: 'center', textDecoration: isChecked ? 'line-through' : 'none' }}>
+																		<Text
+																			size="sm"
+																			fw={700}
+																			style={{
+																				width: '70px',
+																				textAlign: 'center',
+																				textDecoration: isChecked
+																					? 'line-through'
+																					: 'none',
+																			}}
+																		>
 																			{s.repetitions} reps
 																		</Text>
 
 																		{/* Weight */}
-																		<Text size="sm" fw={700} style={{ width: '60px', textAlign: 'center', textDecoration: isChecked ? 'line-through' : 'none' }}>
+																		<Text
+																			size="sm"
+																			fw={700}
+																			style={{
+																				width: '60px',
+																				textAlign: 'center',
+																				textDecoration: isChecked
+																					? 'line-through'
+																					: 'none',
+																			}}
+																		>
 																			{s.weight || 0} kg
 																		</Text>
 																	</Group>
@@ -362,8 +448,14 @@ export function ActiveWorkoutPage() {
 															p="xs"
 															radius="sm"
 															style={{
-																backgroundColor: remainingTimer > 0 ? 'rgba(34, 139, 230, 0.15)' : 'var(--mantine-color-dark-7)',
-																border: remainingTimer > 0 ? '1px solid var(--mantine-color-blue-6)' : '1px solid var(--mantine-color-dark-5)',
+																backgroundColor:
+																	remainingTimer > 0
+																		? 'rgba(34, 139, 230, 0.15)'
+																		: 'var(--mantine-color-dark-7)',
+																border:
+																	remainingTimer > 0
+																		? '1px solid var(--mantine-color-blue-6)'
+																		: '1px solid var(--mantine-color-dark-5)',
 																marginTop: '4px',
 																cursor: 'pointer',
 															}}

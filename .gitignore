@@ -158,3 +158,10 @@ packages/database/src/generated/*
 
 # TCC Documentation
 tcc-docs/
+
+
+# Playwright E2E artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
