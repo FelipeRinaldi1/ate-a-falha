@@ -86,7 +86,12 @@ export function CreateFoodPage() {
 							<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
 								<Stack gap="sm">
 									{errorMsg && (
-										<Alert variant="light" color="red" title="Erro" icon={<AlertCircle size={16} />}>
+										<Alert
+											variant="light"
+											color="red"
+											title="Erro"
+											icon={<AlertCircle size={16} />}
+										>
 											{errorMsg}
 										</Alert>
 									)}
@@ -96,7 +101,6 @@ export function CreateFoodPage() {
 										required
 										{...form.getInputProps('name')}
 									/>
-
 
 									<NumberInput
 										label="Quantidade de Referência (g)"

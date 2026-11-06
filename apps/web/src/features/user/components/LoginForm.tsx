@@ -46,12 +46,7 @@ export function LoginForm() {
 						</Alert>
 					)}
 					<TextInput label="Email" placeholder="seu@email.com" required {...form.getInputProps('email')} />
-					<PasswordInput
-						label="Senha"
-						placeholder="Sua senha"
-						required
-						{...form.getInputProps('password')}
-					/>
+					<PasswordInput label="Senha" placeholder="Sua senha" required {...form.getInputProps('password')} />
 					<Button type="submit" fullWidth mt="xl" loading={mutation.isPending}>
 						Entrar
 					</Button>
@@ -60,4 +55,3 @@ export function LoginForm() {
 		</Paper>
 	)
 }
-

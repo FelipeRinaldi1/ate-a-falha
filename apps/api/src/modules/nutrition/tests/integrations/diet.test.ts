@@ -276,9 +276,7 @@ describe('Diet Plan Integration Tests', () => {
 		test('Should fail to export diet if isExported is false', async () => {
 			const diet = await setupTestDiet(user1Context.cookie || '', 'Private Diet')
 
-			const result = await request(app)
-				.get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`)
-				.send()
+			const result = await request(app).get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`).send()
 
 			expect(result.status).toBe(404)
 		})
@@ -291,9 +289,7 @@ describe('Diet Plan Integration Tests', () => {
 				data: { isExported: true },
 			})
 
-			const result = await request(app)
-				.get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`)
-				.send()
+			const result = await request(app).get(`${BASE_API_URL}/nutrition/diets/${diet.id}/export`).send()
 
 			expect(result.status).toBe(200)
 			expect(result.body.id).toBe(diet.id)

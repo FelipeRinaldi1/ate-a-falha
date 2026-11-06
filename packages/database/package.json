@@ -1,8 +1,15 @@
 {
 	"name": "@ate-a-falha/database",
 	"version": "1.0.0",
+	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
 	"scripts": {
 		"build": "npm run db:generate && tsc -b && shx mkdir -p dist/generated && shx cp -r src/generated/* dist/generated/",
 		"db:generate": "prisma generate",

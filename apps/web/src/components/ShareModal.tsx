@@ -64,7 +64,8 @@ export function ShareModal({
 		>
 			<Stack gap="md">
 				<Text size="sm" c="dimmed">
-					Ao ativar o compartilhamento, qualquer pessoa com o código, link ou QR Code poderá visualizar e importar uma cópia deste {resourceType === 'workout' ? 'treino' : 'dieta'}.
+					Ao ativar o compartilhamento, qualquer pessoa com o código, link ou QR Code poderá visualizar e
+					importar uma cópia deste {resourceType === 'workout' ? 'treino' : 'dieta'}.
 				</Text>
 
 				<Switch
@@ -92,11 +93,7 @@ export function ShareModal({
 											Código Rápido de Importação
 										</Text>
 									</Group>
-									<Text
-										fw={900}
-										size="xl"
-										style={{ letterSpacing: '2px', fontFamily: 'monospace' }}
-									>
+									<Text fw={900} size="xl" style={{ letterSpacing: '2px', fontFamily: 'monospace' }}>
 										{shareCode}
 									</Text>
 								</Stack>

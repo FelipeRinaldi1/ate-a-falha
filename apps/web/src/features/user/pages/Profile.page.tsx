@@ -81,9 +81,7 @@ export function ProfilePage() {
 	const openEditProfileModal = () => {
 		setEditName(user.name)
 		setEditGender(user.gender || 'MALE')
-		const formattedBirth = user.birthDate
-			? new Date(user.birthDate).toISOString().split('T')[0]
-			: ''
+		const formattedBirth = user.birthDate ? new Date(user.birthDate).toISOString().split('T')[0] : ''
 		setEditBirthDate(formattedBirth)
 		setOldPassword('')
 		setNewPassword('')
@@ -501,12 +499,7 @@ export function ProfilePage() {
 										{ value: 'OTHER', label: 'Outro' },
 									]}
 								/>
-								<Button
-									fullWidth
-									mt="xs"
-									loading={isSavingProfile}
-									onClick={handleSaveProfile}
-								>
+								<Button fullWidth mt="xs" loading={isSavingProfile} onClick={handleSaveProfile}>
 									Salvar Alterações
 								</Button>
 							</Stack>

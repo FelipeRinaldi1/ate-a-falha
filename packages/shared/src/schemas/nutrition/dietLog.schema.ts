@@ -11,11 +11,13 @@ export const dietLogSchema = z.object({
 	updatedAt: z.date(),
 })
 
-export const createDietLogSchema = dietLogSchema.pick({
-	date: true,
-}).extend({
-	waterIntake: z.number().nonnegative().optional(),
-})
+export const createDietLogSchema = dietLogSchema
+	.pick({
+		date: true,
+	})
+	.extend({
+		waterIntake: z.number().nonnegative().optional(),
+	})
 
 export const updateDietLogSchema = createDietLogSchema.partial()
 

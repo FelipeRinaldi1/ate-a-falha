@@ -9,7 +9,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const envPath = path.resolve(__dirname, '../../../apps/api/.env')
 dotenv.config({ path: envPath })
 
-
 const globalForPrisma = globalThis as unknown as {
 	prisma: PrismaClient | undefined
 }
@@ -21,7 +20,8 @@ const pool = new Pool({
 	max: 10,
 	idleTimeoutMillis: 30000,
 	connectionTimeoutMillis: 15000,
-	ssl: isProduction ? { rejectUnauthorized: false } : false
+	allowExitOnIdle: true,
+	ssl: isProduction ? { rejectUnauthorized: false } : false,
 })
 const adapter = new PrismaPg(pool)
 

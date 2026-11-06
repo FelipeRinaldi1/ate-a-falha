@@ -34,31 +34,31 @@ export class WorkoutExerciseRepository implements IWorkoutExerciseRepository {
 	}
 	async update(id: string, data: UpdateWorkoutExerciseDTO, _userId: string): Promise<Result<WorkoutExerciseFull>> {
 		const result = await safeCall(
- 			prisma.workoutExercise.update({
- 				where: { id },
- 				data: {
- 					...data,
- 				},
- 				include: {
- 					sets: true,
- 					exercise: true,
- 				},
- 			})
- 		)
- 		if (result.isFailure()) return failure(result.error)
+			prisma.workoutExercise.update({
+				where: { id },
+				data: {
+					...data,
+				},
+				include: {
+					sets: true,
+					exercise: true,
+				},
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
 
- 		return success(result.value)
- 	}
- 	async delete(id: string, _userId: string): Promise<Result<void>> {
- 		const result = await safeCall(
- 			prisma.workoutExercise.delete({
- 				where: { id },
- 			})
- 		)
- 		if (result.isFailure()) return failure(result.error)
+		return success(result.value)
+	}
+	async delete(id: string, _userId: string): Promise<Result<void>> {
+		const result = await safeCall(
+			prisma.workoutExercise.delete({
+				where: { id },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
 
- 		return success(undefined)
- 	}
+		return success(undefined)
+	}
 	async findAll(workoutId: string, userId: string): Promise<Result<WorkoutExerciseFull[]>> {
 		const result = await safeCall(
 			prisma.workoutExercise.findMany({

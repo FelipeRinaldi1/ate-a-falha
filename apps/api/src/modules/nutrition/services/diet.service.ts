@@ -63,8 +63,7 @@ export class DietService {
 
 		if (access.isFailure()) return failure(access.error)
 
-		const previousLog =
-			data.waterIntake !== undefined ? await this.dietRepo.findLogById(id, authUser.id) : null
+		const previousLog = data.waterIntake !== undefined ? await this.dietRepo.findLogById(id, authUser.id) : null
 
 		const result = await this.dietRepo.updateLog(id, data, authUser.id)
 

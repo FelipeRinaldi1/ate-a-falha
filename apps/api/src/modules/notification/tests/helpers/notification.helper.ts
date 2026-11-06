@@ -9,10 +9,7 @@ export const setupTestNotification = async (
 	customData?: Partial<CreateNotificationDTO>
 ): Promise<NotificationDTO> => {
 	const data = overrideNotificationMock(customData)
-	const res = await request(app)
-		.post(`${BASE_API_URL}/notifications`)
-		.set('Cookie', cookie)
-		.send(data)
+	const res = await request(app).post(`${BASE_API_URL}/notifications`).set('Cookie', cookie).send(data)
 
 	if (res.status !== 201) {
 		throw new Error(`Failed to create test notification. Status: ${res.status}, body: ${JSON.stringify(res.body)}`)

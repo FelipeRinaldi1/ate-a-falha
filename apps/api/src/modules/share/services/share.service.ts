@@ -1,11 +1,5 @@
 import { prisma, safeCall } from '@ate-a-falha/database'
-import {
-	ShareLogic,
-	type ShareLookupResponseDTO,
-	type Result,
-	success,
-	failure,
-} from '@ate-a-falha/shared'
+import { ShareLogic, type ShareLookupResponseDTO, type Result, success, failure } from '@ate-a-falha/shared'
 
 export class ShareService {
 	async lookupByCode(rawCode: string): Promise<Result<ShareLookupResponseDTO>> {

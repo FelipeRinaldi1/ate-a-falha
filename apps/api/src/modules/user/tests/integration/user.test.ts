@@ -216,7 +216,7 @@ describe('user Tests', () => {
 				.send(userContext.user.id)
 
 			expect(result.status).toBe(HTTP_STATUS.OK)
-			
+
 			// Nullify userContext so afterEach doesn't attempt to double-delete an already deleted user
 			userContext = null as any
 		})

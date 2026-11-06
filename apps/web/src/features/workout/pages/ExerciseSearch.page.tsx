@@ -74,13 +74,7 @@ const ExerciseCardItem = memo(function ExerciseCardItem({
 	const exerciseImageUrl = getExerciseImageUrl(imagePath, true)
 
 	return (
-		<Card
-			withBorder
-			p="sm"
-			radius="md"
-			style={{ cursor: 'pointer' }}
-			onClick={() => onSelect(exercise.id)}
-		>
+		<Card withBorder p="sm" radius="md" style={{ cursor: 'pointer' }} onClick={() => onSelect(exercise.id)}>
 			<Group gap="md" wrap="nowrap" align="center">
 				<div style={{ width: '80px', height: '80px', flexShrink: 0, overflow: 'hidden', borderRadius: '8px' }}>
 					<Image
@@ -157,14 +151,9 @@ export function ExerciseSearchPage() {
 	)
 
 	// Infinite Query: Fetches exercises per page from the backend database with active filters
-	const {
-		data,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
-		isLoading,
-		isFetching,
-	} = useInfiniteQuery<ExerciseDTO[]>({
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isFetching } = useInfiniteQuery<
+		ExerciseDTO[]
+	>({
 		queryKey: ['exercise-catalog-infinite', debouncedSearch, selectedCategory, selectedMuscle],
 		queryFn: async ({ pageParam }) => {
 			const res = await api.get('/workout/exercise-catalog', {
@@ -275,7 +264,15 @@ export function ExerciseSearchPage() {
 								))}
 
 								{/* Infinite Scroll Trigger Indicator */}
-								<div ref={observerTarget} style={{ height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+								<div
+									ref={observerTarget}
+									style={{
+										height: '40px',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center',
+									}}
+								>
 									{isFetchingNextPage && <Loader size="sm" />}
 								</div>
 							</>

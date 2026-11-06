@@ -148,11 +148,7 @@ export function MetricsEvolutionPage() {
 			title="Evolução Corporal"
 			onBack={() => goBack('/profile')}
 			actions={
-				<Button
-					variant="light"
-					size="xs"
-					onClick={() => navigate('/profile/new-metric')}
-				>
+				<Button variant="light" size="xs" onClick={() => navigate('/profile/new-metric')}>
 					Registrar Métrica
 				</Button>
 			}
@@ -174,7 +170,10 @@ export function MetricsEvolutionPage() {
 										Peso Atual
 									</Text>
 									<Text size="xl" fw={800}>
-										{latestMetric.weight} <Text span size="sm" fw={500} c="dimmed">kg</Text>
+										{latestMetric.weight}{' '}
+										<Text span size="sm" fw={500} c="dimmed">
+											kg
+										</Text>
 									</Text>
 								</Stack>
 								<Paper p="xs" radius="md" bg="var(--mantine-color-dark-6)">
@@ -218,7 +217,10 @@ export function MetricsEvolutionPage() {
 										Composição
 									</Text>
 									<Text size="xl" fw={800}>
-										{latestMetric.bodyFat ? `${latestMetric.bodyFat}%` : '--'} <Text span size="xs" c="dimmed">Gord</Text>
+										{latestMetric.bodyFat ? `${latestMetric.bodyFat}%` : '--'}{' '}
+										<Text span size="xs" c="dimmed">
+											Gord
+										</Text>
 									</Text>
 								</Stack>
 								<Paper p="xs" radius="md" bg="var(--mantine-color-dark-6)">
@@ -260,8 +262,8 @@ export function MetricsEvolutionPage() {
 									{selectedTab === 'weight'
 										? 'Progressão de Peso (kg)'
 										: selectedTab === 'bmi'
-										? 'Progressão de IMC'
-										: 'Percentuais de Gordura e Massa Muscular (%)'}
+											? 'Progressão de IMC'
+											: 'Percentuais de Gordura e Massa Muscular (%)'}
 								</Text>
 								<Text size="xs" c="dimmed">
 									Últimos {chartData.length} registros
@@ -287,4 +289,3 @@ export function MetricsEvolutionPage() {
 		</MainLayout>
 	)
 }
-

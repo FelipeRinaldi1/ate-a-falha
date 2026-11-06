@@ -1,10 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import { NotificationService } from '../services/notification.service.js'
-import {
-	createNotificationSchema,
-	notificationSearchSchema,
-	validateData,
-} from '@ate-a-falha/shared'
+import { createNotificationSchema, notificationSearchSchema, validateData } from '@ate-a-falha/shared'
 import { z } from 'zod'
 import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 

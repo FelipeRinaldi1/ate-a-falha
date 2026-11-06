@@ -24,11 +24,7 @@ interface ImportRoutineModalProps {
 	defaultMode?: 'code' | 'camera'
 }
 
-export function ImportRoutineModal({
-	opened,
-	onClose,
-	defaultMode = 'code',
-}: ImportRoutineModalProps) {
+export function ImportRoutineModal({ opened, onClose, defaultMode = 'code' }: ImportRoutineModalProps) {
 	const navigate = useNavigate()
 	const [mode, setMode] = useState<'code' | 'camera'>(defaultMode)
 	const [codeInput, setCodeInput] = useState('')
@@ -75,9 +71,7 @@ export function ImportRoutineModal({
 					? `${parsed.resourceType === 'workout' ? 'T' : 'D'}-${parsed.codeOrId}`
 					: parsed.codeOrId
 
-				const res = await api.get<ShareLookupResponseDTO>(
-					`/share/lookup/${encodeURIComponent(lookupParam)}`
-				)
+				const res = await api.get<ShareLookupResponseDTO>(`/share/lookup/${encodeURIComponent(lookupParam)}`)
 				const { resourceType, resourceId } = res.data
 
 				stopCamera()
@@ -238,7 +232,12 @@ export function ImportRoutineModal({
 				/>
 
 				{errorMsg && (
-					<Alert color="red" variant="light" title="Não foi possível localizar" icon={<AlertCircle size={16} />}>
+					<Alert
+						color="red"
+						variant="light"
+						title="Não foi possível localizar"
+						icon={<AlertCircle size={16} />}
+					>
 						{errorMsg}
 					</Alert>
 				)}
@@ -297,11 +296,7 @@ export function ImportRoutineModal({
 							>
 								<Stack gap="xs">
 									<Text size="xs">{cameraError}</Text>
-									<Button
-										size="xs"
-										variant="light"
-										onClick={() => setMode('code')}
-									>
+									<Button size="xs" variant="light" onClick={() => setMode('code')}>
 										Digitar código manualmente
 									</Button>
 								</Stack>

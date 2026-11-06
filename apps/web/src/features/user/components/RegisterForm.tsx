@@ -57,7 +57,6 @@ export function RegisterForm() {
 					)}
 					<TextInput label="Nome" placeholder="Nome completo" required {...form.getInputProps('name')} />
 
-
 					<TextInput
 						label="Email"
 						placeholder="seu@email.com"
