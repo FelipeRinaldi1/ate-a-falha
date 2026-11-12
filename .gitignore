@@ -166,3 +166,6 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+
+# Skills backup
+.skills_backup/
