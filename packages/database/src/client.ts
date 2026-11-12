@@ -15,7 +15,7 @@ const pool = new Pool({
 	connectionTimeoutMillis: 15000,
 	allowExitOnIdle: true,
 	ssl: isProduction
-		? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' }
+		? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === 'true' }
 		: false,
 })
 const adapter = new PrismaPg(pool)

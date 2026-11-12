@@ -38,6 +38,7 @@ app.get(['/health', `${BASE_API_URL}/health`], async (_req, res) => {
 		await prisma.$queryRaw`SELECT 1`
 		res.status(200).json({ status: 'ok', database: 'connected' })
 	} catch (error) {
+		logger.error({ err: error }, '[Health] Database connection failed')
 		res.status(500).json({ status: 'error', database: 'disconnected' })
 	}
 })
