@@ -16,16 +16,15 @@ import {
 	Image,
 } from '@mantine/core'
 import { ChevronRight, Plus, Trash2, Share2, QrCode } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
 import { type PlanDTO } from '@ate-a-falha/shared'
 import { ShareModal } from '../../../components/ShareModal'
 import { ImportRoutineModal } from '../../../components/ImportRoutineModal'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
+import { usePlans, useCreatePlan, useUpdatePlan, useDeletePlan } from '../hooks/useWorkout'
 
 const GOAL_LABELS: Record<string, string> = {
 	forca: 'Força',
@@ -36,7 +35,6 @@ const GOAL_LABELS: Record<string, string> = {
 export function WorkoutPlansPage() {
 	const navigate = useNavigate()
 	const goBack = useGoBack('/workout')
-	const queryClient = useQueryClient()
 	const [createModalOpen, setCreateModalOpen] = useState(false)
 	const [shareModalOpen, setShareModalOpen] = useState(false)
 	const [importModalOpen, setImportModalOpen] = useState(false)
@@ -44,59 +42,44 @@ export function WorkoutPlansPage() {
 	const [newPlanName, setNewPlanName] = useState('')
 	const [newPlanGoal, setNewPlanGoal] = useState<'forca' | 'hipertrofia' | 'resistencia'>('hipertrofia')
 
-	const { data: plans = [], isLoading } = useQuery<PlanDTO[]>({
-		queryKey: ['workout-plans'],
-		queryFn: async () => {
-			const res = await api.get('/workout/plans')
-			return res.data
-		},
-	})
+	const { data: plans = [], isLoading } = usePlans()
 
-	const createPlanMutation = useMutation({
-		mutationFn: async (data: { name: string; goal: string }) => {
-			const res = await api.post('/workout/plans', data)
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
-			setCreateModalOpen(false)
-			setNewPlanName('')
-			setNewPlanGoal('hipertrofia')
-		},
-	})
+	const baseCreatePlan = useCreatePlan()
+	const createPlanMutation = {
+		...baseCreatePlan,
+		mutate: (data: { name: string; goal: string }) =>
+			baseCreatePlan.mutate(data, {
+				onSuccess: () => {
+					setCreateModalOpen(false)
+					setNewPlanName('')
+					setNewPlanGoal('hipertrofia')
+				},
+			}),
+	}
 
-	// Mutation: Toggle active plan
-	const togglePlanActiveMutation = useMutation({
-		mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-			return api.patch(`/workout/plans/${id}`, { isActive })
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
-		},
-	})
+	const baseUpdatePlan = useUpdatePlan()
+	const togglePlanActiveMutation = {
+		...baseUpdatePlan,
+		mutate: ({ id, isActive }: { id: string; isActive: boolean }) =>
+			baseUpdatePlan.mutate({ id, data: { isActive } }),
+	}
 
-	// Mutation: Toggle isExported plan
-	const togglePlanExportMutation = useMutation({
-		mutationFn: async ({ id, isExported }: { id: string; isExported: boolean }) => {
-			return api.patch(`/workout/plans/${id}`, { isExported })
-		},
-		onSuccess: (_, variables) => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
-			if (selectedPlanForShare && selectedPlanForShare.id === variables.id) {
-				setSelectedPlanForShare((prev) => (prev ? { ...prev, isExported: variables.isExported } : null))
-			}
-		},
-	})
+	const togglePlanExportMutation = {
+		...baseUpdatePlan,
+		mutate: ({ id, isExported }: { id: string; isExported: boolean }) =>
+			baseUpdatePlan.mutate(
+				{ id, data: { isExported } },
+				{
+					onSuccess: () => {
+						if (selectedPlanForShare && selectedPlanForShare.id === id) {
+							setSelectedPlanForShare((prev) => (prev ? { ...prev, isExported } : null))
+						}
+					},
+				}
+			),
+	}
 
-	// Mutation: Delete plan
-	const deletePlanMutation = useMutation({
-		mutationFn: async (id: string) => {
-			return api.delete(`/workout/plans/${id}`)
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
-		},
-	})
+	const deletePlanMutation = useDeletePlan()
 
 	const handleCreatePlan = () => {
 		if (newPlanName.trim().length < 3) return
@@ -361,7 +344,7 @@ export function WorkoutPlansPage() {
 					onToggleExport={async (newVal) => {
 						await togglePlanExportMutation.mutateAsync({
 							id: selectedPlanForShare.id,
-							isExported: newVal,
+							data: { isExported: newVal },
 						})
 					}}
 					loading={togglePlanExportMutation.isPending}

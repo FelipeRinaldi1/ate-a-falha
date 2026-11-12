@@ -1,5 +1,15 @@
-import { CreateNotificationDTO, NotificationSearchDTO, NotificationListResponseDTO, Result } from '@ate-a-falha/shared'
+import {
+	CreateNotificationDTO,
+	NotificationSearchDTO,
+	NotificationListResponseDTO,
+	Result,
+	authenticatedUser,
+} from '@ate-a-falha/shared'
 import { NotificationFull } from '@ate-a-falha/database'
+
+export interface INotificationService {
+	create(data: CreateNotificationDTO, authUser: authenticatedUser): Promise<Result<NotificationFull>>
+}
 
 export interface INotificationRepository {
 	create(data: CreateNotificationDTO, userId: string): Promise<Result<NotificationFull>>

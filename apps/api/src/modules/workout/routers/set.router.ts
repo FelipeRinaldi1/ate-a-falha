@@ -16,6 +16,7 @@ const setController = new SetController(setService)
 setRouter.use(ensureAuthenticated)
 
 setRouter.post('/workout-exercises/:workoutExerciseId/sets', setController.create)
+setRouter.put('/workout-exercises/:workoutExerciseId/sets', setController.replaceAll)
 setRouter.get('/workout-exercises/:workoutExerciseId/sets', setController.findAll)
 setRouter.get('/sets/:id', setController.findById)
 setRouter.patch('/sets/:id', setController.update)

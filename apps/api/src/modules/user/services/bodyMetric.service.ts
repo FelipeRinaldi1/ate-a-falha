@@ -12,15 +12,15 @@ import { type BodyMetricFull } from '@ate-a-falha/database'
 import type { IBodyMetricRepository } from '../interfaces/bodyMetric.interface.js'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
 import { UserAccessControlService } from './userAccessControl.service.js'
-import type { INotificationRepository } from '../../notification/interfaces/notification.interface.js'
-import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import type { INotificationService } from '../../notification/interfaces/notification.interface.js'
+import { logger } from '../../../config/logger.js'
 
 export class BodyMetricService {
 	constructor(
 		private readonly bodyMetricRepository: IBodyMetricRepository,
 		private readonly userRepository: IUserRepository,
 		private readonly accessControl: UserAccessControlService,
-		private readonly notificationRepository: INotificationRepository = new NotificationRepository()
+		private readonly notificationService: INotificationService
 	) {}
 
 	private calculateAge(birthDate: Date): number {
@@ -41,13 +41,8 @@ export class BodyMetricService {
 		const user = userResult.value
 
 		const age = this.calculateAge(user.birthDate)
-		const bmi = BodyMetricLogic.calculateBMI(data.weight, data.height / 100)
-		const bmr = BodyMetricLogic.calculateBMR(
-			user.gender === 'FEMALE' ? 'FEMALE' : 'MALE',
-			data.weight,
-			data.height,
-			age
-		)
+		const bmi = BodyMetricLogic.calculateBMI(data.weight, data.height)
+		const bmr = BodyMetricLogic.calculateBMR(user.gender, data.weight, data.height, age)
 		const tdee = BodyMetricLogic.calculateTDEE(bmr, data.activityLevel)
 
 		const result = await this.bodyMetricRepository.create({ ...data, bmi, bmr, tdee }, authUser.id)
@@ -56,15 +51,18 @@ export class BodyMetricService {
 			return failure(result.error)
 		}
 
-		await this.notificationRepository.create(
+		const notifResult = await this.notificationService.create(
 			{
 				title: 'Evolução Física Atualizada',
 				message: `Nova avaliação registrada: ${data.weight}kg (IMC: ${bmi.toFixed(1)}).`,
 				type: 'SUCCESS',
 				link: '/profile/evolution',
 			},
-			authUser.id
+			authUser
 		)
+		if (notifResult.isFailure()) {
+			logger.warn({ err: notifResult.error, userId: authUser.id }, 'Failed to create body metric notification')
+		}
 
 		return success(result.value)
 	}
@@ -73,7 +71,8 @@ export class BodyMetricService {
 		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
-		const result = await this.bodyMetricRepository.findById(id, authUser.id)
+		const ownerScope = authUser.role === 'ADMIN' ? undefined : authUser.id
+		const result = await this.bodyMetricRepository.findById(id, ownerScope)
 		if (result.isFailure()) return failure(result.error)
 
 		return success(result.value)
@@ -92,13 +91,14 @@ export class BodyMetricService {
 		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
-		const existingResult = await this.bodyMetricRepository.findById(id, authUser.id)
+		const ownerScope = authUser.role === 'ADMIN' ? undefined : authUser.id
+		const existingResult = await this.bodyMetricRepository.findById(id, ownerScope)
 		if (existingResult.isFailure()) {
 			return failure(existingResult.error)
 		}
 		const existing = existingResult.value
 
-		const userResult = await this.userRepository.findById(authUser.id)
+		const userResult = await this.userRepository.findById(existing.userId)
 		if (userResult.isFailure()) {
 			return failure(userResult.error)
 		}
@@ -109,11 +109,11 @@ export class BodyMetricService {
 		const activityLevel = data.activityLevel ?? existing.activityLevel
 
 		const age = this.calculateAge(user.birthDate)
-		const bmi = BodyMetricLogic.calculateBMI(weight, height / 100)
-		const bmr = BodyMetricLogic.calculateBMR(user.gender === 'FEMALE' ? 'FEMALE' : 'MALE', weight, height, age)
+		const bmi = BodyMetricLogic.calculateBMI(weight, height)
+		const bmr = BodyMetricLogic.calculateBMR(user.gender, weight, height, age)
 		const tdee = BodyMetricLogic.calculateTDEE(bmr, activityLevel)
 
-		const result = await this.bodyMetricRepository.update(id, { ...data, bmi, bmr, tdee }, authUser.id)
+		const result = await this.bodyMetricRepository.update(id, { ...data, bmi, bmr, tdee }, existing.userId)
 
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
@@ -123,7 +123,11 @@ export class BodyMetricService {
 		const access = await this.accessControl.canAccessBodyMetric(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
-		const result = await this.bodyMetricRepository.delete(id, authUser.id)
+		const ownerScope = authUser.role === 'ADMIN' ? undefined : authUser.id
+		const existingResult = await this.bodyMetricRepository.findById(id, ownerScope)
+		if (existingResult.isFailure()) return failure(existingResult.error)
+
+		const result = await this.bodyMetricRepository.delete(id, existingResult.value.userId)
 
 		if (result.isFailure()) {
 			return failure(result.error)
@@ -132,13 +136,35 @@ export class BodyMetricService {
 		return success(result.value)
 	}
 
-	async hasBodyMetrics(userId: string): Promise<boolean> {
+	async recalculateLatestForUser(user: {
+		id: string
+		birthDate: Date
+		gender: 'MALE' | 'FEMALE' | 'OTHER'
+	}): Promise<Result<void>> {
+		const listResult = await this.bodyMetricRepository.findAll({ take: 1 }, user.id)
+		if (listResult.isFailure()) return failure(listResult.error)
+
+		const latest = listResult.value[0]
+		if (!latest) return success(undefined)
+
+		const age = this.calculateAge(user.birthDate)
+		const bmi = BodyMetricLogic.calculateBMI(latest.weight, latest.height)
+		const bmr = BodyMetricLogic.calculateBMR(user.gender, latest.weight, latest.height, age)
+		const tdee = BodyMetricLogic.calculateTDEE(bmr, latest.activityLevel)
+
+		const updateResult = await this.bodyMetricRepository.update(latest.id, { bmi, bmr, tdee }, user.id)
+		if (updateResult.isFailure()) return failure(updateResult.error)
+
+		return success(undefined)
+	}
+
+	async hasBodyMetrics(userId: string): Promise<Result<boolean>> {
 		const result = await this.bodyMetricRepository.countBodyMetrics(userId)
 
 		if (result.isFailure()) {
-			throw result.error
+			return failure(result.error)
 		}
 
-		return result.value > 0
+		return success(result.value > 0)
 	}
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	Container,
 	Stack,
@@ -20,8 +20,9 @@ import {
 import { Trash2, Pencil, PlusCircle } from 'lucide-react'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { NutritionLogic, type MealLogDTO, type FoodLogDTO } from '@ate-a-falha/shared'
+import { nutritionApi } from '../api/nutritionApi'
+import { NUTRITION_QUERY_KEYS, useMealLog } from '../hooks/useNutrition'
+import { NutritionLogic, type FoodLogDTO } from '@ate-a-falha/shared'
 import { useGoBack } from '../../../utils/navigation'
 
 export function MealDetailsPage() {
@@ -39,57 +40,43 @@ export function MealDetailsPage() {
 	const [editQuantity, setEditQuantity] = useState<number>(100)
 
 	// Fetch Meal details
-	const { data: meal, isLoading: isLoadingMeal } = useQuery<MealLogDTO>({
-		queryKey: ['meal-log', id],
-		queryFn: async () => {
-			const res = await api.get(`/nutrition/meal-logs/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-	})
+	const { data: meal, isLoading: isLoadingMeal } = useMealLog(id)
 
 	// Mutation: Update Meal name/time
 	const updateMealMutation = useMutation({
-		mutationFn: async ({ name, time }: { name: string; time: string }) => {
-			return api.patch(`/nutrition/meal-logs/${id}`, { name, time })
-		},
+		mutationFn: ({ name, time }: { name: string; time: string }) => nutritionApi.updateMealLog(id!, { name, time }),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['meal-log', id] })
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.mealLog(id) })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 			setEditOpened(false)
 		},
 	})
 
 	// Mutation: Delete Food from Meal Log
 	const removeFoodMutation = useMutation({
-		mutationFn: async (foodLogId: string) => {
-			return api.delete(`/nutrition/food-logs/${foodLogId}`)
-		},
+		mutationFn: (foodLogId: string) => nutritionApi.deleteFoodLog(foodLogId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['meal-log', id] })
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.mealLog(id) })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 		},
 	})
 
 	// Mutation: Update Food portion quantity
 	const updateFoodPortionMutation = useMutation({
-		mutationFn: async ({ foodLogId, quantity }: { foodLogId: string; quantity: number }) => {
-			return api.patch(`/nutrition/food-logs/${foodLogId}`, { quantity })
-		},
+		mutationFn: ({ foodLogId, quantity }: { foodLogId: string; quantity: number }) =>
+			nutritionApi.updateFoodLog(foodLogId, { quantity }),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['meal-log', id] })
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.mealLog(id) })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 			setEditingFood(null)
 		},
 	})
 
 	// Mutation: Exclude whole Meal Log
 	const deleteMealMutation = useMutation({
-		mutationFn: async () => {
-			return api.delete(`/nutrition/meal-logs/${id}`)
-		},
+		mutationFn: () => nutritionApi.deleteMealLog(id!),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 			setEditOpened(false)
 			goBack('/nutrition')
 		},

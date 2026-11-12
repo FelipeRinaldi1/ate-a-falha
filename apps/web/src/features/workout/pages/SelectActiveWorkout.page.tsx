@@ -1,10 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { Container, Stack, Text, Button, Center, Loader, Paper, Group } from '@mantine/core'
 import { Dumbbell } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { type PlanDTO, type WorkoutDTO } from '@ate-a-falha/shared'
+import { usePlanDetail } from '../hooks/useWorkout'
+import { type WorkoutDTO } from '@ate-a-falha/shared'
 import { useGoBack } from '../../../utils/navigation'
 
 export function SelectActiveWorkoutPage() {
@@ -12,14 +11,7 @@ export function SelectActiveWorkoutPage() {
 	const navigate = useNavigate()
 	const goBack = useGoBack('/workout')
 
-	const { data: plan, isLoading } = useQuery<PlanDTO>({
-		queryKey: ['workout-plans-detail', id],
-		queryFn: async () => {
-			const res = await api.get(`/workout/plans/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-	})
+	const { data: plan, isLoading } = usePlanDetail(id)
 
 	const workouts = plan?.workouts || []
 

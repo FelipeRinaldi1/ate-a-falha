@@ -43,13 +43,43 @@ export class FoodService {
 		const access = await this.accessControl.canAccessFood(id, authUser)
 		if (access.isFailure()) return failure(access.error)
 
+		const existingResult = await this.foodRepository.findById(id)
+		if (existingResult.isFailure()) return failure(existingResult.error)
+		const existing = existingResult.value
+
+		if (existing.userId === null) {
+			const globalAccess = await this.accessControl.canManageGlobalFoods(authUser)
+			if (globalAccess.isFailure()) return failure(globalAccess.error)
+		}
+
+		const updatePayload: UpdateFoodDTO = { ...data }
+		if (
+			data.calories === undefined &&
+			(data.protein !== undefined || data.carbohydrate !== undefined || data.lipids !== undefined)
+		) {
+			updatePayload.calories = NutritionLogic.calculateCalories(
+				data.protein ?? existing.protein,
+				data.carbohydrate ?? existing.carbohydrate,
+				data.lipids ?? existing.lipids,
+				data.fiber ?? existing.fiber
+			)
+		}
+
 		const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
-		return await this.foodRepository.update(id, data, ownerId)
+		return await this.foodRepository.update(id, updatePayload, ownerId)
 	}
 
 	async delete(id: string, authUser: authenticatedUser): Promise<Result<void>> {
 		const access = await this.accessControl.canAccessFood(id, authUser)
 		if (access.isFailure()) return failure(access.error)
+
+		const existingResult = await this.foodRepository.findById(id)
+		if (existingResult.isFailure()) return failure(existingResult.error)
+
+		if (existingResult.value.userId === null) {
+			const globalAccess = await this.accessControl.canManageGlobalFoods(authUser)
+			if (globalAccess.isFailure()) return failure(globalAccess.error)
+		}
 
 		const ownerId = authUser.role === 'ADMIN' ? undefined : authUser.id
 		return await this.foodRepository.delete(id, ownerId)

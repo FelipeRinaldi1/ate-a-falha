@@ -4,7 +4,7 @@ import { workoutexerciseSchema } from './workoutExercise.schema.js'
 export const workoutSchema = z.object({
 	id: z.uuid(),
 	planId: z.uuid(),
-	name: z.string().min(3).max(32).nullable(),
+	name: z.string().min(3).max(32).nullable().optional(),
 	day: z.enum(['A', 'B', 'C', 'D', 'E', 'F']),
 	weekDay: z.string().nullable().optional(),
 

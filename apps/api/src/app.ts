@@ -1,3 +1,4 @@
+import './config/env.js'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -79,6 +80,15 @@ app.use(`${BASE_API_URL}/share`, shareModuleRouter)
 
 app.get(`${BASE_API_URL}/`, (_req, res) => {
 	res.send('Até-a-falha API On')
+})
+
+app.use((req, res) => {
+	res.status(404).json({
+		status: 'error',
+		code: 'NOT_FOUND',
+		message: `Route ${req.method} ${req.originalUrl} not found`,
+		details: null,
+	})
 })
 
 app.use(globalErrorHandler)

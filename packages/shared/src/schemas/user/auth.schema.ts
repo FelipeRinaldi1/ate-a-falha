@@ -1,11 +1,17 @@
 import { z } from 'zod'
 
-const MIN_PASSWORD_LENGTH = 6
+const MIN_PASSWORD_LENGTH = 8
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/
+
+export const passwordSchema = z
+	.string()
+	.min(MIN_PASSWORD_LENGTH, 'A senha deve ter no mínimo 8 caracteres')
+	.regex(PASSWORD_REGEX, 'A senha deve conter letra maiúscula, minúscula, número e símbolo')
 
 export const authSchema = z.object({
 	id: z.uuid(),
 	email: z.email('Invalid email address'),
-	password: z.string().min(MIN_PASSWORD_LENGTH, 'Password must be at least 6 characters long'),
+	password: passwordSchema,
 	userId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),
@@ -28,7 +34,7 @@ export const loginSchema = z.object({
 export const changePasswordSchema = z
 	.object({
 		oldPassword: z.string().min(1, 'Old password is required'),
-		newPassword: z.string().min(MIN_PASSWORD_LENGTH, 'New password must be at least 6 characters long'),
+		newPassword: passwordSchema,
 	})
 	.refine((data) => data.oldPassword !== data.newPassword, {
 		message: 'New password must be different from old password',

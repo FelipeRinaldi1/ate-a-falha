@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { authSchema, createAuthSchema, updateAuthSchema } from './auth.schema.js'
+import { authSchema, createAuthSchema } from './auth.schema.js'
 
 export const GENDER = z.enum(['MALE', 'FEMALE', 'OTHER'])
 export const ROLE = z.enum(['USER', 'ADMIN'])
@@ -16,7 +16,6 @@ export const userSchema = z.object({
 })
 
 export const createUserSchema = userSchema.pick({
-	role: true,
 	name: true,
 	birthDate: true,
 	gender: true,
@@ -28,9 +27,7 @@ export const createUserWithAuthSchema = createUserSchema.extend({
 })
 export type CreateUserWithAuthDTO = z.infer<typeof createUserWithAuthSchema>
 
-export const updateUserSchema = createUserSchema.partial().extend({
-	auth: updateAuthSchema.optional(),
-})
+export const updateUserSchema = createUserSchema.partial()
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>
 
 export const userResponseSchema = z.object({

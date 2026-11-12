@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { api } from '../api/axiosInstance'
+import { api, setUnauthorizedHandler } from '../api/axiosInstance'
 import type { UserResponseDTO } from '@ate-a-falha/shared'
 import { AuthContext } from '../features/user/hooks/useAuth'
 import { queryClient } from './queryClient'
@@ -9,6 +9,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
+		setUnauthorizedHandler(() => {
+			queryClient.clear()
+			setUser(null)
+		})
+
 		api.get('/users/me')
 			.then((response) => {
 				setUser(response.data)
@@ -19,6 +24,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			.finally(() => {
 				setIsLoading(false)
 			})
+
+		return () => {
+			setUnauthorizedHandler(null)
+		}
 	}, [])
 
 	const login = (loggedUser: UserResponseDTO) => {

@@ -5,12 +5,15 @@ import { PlanService } from '../services/plan.service.js'
 import { PlanController } from '../controllers/plan.controller.js'
 import { WorkoutAccessControlRepository } from '../repositories/accessControl.repository.js'
 import { WorkoutAccessControlService } from '../services/accessControl.service.js'
+import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import { NotificationService } from '../../notification/services/notification.service.js'
 
 const planRouter = Router()
 const planRepo = new PlanRepository()
 const accessRepo = new WorkoutAccessControlRepository()
 const accessService = new WorkoutAccessControlService(accessRepo)
-const planService = new PlanService(planRepo, accessService)
+const notificationService = new NotificationService(new NotificationRepository())
+const planService = new PlanService(planRepo, accessService, notificationService)
 const planController = new PlanController(planService)
 
 planRouter.get('/plans/:id/export', planController.export)

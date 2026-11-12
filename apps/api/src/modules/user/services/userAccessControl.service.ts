@@ -4,17 +4,20 @@ import type { IUserAccessControlRepository } from '../interfaces/accessControl.i
 export class UserAccessControlService {
 	constructor(private readonly accessRepo: IUserAccessControlRepository) {}
 
-	private readonly NotFoundError: AppError = {
-		type: 'NOT_FOUND',
+	private readonly ForbiddenError: AppError = {
+		type: 'FORBIDDEN',
 		message: 'Not found or not authorized',
 	}
 
 	private handleAccessResult(result: Result<boolean>): Result<boolean> {
 		if (result.isFailure()) {
-			return failure(this.NotFoundError)
+			if (result.error.type === 'NOT_FOUND') {
+				return failure(this.ForbiddenError)
+			}
+			return failure(result.error)
 		}
 		if (result.value === false) {
-			return failure(this.NotFoundError)
+			return failure(this.ForbiddenError)
 		}
 		return success(true)
 	}

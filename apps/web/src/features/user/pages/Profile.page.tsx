@@ -21,20 +21,9 @@ import {
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { Flame, Ruler, Scale, Weight, Edit, Plus, Info, TrendingUp, LogOut, UserCheck, Lock } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { api } from '../../../api/axiosInstance'
+import { useBodyMetrics, useUpdateProfile, useChangePassword } from '../hooks/useUser'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-
-interface BodyMetric {
-	id: string
-	weight: number
-	height: number
-	activityLevel: number
-	bodyFat: number | null
-	muscleRate: number | null
-	createdAt: string
-}
 
 const activityLevelLabels = ['Sedentário', 'Leve', 'Moderado', 'Intenso', 'Muito intenso']
 
@@ -56,17 +45,12 @@ export function ProfilePage() {
 	const [oldPassword, setOldPassword] = useState('')
 	const [newPassword, setNewPassword] = useState('')
 	const [modalMessage, setModalMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-	const [isSavingProfile, setIsSavingProfile] = useState(false)
-	const [isSavingPassword, setIsSavingPassword] = useState(false)
 
-	const { data: metrics = [], isLoading } = useQuery<BodyMetric[]>({
-		queryKey: ['body-metrics'],
-		queryFn: async () => {
-			const response = await api.get('/users/body-metrics')
-			return response.data
-		},
-		enabled: !!user,
-	})
+	const { data: metrics = [], isLoading } = useBodyMetrics({ enabled: !!user })
+	const updateProfileMutation = useUpdateProfile()
+	const changePasswordMutation = useChangePassword()
+	const isSavingProfile = updateProfileMutation.isPending
+	const isSavingPassword = changePasswordMutation.isPending
 
 	if (!user || isLoading) {
 		return (
@@ -94,13 +78,12 @@ export function ProfilePage() {
 			setModalMessage({ type: 'error', text: 'O nome é obrigatório.' })
 			return
 		}
-		setIsSavingProfile(true)
 		setModalMessage(null)
 		try {
-			await api.put('/users/me', {
+			await updateProfileMutation.mutateAsync({
 				name: editName.trim(),
-				gender: editGender,
-				...(editBirthDate ? { birthDate: new Date(editBirthDate).toISOString() } : {}),
+				gender: editGender as 'MALE' | 'FEMALE' | 'OTHER',
+				...(editBirthDate ? { birthDate: new Date(editBirthDate) } : {}),
 			})
 			await refreshUser()
 			setModalMessage({ type: 'success', text: 'Dados da conta atualizados com sucesso!' })
@@ -110,8 +93,6 @@ export function ProfilePage() {
 				type: 'error',
 				text: errorResponse?.response?.data?.message || 'Não foi possível atualizar os dados da conta.',
 			})
-		} finally {
-			setIsSavingProfile(false)
 		}
 	}
 
@@ -120,10 +101,9 @@ export function ProfilePage() {
 			setModalMessage({ type: 'error', text: 'Preencha a senha atual e a nova senha.' })
 			return
 		}
-		setIsSavingPassword(true)
 		setModalMessage(null)
 		try {
-			await api.patch('/users/me/password', {
+			await changePasswordMutation.mutateAsync({
 				oldPassword,
 				newPassword,
 			})
@@ -141,8 +121,6 @@ export function ProfilePage() {
 					errorResponse?.response?.data?.message ||
 					'Verifique a senha atual e tente novamente (mín. 8 caracteres, maiúscula, minúscula, número e símbolo).',
 			})
-		} finally {
-			setIsSavingPassword(false)
 		}
 	}
 
@@ -161,14 +139,9 @@ export function ProfilePage() {
 			})()
 		: 0
 
-	const bmi = latestMetric ? BodyMetricLogic.calculateBMI(latestMetric.weight, latestMetric.height / 100) : 0
+	const bmi = latestMetric ? BodyMetricLogic.calculateBMI(latestMetric.weight, latestMetric.height) : 0
 	const bmr = latestMetric
-		? BodyMetricLogic.calculateBMR(
-				user.gender === 'FEMALE' ? 'FEMALE' : 'MALE',
-				latestMetric.weight,
-				latestMetric.height,
-				age
-			)
+		? BodyMetricLogic.calculateBMR(user.gender, latestMetric.weight, latestMetric.height, age)
 		: 0
 	const tdee = latestMetric ? BodyMetricLogic.calculateTDEE(bmr, latestMetric.activityLevel) : 0
 

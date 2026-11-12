@@ -23,7 +23,8 @@ import { Plus, Search, Trash2 } from 'lucide-react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
+import { nutritionApi } from '../api/nutritionApi'
+import { NUTRITION_QUERY_KEYS, useDeleteFood } from '../hooks/useNutrition'
 import { useAuth } from '../../user/hooks/useAuth'
 import { type FoodDTO } from '@ate-a-falha/shared'
 import { useGoBack } from '../../../utils/navigation'
@@ -183,17 +184,13 @@ export function FoodSearchPage() {
 		isLoading,
 		isFetching,
 	} = useQuery<FoodDTO[]>({
-		queryKey: ['food-catalog', debouncedSearch, foodScope],
-		queryFn: async () => {
-			const res = await api.get('/nutrition/food-catalog', {
-				params: {
-					name: debouncedSearch.trim() || undefined,
-					onlyMine: foodScope === 'mine' ? true : undefined,
-					take: 40,
-				},
-			})
-			return res.data
-		},
+		queryKey: [NUTRITION_QUERY_KEYS.foodCatalog[0], debouncedSearch, foodScope],
+		queryFn: () =>
+			nutritionApi.searchFoods({
+				name: debouncedSearch.trim() || undefined,
+				onlyMine: foodScope === 'mine' ? true : undefined,
+				take: 40,
+			}),
 		placeholderData: keepPreviousData,
 		staleTime: 1000 * 60 * 5,
 	})
@@ -202,28 +199,28 @@ export function FoodSearchPage() {
 	const addFoodMutation = useMutation({
 		mutationFn: async ({ foodId, quantity }: { foodId: string; quantity: number }) => {
 			if (mealId) {
-				return api.post(`/nutrition/meals/${mealId}/foods`, {
+				return nutritionApi.addFoodToMeal(mealId, {
 					foodId,
 					quantity,
 				})
 			}
 			if (!mealLogId) throw new Error('Meal Log ID or Meal Template ID is required')
-			return api.post(`/nutrition/meal-logs/${mealLogId}/foods`, {
+			return nutritionApi.addFoodToMealLog(mealLogId, {
 				foodId,
 				quantity,
 			})
 		},
 		onSuccess: () => {
 			if (mealId) {
-				queryClient.invalidateQueries({ queryKey: ['target-meals'] })
-				queryClient.invalidateQueries({ queryKey: ['diets'] })
+				queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.targetMealsAll })
+				queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.diets })
 				setSelectedFood(null)
 				setPortionGrams(100)
 				goBack('/nutrition/goals')
 				return
 			}
-			queryClient.invalidateQueries({ queryKey: ['meal-log', mealLogId] })
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.mealLog(mealLogId ?? undefined) })
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 			setSelectedFood(null)
 			setPortionGrams(100)
 			goBack(fallbackBackPath)
@@ -231,15 +228,18 @@ export function FoodSearchPage() {
 	})
 
 	// Mutation: Exclude food from catalog
-	const deleteCatalogFoodMutation = useMutation({
-		mutationFn: async (foodId: string) => {
-			return api.delete(`/nutrition/food-catalog/${foodId}`)
+	const deleteFoodMutation = useDeleteFood()
+	const deleteCatalogFoodMutation = {
+		isPending: deleteFoodMutation.isPending,
+		variables: deleteFoodMutation.variables,
+		mutate: (foodId: string) => {
+			deleteFoodMutation.mutate(foodId, {
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
+				},
+			})
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-		},
-	})
+	}
 
 	const handleDeleteFood = useCallback(
 		(e: React.MouseEvent, food: FoodDTO) => {

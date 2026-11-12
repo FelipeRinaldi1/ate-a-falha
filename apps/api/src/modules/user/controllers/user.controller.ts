@@ -37,6 +37,7 @@ export class UserController {
 		const result = await this.userService.deleteMe(req.user.id)
 		if (result.isFailure()) return next(result.error)
 
+		clearAuthCookie(res)
 		return res.status(HTTP_STATUS.OK).json(result.value)
 	}
 

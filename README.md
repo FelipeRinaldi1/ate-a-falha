@@ -1,135 +1,127 @@
 # Até a Falha
 
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
-![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
-![TypeScript](https://img.shields.io/badge/typescript-%23007acc.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+Plataforma web para acompanhamento completo de **treinos de musculação**, **nutrição** e **evolução corporal**. O objetivo do produto é centralizar em um único lugar o planejamento de fichas de treino, o registro de sessões em tempo real, o controle diário de refeições e metas nutricionais, além do acompanhamento histórico de medidas corporais.
 
-Sistema web _mobile-first_ de gerenciamento integrado de dietas, treinos de musculação e evolução antropométrica. Projetado com foco na experiência do praticante na academia e no compartilhamento ágil de rotinas.
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Mantine](https://img.shields.io/badge/Mantine-339AF0?style=for-the-badge&logo=mantine&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
 
 ---
 
 ## Principais Funcionalidades
 
-- **Gestão e Execução de Treinos (`Workout`):** Divisões de `A` a `F`, execução interativa com ajuste dinâmico de cargas/repetições, cronômetro de descanso por série, persistência em `localStorage` e marcação automática no calendário semanal.
-- **Diário Alimentar e Hidratação (`Nutrition`):** Base fundamentada na Tabela TACO (NEPA/UNICAMP), cálculo energético automático pelos fatores de Atwater, normalização para $100\text{g}$ em alimentos personalizados e controle de ingestão hídrica diária.
-- **Avaliação Antropométrica (`BodyMetric`):** Histórico de peso, percentual de gordura e massa muscular com cálculo automatizado de IMC, TMB (Mifflin-St Jeor) e TDEE.
-- **Compartilhamento e Importação (`Share`):** Exportação pública (`isExported`) e importação por clonagem profunda (_deep copy_) via **Link Público**, **Código Curto (`T-XXXXXX` / `D-XXXXXX`)** ou **Leitor de QR Code integrado à câmera (`jsQR`)**.
-- **Central de Notificações Reativa (`Notification`):** Alertas automáticos disparados ao concluir treinos, registrar novas medidas corporais, atingir 100% da meta diária de água e importar fichas de treino ou planos alimentares.
+### Treinos (`/workout`)
+
+- **Dashboard de Treino**: visão geral das rotinas e acesso rápido aos treinos ativos.
+- **Planos de Treino (`/workout/plans`)**: criação e edição de fichas e divisões de treino (`/workout/plans/:id/edit`).
+- **Execução de Treino Ativo (`/workout/active/:id`)**: seleção de treino (`/workout/active/:id/select`) e registro em tempo real de séries, cargas e repetições.
+- **Catálogo de Exercícios (`/workout/exercises`)**: busca e visualização de detalhes de exercícios (`/workout/exercises/:id`).
+- **Compartilhamento**: geração de visualização compartilhável de treinos.
+
+### Nutrição
+
+- **Diário Alimentar**: registro de refeições diárias e visualização detalhada de cada refeição.
+- **Metas Nutricionais**: configuração e acompanhamento de objetivos calóricos e de macronutrientes.
+- **Catálogo e Criação de Alimentos**: busca de alimentos, visualização de detalhes nutricionais e cadastro de alimentos personalizados.
+- **Compartilhamento**: geração de visualização compartilhável da dieta.
+
+### Perfil e Métricas Corporais (`/profile`)
+
+- **Cadastro e Edição de Métricas**: registro inicial, atualização (`/profile/edit-metrics`) e adição de novas medições (`/profile/new-metric`).
+- **Evolução Corporal**: acompanhamento histórico da evolução das medidas ao longo do tempo.
+- **Autenticação**: fluxo completo de cadastro, login e rotas protegidas.
 
 ---
 
-## Arquitetura de Pastas
-
-O projeto utiliza uma estrutura de **Monorepo** (NPM Workspaces) para compartilhamento de contratos, validações e regras de negócio entre cliente e servidor.
+## Arquitetura do Monorepo
 
 ```text
-.
+ate-a-falha/
 ├── apps/
-│   ├── api/          # Backend REST (Express 5 + Prisma + Pino)
-│   └── web/          # Frontend SPA Mobile-First (React 19 + Mantine v9)
+│   ├── api/                 # API REST em Node.js + TypeScript
+│   └── web/                 # Frontend em React + TypeScript + Mantine UI
 ├── packages/
-│   ├── database/     # Schema Prisma, Migrations, Seeds e Client PostgreSQL
-│   └── shared/       # Schemas Zod, DTOs e Lógica de Domínio (Nutrition, BodyMetric, Share)
-├── pipeline/         # Pipeline ETL em Python (Arquitetura Medalhão)
-├── data/
-│   ├── bronze/       # Dados brutos (TACO e Free Exercise DB)
-│   ├── silver/       # Dados higienizados e traduzidos
-│   └── gold/         # Dados otimizados (.json e imagens .webp / thumbnails)
-├── tcc-docs/         # Documentação de apoio e revisão da monografia
-└── docker-compose.yml
+│   ├── database/            # Schema, migrations e seeds (PostgreSQL)
+│   └── shared/              # Tipos e utilitários compartilhados
+├── pipeline/                # Pipeline de dados (Docker profile: tools)
+├── e2e/                     # Testes ponta a ponta com Playwright
+└── docker-compose.yml       # Banco PostgreSQL 18 e serviço de pipeline
 ```
 
 ---
 
-## Como Executar
+## Pré-requisitos
 
-O projeto é conteinerizado via Docker para garantir consistência no ambiente de execução.
-
-### 1. Pré-requisitos
-
-- [Docker](https://www.docker.com/) e Node.js (v20+) instalados.
-
-### 2. Configuração
-
-Crie os arquivos `.env` em `apps/api/.env` e `apps/web/.env` baseados nos respectivos arquivos `.env.example`.
-
-### 3. Inicialização
-
-1. **Subir o banco de dados (Docker):**
-
-    ```bash
-    npm run db:up
-    ```
-
-2. **Rodar migrations e seeds (na primeira execução):**
-
-    ```bash
-    npm run db:migrate
-    npm run db:seed
-    ```
-
-3. **Iniciar os serviços (em terminais separados):**
-    - **Terminal 1 (API):** `npm run dev:api`
-    - **Terminal 2 (Web):** `npm run dev:web`
+- **Node.js** (compatível com workspaces npm e TypeScript)
+- **Docker** e **Docker Compose** (para o banco PostgreSQL 18)
 
 ---
 
-### Usuário de Demonstração / Testes
+## Configuração Local
 
-Ao executar os seeds do banco (`npm run db:seed` ou `npm run db:seed:user`), um usuário de demonstração completo é criado automaticamente:
+1. **Instale as dependências na raiz do monorepo:**
 
-| Campo        | Valor                                                                         |
-| :----------- | :---------------------------------------------------------------------------- |
-| **E-mail**   | `demo@ateafalha.com.br`                                                       |
-| **Senha**    | `Senha123!`                                                                   |
-| **Perfil**   | Felipe Rinaldi                                                                |
-| **Métricas** | 5 avaliações corporais históricas                                             |
-| **Dieta**    | Dieta Limpa (com registro diário e hidratação)                                |
-| **Treinos**  | Plano ABC Ativo (Empurrar, Puxar e Pernas Completo)                           |
-| **Avisos**   | Central de notificações com 6 alertas de treino, dieta, hidratação e evolução |
+```bash
+npm install
+```
 
----
+2. **Configure as variáveis de ambiente da API:**
 
-### 4. Comandos Disponíveis
+Crie o arquivo `apps/api/.env` com as variáveis exigidas pela API (`apps/api/src/config/env.ts`) e pelo container do PostgreSQL (`docker-compose.yml`), incluindo:
 
-| Categoria             | Função                             | Comando                |
-| :-------------------- | :--------------------------------- | :--------------------- |
-| **Desenvolvimento**   | Iniciar API (+ auto DB)            | `npm run dev:api`      |
-|                       | Iniciar Frontend Web               | `npm run dev:web`      |
-| **Banco de Dados**    | Subir Banco (Docker)               | `npm run db:up`        |
-|                       | Parar Banco                        | `npm run db:down`      |
-|                       | Rodar Migrations                   | `npm run db:migrate`   |
-|                       | Popular Banco (Completo)           | `npm run db:seed`      |
-|                       | Popular Usuário Demo               | `npm run db:seed:user` |
-|                       | Visualizar Banco (Studio)          | `npm run db:studio`    |
-| **Qualidade & Build** | Compilar Todos os Pacotes          | `npm run build`        |
-|                       | Rodar Todos os Testes (259 testes) | `npm run test`         |
-|                       | Rodar Testes Unitários (Shared)    | `npm run test:unit`    |
-|                       | Verificar Linting (ESLint)         | `npm run lint`         |
+```env
+NODE_ENV=development
+PORT=3000
+JWT_SECRET=sua_chave_secreta_aqui
+JWT_EXPIRES_IN=7d
+CORS_ORIGIN=*
+LOG_LEVEL=info
 
----
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=ate_a_falha_db
+```
 
-## Tecnologias Principais
+3. **Suba o banco de dados, execute as migrations e popule os dados iniciais:**
 
-- **Backend:** Node.js, Express 5, Pino Logger, Express Rate Limit, Helmet & JWT (HttpOnly Cookies)
-- **Frontend:** React 19, Mantine UI v9, Recharts, Lucide Icons, `qrcode.react` & `jsqr`
-- **Banco de Dados & ORM:** PostgreSQL 15 (`pg_trgm` com fallback resiliente) & Prisma ORM v7
-- **Validação & Contratos:** TypeScript & Zod v4
-- **Gerenciamento de Estado:** TanStack React Query v5
-- **Testes Automatizados:** Vitest & Supertest (259 testes: 45 unitários + 214 de integração)
+```bash
+npm run db:up
+npm run db:migrate
+npm run db:seed
+```
 
----
+O seed cria um usuário de teste para acesso imediato:
+- **E-mail:** `demo@ateafalha.com.br`
+- **Senha:** `Senha123!`
 
-## Créditos de Dados
+4. **Inicie a API e o Frontend em modo de desenvolvimento:**
 
-Este projeto utiliza bases de dados abertas para as bibliotecas de nutrição e exercícios:
+```bash
+# Terminal 1 - API
+npm run dev:api
 
-- **Alimentos:** [Tabela TACO](https://nepa.unicamp.br/tabela-brasileira-de-composicao-de-alimentos-4a-edicao/) (NEPA/UNICAMP)
-- **Exercícios:** Base baseada no [Free Exercise Db](https://github.com/yuhonas/free-exercise-db) com traduções de [Exercícios DB PTBR](https://github.com/joao-gugel/exercicios-bd-ptbr).
+# Terminal 2 - Web
+npm run dev:web
+```
 
 ---
 
-2026 Até a Falha - Desenvolvido para fins acadêmicos e profissionais.
+## Scripts Disponíveis
+
+| Comando              | Descrição                                         |
+| -------------------- | ------------------------------------------------- |
+| `npm run dev:api`    | Inicia a API em modo de desenvolvimento           |
+| `npm run dev:web`    | Inicia o frontend web em modo de desenvolvimento  |
+| `npm run db:up`      | Sobe o container PostgreSQL 18 via Docker Compose |
+| `npm run db:migrate` | Executa as migrations do banco de dados           |
+| `npm run db:seed`    | Popula o banco com dados iniciais                 |
+| `npm run build`      | Compila os workspaces do projeto                  |
+| `npm run lint`       | Executa a verificação de lint                     |
+| `npm test`           | Executa a suíte de testes                         |
+| `npm run test:unit`  | Executa os testes unitários                       |
+| `npm run test:e2e`   | Executa os testes E2E com Playwright              |

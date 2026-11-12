@@ -12,7 +12,7 @@ export interface IBodyMetricRepository {
 		userId: string
 	): Promise<Result<BodyMetricFull>>
 	findAll(data: BodyMetricSearchDTO, userId: string): Promise<Result<BodyMetricFull[]>>
-	findById(id: string, userId: string): Promise<Result<BodyMetricFull>>
+	findById(id: string, userId?: string): Promise<Result<BodyMetricFull>>
 	update(
 		id: string,
 		data: UpdateBodyMetricDTO & { bmi?: number; bmr?: number; tdee?: number },

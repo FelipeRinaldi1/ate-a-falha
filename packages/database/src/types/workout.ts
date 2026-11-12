@@ -1,8 +1,6 @@
 import { Prisma } from '../generated/prisma/client.js'
 
-export type ExerciseFull = Prisma.ExerciseGetPayload<{
-	include: { usedInWorkouts: true }
-}>
+export type ExerciseFull = Prisma.ExerciseGetPayload<{}>
 
 export type PlanFull = Prisma.PlanGetPayload<{
 	include: {

@@ -19,26 +19,28 @@ import {
 	Badge,
 } from '@mantine/core'
 import { Pencil, PlusCircle, Trash2, Share2, QrCode } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
 import { ShareModal } from '../../../components/ShareModal'
 import { ImportRoutineModal } from '../../../components/ImportRoutineModal'
-import { type DietDTO, type MealDTO, type FoodInMealDTO, NutritionLogic } from '@ate-a-falha/shared'
+import { type MealDTO, type FoodInMealDTO, NutritionLogic } from '@ate-a-falha/shared'
 import { DonutChart } from '@mantine/charts'
 import { useGoBack } from '../../../utils/navigation'
-
-interface BodyMetric {
-	id: string
-	weight: number
-	height: number
-	activityLevel: number
-	bodyFat: number | null
-	muscleRate: number | null
-	createdAt: string
-}
+import { nutritionApi } from '../api/nutritionApi'
+import {
+	NUTRITION_QUERY_KEYS,
+	useDiets,
+	useTargetMeals,
+	useCreateDiet,
+	useUpdateDiet,
+	useUpdateMeal,
+	useDeleteMeal,
+	useDeleteFoodInMeal,
+	useUpdateFoodInMeal,
+} from '../hooks/useNutrition'
+import { useBodyMetrics } from '../../user/hooks/useUser'
 
 export function DietGoalsPage() {
 	const navigate = useNavigate()
@@ -49,22 +51,10 @@ export function DietGoalsPage() {
 	const [importModalOpen, setImportModalOpen] = useState(false)
 
 	// Fetch active diet plans
-	const { data: diets = [], isLoading: isLoadingDiets } = useQuery<DietDTO[]>({
-		queryKey: ['diets'],
-		queryFn: async () => {
-			const res = await api.get('/nutrition/diets')
-			return res.data
-		},
-	})
+	const { data: diets = [], isLoading: isLoadingDiets } = useDiets()
 
 	// Fetch body metrics to get user weight
-	const { data: bodyMetrics = [], isLoading: isLoadingMetrics } = useQuery<BodyMetric[]>({
-		queryKey: ['body-metrics'],
-		queryFn: async () => {
-			const res = await api.get('/users/body-metrics')
-			return res.data
-		},
-	})
+	const { data: bodyMetrics = [], isLoading: isLoadingMetrics } = useBodyMetrics()
 
 	const activeDiet = diets[0]
 	const latestMetric = bodyMetrics[0]
@@ -99,9 +89,13 @@ export function DietGoalsPage() {
 		NutritionLogic.calculateCalories(calculatedProtein, calculatedCarb, calculatedFat)
 	)
 
+	const createDietBase = useCreateDiet()
+	const updateDietBase = useUpdateDiet()
+
 	// Mutation: Save Diet Goals (Create or Update)
-	const saveDietGoalsMutation = useMutation({
-		mutationFn: async () => {
+	const saveDietGoalsMutation = {
+		isPending: createDietBase.isPending || updateDietBase.isPending,
+		mutate: () => {
 			const payload = {
 				name: activeDiet?.name || 'Minha Dieta',
 				dailyKcalGoal: calculatedKcal,
@@ -114,38 +108,22 @@ export function DietGoalsPage() {
 			}
 
 			if (activeDiet) {
-				const res = await api.patch(`/nutrition/diets/${activeDiet.id}`, payload)
-				return res.data
+				updateDietBase.mutate({ id: activeDiet.id, data: payload }, { onSuccess: () => setOpened(false) })
 			} else {
-				const res = await api.post('/nutrition/diets', payload)
-				return res.data
+				createDietBase.mutate(payload, { onSuccess: () => setOpened(false) })
 			}
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diets'] })
-			setOpened(false)
-		},
-	})
+	}
 
 	// Mutation: Toggle isExported diet
-	const toggleDietExportMutation = useMutation({
-		mutationFn: async ({ id, isExported }: { id: string; isExported: boolean }) => {
-			return api.patch(`/nutrition/diets/${id}`, { isExported })
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diets'] })
-		},
-	})
+	const toggleDietExportMutation = {
+		...updateDietBase,
+		mutate: ({ id, isExported }: { id: string; isExported: boolean }) =>
+			updateDietBase.mutate({ id, data: { isExported } }),
+	}
 
 	// Reference Meals Query and States
-	const { data: targetMeals = [], isLoading: isLoadingMeals } = useQuery<MealDTO[]>({
-		queryKey: ['target-meals', activeDiet?.id],
-		queryFn: async () => {
-			const res = await api.get(`/nutrition/diets/${activeDiet.id}/meals`)
-			return res.data
-		},
-		enabled: !!activeDiet?.id,
-	})
+	const { data: targetMeals = [], isLoading: isLoadingMeals } = useTargetMeals(activeDiet?.id)
 
 	const [newMealOpened, setNewMealOpened] = useState(false)
 	const [newMealName, setNewMealName] = useState('')
@@ -159,11 +137,12 @@ export function DietGoalsPage() {
 	const [editFoodQuantity, setEditFoodQuantity] = useState(100)
 
 	// Mutations for Reference Meals
-	const addMealMutation = useMutation({
-		mutationFn: async () => {
+	const addMealMutation = {
+		isPending: false,
+		mutate: async () => {
 			let dietId = activeDiet?.id
 			if (!dietId) {
-				const newDietRes = await api.post('/nutrition/diets', {
+				const newDiet = await nutritionApi.createDiet({
 					name: 'Minha Dieta',
 					dailyKcalGoal: activeDiet?.dailyKcalGoal || 2000,
 					dailyProteinGoal: activeDiet?.dailyProteinGoal || 150,
@@ -173,66 +152,43 @@ export function DietGoalsPage() {
 					dailyWaterGoal: 3000,
 					dailyWater: 0,
 				})
-				dietId = newDietRes.data.id
+				dietId = newDiet.id
 			}
-			const orderIndex = targetMeals.length
-			return api.post(`/nutrition/diets/${dietId}/meals`, {
+			await nutritionApi.createMeal(dietId, {
 				name: newMealName,
 				time: newMealTime,
-				orderIndex,
+				orderIndex: targetMeals.length,
 			})
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diets'] })
-			queryClient.invalidateQueries({ queryKey: ['target-meals'] })
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.diets }),
+				queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.targetMealsAll }),
+			])
 			setNewMealName('')
 			setNewMealTime('08:00')
 			setNewMealOpened(false)
 		},
-	})
+	}
 
-	const updateMealMutation = useMutation({
-		mutationFn: async () => {
+	const baseUpdateMeal = useUpdateMeal(activeDiet?.id)
+	const updateMealMutation = {
+		...baseUpdateMeal,
+		mutate: () => {
 			if (!editingMeal) return
-			return api.patch(`/nutrition/meals/${editingMeal.id}`, {
-				name: editMealName,
-				time: editMealTime,
-			})
+			baseUpdateMeal.mutate(
+				{ mealId: editingMeal.id, name: editMealName, time: editMealTime },
+				{ onSuccess: () => setEditingMeal(null) }
+			)
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['target-meals', activeDiet?.id] })
-			setEditingMeal(null)
-		},
-	})
+	}
 
-	const deleteMealMutation = useMutation({
-		mutationFn: async (mealId: string) => {
-			return api.delete(`/nutrition/meals/${mealId}`)
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['target-meals', activeDiet?.id] })
-		},
-	})
-
-	// Mutations for Reference Foods
-	const removeFoodMutation = useMutation({
-		mutationFn: async (foodInMealId: string) => {
-			return api.delete(`/nutrition/food-in-meals/${foodInMealId}`)
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['target-meals', activeDiet?.id] })
-		},
-	})
-
-	const updateFoodPortionMutation = useMutation({
-		mutationFn: async ({ foodInMealId, quantity }: { foodInMealId: string; quantity: number }) => {
-			return api.patch(`/nutrition/food-in-meals/${foodInMealId}`, { quantity })
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['target-meals', activeDiet?.id] })
-			setEditingFood(null)
-		},
-	})
+	const deleteMealMutation = useDeleteMeal(activeDiet?.id)
+	const removeFoodMutation = useDeleteFoodInMeal(activeDiet?.id)
+	const baseUpdateFoodPortion = useUpdateFoodInMeal(activeDiet?.id)
+	const updateFoodPortionMutation = {
+		...baseUpdateFoodPortion,
+		mutate: (vars: { foodInMealId: string; quantity: number }) =>
+			baseUpdateFoodPortion.mutate(vars, { onSuccess: () => setEditingFood(null) }),
+	}
 
 	const handleDeleteMealConfirm = (meal: MealDTO) => {
 		modals.openConfirmModal({
@@ -1115,7 +1071,7 @@ export function DietGoalsPage() {
 					onToggleExport={async (newVal) => {
 						await toggleDietExportMutation.mutateAsync({
 							id: activeDiet.id,
-							isExported: newVal,
+							data: { isExported: newVal },
 						})
 					}}
 					loading={toggleDietExportMutation.isPending}

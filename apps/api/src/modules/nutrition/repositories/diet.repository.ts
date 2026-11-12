@@ -178,11 +178,14 @@ export class DietRepository implements IDietRepository, IDietLogRepository {
 		if (targetResult.isFailure()) return failure(targetResult.error)
 		const targetDiet = targetResult.value
 
+		const importSuffix = ' (Importada)'
+		const importedName = `${targetDiet.name.slice(0, 64 - importSuffix.length)}${importSuffix}`
+
 		const importResult = await safeCall(
 			prisma.$transaction(async (tx) => {
 				const newDiet = await tx.diet.create({
 					data: {
-						name: `${targetDiet.name} (Importada)`,
+						name: importedName,
 						dailyKcalGoal: targetDiet.dailyKcalGoal,
 						dailyProteinGoal: targetDiet.dailyProteinGoal,
 						dailyCarbGoal: targetDiet.dailyCarbGoal,

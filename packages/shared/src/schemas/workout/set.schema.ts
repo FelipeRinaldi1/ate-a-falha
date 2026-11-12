@@ -11,15 +11,23 @@ export const setSchema = z.object({
 	updatedAt: z.date(),
 })
 
-export const createSetSchema = setSchema.pick({
-	setNumber: true,
-	repetitions: true,
-	weight: true,
-	restTimeSeconds: true,
-})
+export const createSetSchema = setSchema
+	.pick({
+		repetitions: true,
+		restTimeSeconds: true,
+	})
+	.extend({
+		setNumber: z.number().int().positive().optional(),
+		weight: z.number().nonnegative().nullable().optional(),
+	})
 
 export const updateSetSchema = createSetSchema.partial()
+
+export const replaceSetsSchema = z.object({
+	sets: z.array(createSetSchema),
+})
 
 export type SetDTO = z.infer<typeof setSchema>
 export type CreateSetDTO = z.infer<typeof createSetSchema>
 export type UpdateSetDTO = z.infer<typeof updateSetSchema>
+export type ReplaceSetsDTO = z.infer<typeof replaceSetsSchema>

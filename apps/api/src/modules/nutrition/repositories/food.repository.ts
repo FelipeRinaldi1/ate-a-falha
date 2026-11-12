@@ -31,7 +31,6 @@ export class FoodRepository implements IFoodRepository {
 		const result = await safeCall(
 			prisma.food.create({
 				data: { ...data, calories: data.calories as number, userId: userId ?? null },
-				include: { foodInMeals: true },
 			})
 		)
 		if (result.isFailure()) return result
@@ -46,45 +45,76 @@ export class FoodRepository implements IFoodRepository {
 			const cleanTerm = data.name.trim()
 			const pattern = `%${cleanTerm}%`
 			const limit = Number(data.take || 20)
+			const cursorId = data.cursorId ?? null
 
 			const rawResult = await safeCall(
 				prisma.$queryRawUnsafe<FoodFull[]>(
 					`
-					SELECT 
-						f.id,
-						f.name,
-						f.calories,
-						f.carbohydrate,
-						f.protein,
-						f.lipids,
-						f.fiber,
-						f."userId",
-						f."createdAt",
-						f."updatedAt",
-						similarity(f.name, $1::text) AS sim,
-						(CASE WHEN f.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
-					FROM "Food" f
-					WHERE (
-						CASE
-							WHEN $5::boolean IS TRUE THEN f."userId" = $3::text
-							ELSE ($3::text IS NULL OR f."userId" = $3::text OR f."userId" IS NULL)
-						END
+					WITH ranked AS (
+						SELECT
+							f.id,
+							f.name,
+							f.calories,
+							f.carbohydrate,
+							f.protein,
+							f.lipids,
+							f.fiber,
+							f."userId",
+							f."createdAt",
+							f."updatedAt",
+							similarity(f.name, $1::text) AS sim,
+							(CASE WHEN f.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
+						FROM "Food" f
+						WHERE (
+							CASE
+								WHEN $5::boolean IS TRUE THEN f."userId" = $3::text
+								ELSE ($3::text IS NULL OR f."userId" = $3::text OR f."userId" IS NULL)
+							END
+						)
+						  AND (
+						    f.name ILIKE $2::text
+						    OR similarity(f.name, $1::text) > 0.3
+						  )
+					),
+					cursor_row AS (
+						SELECT exact_match, sim, name, id
+						FROM ranked
+						WHERE $6::text IS NOT NULL AND id = $6::text
+						LIMIT 1
 					)
-					  AND (
-					    f.name ILIKE $2::text
-					    OR similarity(f.name, $1::text) > 0.3
-					  )
-					ORDER BY 
-					  exact_match DESC,
-					  sim DESC,
-					  f.name ASC
+					SELECT
+						r.id,
+						r.name,
+						r.calories,
+						r.carbohydrate,
+						r.protein,
+						r.lipids,
+						r.fiber,
+						r."userId",
+						r."createdAt",
+						r."updatedAt"
+					FROM ranked r
+					LEFT JOIN cursor_row c ON TRUE
+					WHERE c.id IS NULL
+					   OR (
+					     r.exact_match < c.exact_match
+					     OR (r.exact_match = c.exact_match AND r.sim < c.sim)
+					     OR (r.exact_match = c.exact_match AND r.sim = c.sim AND r.name > c.name)
+					     OR (r.exact_match = c.exact_match AND r.sim = c.sim AND r.name = c.name AND r.id > c.id)
+					   )
+					ORDER BY
+					  r.exact_match DESC,
+					  r.sim DESC,
+					  r.name ASC,
+					  r.id ASC
 					LIMIT $4::int;
 					`,
 					cleanTerm,
 					pattern,
 					userId ?? null,
 					limit,
-					onlyMine
+					onlyMine,
+					cursorId
 				)
 			)
 
@@ -96,7 +126,7 @@ export class FoodRepository implements IFoodRepository {
 			const words = cleanTerm.split(/\s+/).filter(Boolean)
 			const fallbackResult = await safeCall(
 				prisma.food.findMany({
-					take: Math.max(limit * 3, 60),
+					take: Math.max(limit * 5, 200),
 					where: {
 						AND: [
 							onlyMine
@@ -112,12 +142,13 @@ export class FoodRepository implements IFoodRepository {
 						],
 					},
 					orderBy: [{ name: 'asc' }, { id: 'asc' }],
-					include: { foodInMeals: true },
 				})
 			)
 
 			if (fallbackResult.isFailure()) return fallbackResult
-			return success(rankByTermRelevance(fallbackResult.value, cleanTerm).slice(0, limit))
+			const ranked = rankByTermRelevance(fallbackResult.value, cleanTerm)
+			const startIndex = cursorId ? ranked.findIndex((item) => item.id === cursorId) + 1 : 0
+			return success(ranked.slice(startIndex, startIndex + limit))
 		}
 
 		const result = await safeCall(
@@ -137,7 +168,6 @@ export class FoodRepository implements IFoodRepository {
 					],
 				},
 				orderBy: [{ name: 'asc' }, { id: 'asc' }],
-				include: { foodInMeals: true },
 			})
 		)
 
@@ -150,7 +180,6 @@ export class FoodRepository implements IFoodRepository {
 		const result = await safeCall(
 			prisma.food.findUniqueOrThrow({
 				where: { id },
-				include: { foodInMeals: true },
 			})
 		)
 
@@ -164,7 +193,6 @@ export class FoodRepository implements IFoodRepository {
 			prisma.food.update({
 				where: userId ? { id_userId: { id, userId } } : { id },
 				data: { ...data },
-				include: { foodInMeals: true },
 			})
 		)
 

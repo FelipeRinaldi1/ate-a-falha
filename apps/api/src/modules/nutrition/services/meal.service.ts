@@ -88,6 +88,14 @@ export class MealService {
 
 		if (access.isFailure()) return failure(access.error)
 
+		if (data.foods?.length) {
+			const uniqueFoodIds = Array.from(new Set(data.foods.map((item) => item.foodId)))
+			for (const foodId of uniqueFoodIds) {
+				const foodAccess = await this.accessControl.canAccessFood(foodId, authUser)
+				if (foodAccess.isFailure()) return failure(foodAccess.error)
+			}
+		}
+
 		const result = await this.mealRepo.createLog(dietLogId, data)
 
 		if (result.isFailure()) return failure(result.error)

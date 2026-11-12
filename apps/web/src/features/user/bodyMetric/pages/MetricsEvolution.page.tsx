@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { api } from '../../../../api/axiosInstance'
 import {
 	Center,
 	Container,
@@ -20,20 +19,10 @@ import { useNavigate } from 'react-router-dom'
 import { AreaChart } from '@mantine/charts'
 import { BodyMetricLogic } from '@ate-a-falha/shared'
 import { useAuth } from '../../hooks/useAuth'
+import { useBodyMetrics } from '../../hooks/useUser'
 import { MainLayout } from '../../../../components/layout/MainLayout'
 import { useGoBack } from '../../../../utils/navigation'
 import dayjs from 'dayjs'
-import { useQuery } from '@tanstack/react-query'
-
-interface BodyMetric {
-	id: string
-	weight: number
-	height: number
-	activityLevel: number
-	bodyFat: number | null
-	muscleRate: number | null
-	createdAt: string
-}
 
 export function MetricsEvolutionPage() {
 	const navigate = useNavigate()
@@ -41,14 +30,7 @@ export function MetricsEvolutionPage() {
 	const { user } = useAuth()
 	const [selectedTab, setSelectedTab] = useState<'weight' | 'bmi' | 'percentages'>('weight')
 
-	const { data: metrics = [], isLoading } = useQuery<BodyMetric[]>({
-		queryKey: ['body-metrics', { take: 100 }],
-		queryFn: async () => {
-			const response = await api.get('/users/body-metrics?take=100')
-			return response.data
-		},
-		enabled: !!user,
-	})
+	const { data: metrics = [], isLoading } = useBodyMetrics({ take: 100, enabled: !!user })
 
 	const chronologicalMetrics = useMemo(() => [...metrics].reverse(), [metrics])
 
@@ -88,12 +70,12 @@ export function MetricsEvolutionPage() {
 	const latestMetric = chronologicalMetrics[chronologicalMetrics.length - 1]
 
 	const weightDelta = latestMetric.weight - initialMetric.weight
-	const latestBMI = BodyMetricLogic.calculateBMI(latestMetric.weight, latestMetric.height / 100)
-	const initialBMI = BodyMetricLogic.calculateBMI(initialMetric.weight, initialMetric.height / 100)
+	const latestBMI = BodyMetricLogic.calculateBMI(latestMetric.weight, latestMetric.height)
+	const initialBMI = BodyMetricLogic.calculateBMI(initialMetric.weight, initialMetric.height)
 	const bmiDelta = latestBMI - initialBMI
 
 	const chartData = chronologicalMetrics.map((m) => {
-		const bmiValue = BodyMetricLogic.calculateBMI(m.weight, m.height / 100)
+		const bmiValue = BodyMetricLogic.calculateBMI(m.weight, m.height)
 		return {
 			date: dayjs(m.createdAt).format('DD/MM'),
 			fullDate: dayjs(m.createdAt).format('DD/MM/YYYY'),

@@ -12,13 +12,17 @@ export const mealLogSchema = z.object({
 	updatedAt: z.date(),
 })
 
-export const createMealLogSchema = mealLogSchema.pick({
+const baseMealLogSchema = mealLogSchema.pick({
 	name: true,
 	time: true,
 	orderIndex: true,
 })
 
-export const updateMealLogSchema = createMealLogSchema.partial()
+export const createMealLogSchema = baseMealLogSchema.extend({
+	foods: z.array(foodLogSchema.pick({ foodId: true, quantity: true })).optional(),
+})
+
+export const updateMealLogSchema = baseMealLogSchema.partial()
 
 export type CreateMealLogDTO = z.infer<typeof createMealLogSchema>
 export type UpdateMealLogDTO = z.infer<typeof updateMealLogSchema>

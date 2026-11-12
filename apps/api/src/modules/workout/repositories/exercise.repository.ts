@@ -37,7 +37,6 @@ export class ExerciseRepository implements IExerciseRepository {
 		const result = await safeCall(
 			prisma.exercise.create({
 				data: data,
-				include: { usedInWorkouts: true },
 			})
 		)
 
@@ -49,7 +48,6 @@ export class ExerciseRepository implements IExerciseRepository {
 			prisma.exercise.update({
 				where: { id: id },
 				data: data,
-				include: { usedInWorkouts: true },
 			})
 		)
 		if (result.isFailure()) return failure(result.error)
@@ -73,41 +71,75 @@ export class ExerciseRepository implements IExerciseRepository {
 			const limit = Number(data.take || 10)
 			const category = data.category ? data.category.toLowerCase() : null
 			const muscle = data.primaryMuscles ? data.primaryMuscles.toLowerCase() : null
+			const secondaryMuscle = data.secondaryMuscles ? data.secondaryMuscles.toLowerCase() : null
+			const cursorId = data.cursorId ?? null
 
 			const rawResult = await safeCall(
 				prisma.$queryRawUnsafe<ExerciseFull[]>(
 					`
-					SELECT 
-						e.id,
-						e."externalId",
-						e.name,
-						e."primaryMuscles",
-						e."secondaryMuscles",
-						e.instructions,
-						e.category,
-						e.images,
-						e."createdAt",
-						e."updatedAt",
-						similarity(e.name, $1::text) AS sim,
-						(CASE WHEN e.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
-					FROM "Exercise" e
-					WHERE ($3::text IS NULL OR LOWER(e.category) = $3::text)
-					  AND ($4::text IS NULL OR $4::text = ANY(e."primaryMuscles"))
-					  AND (
-					    e.name ILIKE $2::text
-					    OR similarity(e.name, $1::text) > 0.32
-					  )
-					ORDER BY 
-					  exact_match DESC,
-					  sim DESC,
-					  e.name ASC
+					WITH ranked AS (
+						SELECT
+							e.id,
+							e."externalId",
+							e.name,
+							e."primaryMuscles",
+							e."secondaryMuscles",
+							e.instructions,
+							e.category,
+							e.images,
+							e."createdAt",
+							e."updatedAt",
+							similarity(e.name, $1::text) AS sim,
+							(CASE WHEN e.name ILIKE $2::text THEN 1 ELSE 0 END) AS exact_match
+						FROM "Exercise" e
+						WHERE ($3::text IS NULL OR LOWER(e.category) = $3::text)
+						  AND ($4::text IS NULL OR $4::text = ANY(e."primaryMuscles"))
+						  AND ($6::text IS NULL OR $6::text = ANY(e."secondaryMuscles"))
+						  AND (
+						    e.name ILIKE $2::text
+						    OR similarity(e.name, $1::text) > 0.32
+						  )
+					),
+					cursor_row AS (
+						SELECT exact_match, sim, name, id
+						FROM ranked
+						WHERE $7::text IS NOT NULL AND id = $7::text
+						LIMIT 1
+					)
+					SELECT
+						r.id,
+						r."externalId",
+						r.name,
+						r."primaryMuscles",
+						r."secondaryMuscles",
+						r.instructions,
+						r.category,
+						r.images,
+						r."createdAt",
+						r."updatedAt"
+					FROM ranked r
+					LEFT JOIN cursor_row c ON TRUE
+					WHERE c.id IS NULL
+					   OR (
+					     r.exact_match < c.exact_match
+					     OR (r.exact_match = c.exact_match AND r.sim < c.sim)
+					     OR (r.exact_match = c.exact_match AND r.sim = c.sim AND r.name > c.name)
+					     OR (r.exact_match = c.exact_match AND r.sim = c.sim AND r.name = c.name AND r.id > c.id)
+					   )
+					ORDER BY
+					  r.exact_match DESC,
+					  r.sim DESC,
+					  r.name ASC,
+					  r.id ASC
 					LIMIT $5::int;
 					`,
 					cleanTerm,
 					pattern,
 					category,
 					muscle,
-					limit
+					limit,
+					secondaryMuscle,
+					cursorId
 				)
 			)
 
@@ -119,7 +151,7 @@ export class ExerciseRepository implements IExerciseRepository {
 			const words = cleanTerm.split(/\s+/).filter(Boolean)
 			const fallbackResult = await safeCall(
 				prisma.exercise.findMany({
-					take: Math.max(limit * 3, 60),
+					take: Math.max(limit * 5, 200),
 					where: {
 						AND: [
 							...words.map((word) => ({
@@ -135,15 +167,21 @@ export class ExerciseRepository implements IExerciseRepository {
 										primaryMuscles: { has: data.primaryMuscles.toLowerCase() },
 									}
 								: {},
+							data.secondaryMuscles
+								? {
+										secondaryMuscles: { has: data.secondaryMuscles.toLowerCase() },
+									}
+								: {},
 						],
 					},
 					orderBy: [{ name: 'asc' }, { id: 'asc' }],
-					include: { usedInWorkouts: true },
 				})
 			)
 
 			if (fallbackResult.isFailure()) return fallbackResult
-			return success(rankExercisesByTermRelevance(fallbackResult.value, cleanTerm).slice(0, limit))
+			const ranked = rankExercisesByTermRelevance(fallbackResult.value, cleanTerm)
+			const startIndex = cursorId ? ranked.findIndex((item) => item.id === cursorId) + 1 : 0
+			return success(ranked.slice(startIndex, startIndex + limit))
 		}
 
 		let skip = data.cursorId ? 1 : 0
@@ -156,6 +194,7 @@ export class ExerciseRepository implements IExerciseRepository {
 							data.name ? { name: { contains: data.name, mode: 'insensitive' } } : {},
 							data.category ? { category: { equals: data.category, mode: 'insensitive' } } : {},
 							data.primaryMuscles ? { primaryMuscles: { has: data.primaryMuscles.toLowerCase() } } : {},
+							data.secondaryMuscles ? { secondaryMuscles: { has: data.secondaryMuscles.toLowerCase() } } : {},
 						],
 					},
 				})
@@ -191,10 +230,14 @@ export class ExerciseRepository implements IExerciseRepository {
 									primaryMuscles: { has: data.primaryMuscles.toLowerCase() },
 								}
 							: {},
+						data.secondaryMuscles
+							? {
+									secondaryMuscles: { has: data.secondaryMuscles.toLowerCase() },
+								}
+							: {},
 					],
 				},
 				orderBy: data.random ? undefined : [{ name: 'asc' }, { id: 'asc' }],
-				include: { usedInWorkouts: true },
 			})
 		)
 
@@ -205,7 +248,6 @@ export class ExerciseRepository implements IExerciseRepository {
 		const result = await safeCall(
 			prisma.exercise.findUniqueOrThrow({
 				where: { id: id },
-				include: { usedInWorkouts: true },
 			})
 		)
 

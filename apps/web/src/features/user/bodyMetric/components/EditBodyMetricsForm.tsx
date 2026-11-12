@@ -1,27 +1,15 @@
-import { useState } from 'react'
-import { api } from '../../../../api/axiosInstance'
+import { useState, useEffect } from 'react'
 import { Button, NumberInput, Paper, Select, Stack, Loader, Center, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../hooks/useAuth'
+import { useBodyMetrics, useCreateBodyMetric, useUpdateBodyMetric, useDeleteBodyMetric } from '../../hooks/useUser'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../../utils/errorTranslator'
 import { useGoBack } from '../../../../utils/navigation'
 import type { AxiosError } from 'axios'
 
-interface BodyMetric {
-	id: string
-	weight: number
-	height: number
-	activityLevel: number
-	bodyFat: number | null
-	muscleRate: number | null
-	createdAt: string
-}
-
 export function EditBodyMetricsForm() {
-	const queryClient = useQueryClient()
 	const goBack = useGoBack('/profile')
 	const { refreshUser } = useAuth()
 	const [metricId, setMetricId] = useState<string | null>(null)
@@ -32,44 +20,32 @@ export function EditBodyMetricsForm() {
 			weight: 0,
 			height: 0,
 			activityLevel: 0,
-			bodyFat: 0,
-			muscleRate: 0,
+			bodyFat: null,
+			muscleRate: null,
 		},
 		validate: schemaResolver(createBodyMetricSchema, { sync: true }),
 	})
 
-	const { isLoading } = useQuery<BodyMetric[]>({
-		queryKey: ['body-metrics'],
-		queryFn: async () => {
-			const response = await api.get('/users/body-metrics')
-			const latest = response.data[0]
-			if (latest) {
-				setMetricId(latest.id)
-				form.setValues({
-					weight: latest.weight,
-					height: latest.height,
-					activityLevel: latest.activityLevel,
-					bodyFat: latest.bodyFat ?? 0,
-					muscleRate: latest.muscleRate ?? 0,
-				})
-			}
-			return response.data
-		},
-	})
+	const { data: metrics, isLoading } = useBodyMetrics()
 
-	const mutation = useMutation({
-		mutationFn: (data: CreateBodyMetricDTO) => {
-			if (!metricId) {
-				return api.post('/users/body-metrics', data)
-			}
-			return api.patch(`/users/body-metrics/${metricId}`, data)
-		},
-		onMutate: () => {
-			setErrorMsg(null)
-		},
+	useEffect(() => {
+		const latest = metrics?.[0]
+		if (latest) {
+			setMetricId(latest.id)
+			form.setValues({
+				weight: latest.weight,
+				height: latest.height,
+				activityLevel: latest.activityLevel,
+				bodyFat: latest.bodyFat ?? null,
+				muscleRate: latest.muscleRate ?? null,
+			})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [metrics])
+
+	const createMutation = useCreateBodyMetric({
 		onSuccess: async () => {
 			await refreshUser()
-			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
 			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
@@ -77,23 +53,49 @@ export function EditBodyMetricsForm() {
 		},
 	})
 
-	const deleteMutation = useMutation({
-		mutationFn: () => {
-			if (!metricId) return Promise.reject(new Error('Nenhum registro para excluir'))
-			return api.delete(`/users/body-metrics/${metricId}`)
-		},
-		onMutate: () => {
-			setErrorMsg(null)
-		},
+	const updateMutation = useUpdateBodyMetric({
 		onSuccess: async () => {
 			await refreshUser()
-			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
+			goBack('/profile')
+		},
+		onError: (error: AxiosError) => {
+			setErrorMsg(translateError(error, 'Erro ao atualizar métricas corporais.'))
+		},
+	})
+
+	const mutation = {
+		isPending: createMutation.isPending || updateMutation.isPending,
+		mutate: (data: CreateBodyMetricDTO) => {
+			setErrorMsg(null)
+			if (!metricId) {
+				createMutation.mutate(data)
+			} else {
+				updateMutation.mutate({ id: metricId, data })
+			}
+		},
+	}
+
+	const deleteBaseMutation = useDeleteBodyMetric({
+		onSuccess: async () => {
+			await refreshUser()
 			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao excluir métricas corporais.'))
 		},
 	})
+
+	const deleteMutation = {
+		...deleteBaseMutation,
+		mutate: () => {
+			setErrorMsg(null)
+			if (!metricId) {
+				setErrorMsg('Nenhum registro para excluir')
+				return
+			}
+			deleteBaseMutation.mutate(metricId)
+		},
+	}
 
 	if (isLoading) {
 		return (
@@ -105,7 +107,15 @@ export function EditBodyMetricsForm() {
 
 	return (
 		<Paper withBorder p="xl" radius="md" shadow="sm">
-			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
+			<form
+				onSubmit={form.onSubmit((values) =>
+					mutation.mutate({
+						...values,
+						bodyFat: (values.bodyFat as unknown) === '' ? null : (values.bodyFat ?? null),
+						muscleRate: (values.muscleRate as unknown) === '' ? null : (values.muscleRate ?? null),
+					})
+				)}
+			>
 				<Stack gap="md">
 					{errorMsg && (
 						<Alert variant="light" color="red" title="Erro" icon={<AlertCircle size={16} />}>

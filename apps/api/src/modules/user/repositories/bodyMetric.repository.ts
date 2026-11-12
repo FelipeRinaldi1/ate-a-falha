@@ -40,10 +40,10 @@ export class BodyMetricRepository implements IBodyMetricRepository {
 		return result
 	}
 
-	async findById(id: string, userId: string): Promise<Result<BodyMetricFull>> {
+	async findById(id: string, userId?: string): Promise<Result<BodyMetricFull>> {
 		const result = await safeCall(
 			prisma.bodyMetric.findFirstOrThrow({
-				where: { id, userId },
+				where: userId ? { id, userId } : { id },
 			})
 		)
 

@@ -228,7 +228,7 @@ describe('Food Catalog Integration Tests', () => {
 			expect(result.status).toBe(403)
 		})
 
-		test('Should forbid updating a global food item when performed by a normal user (returns 404)', async () => {
+		test('Should forbid updating a global food item when performed by a normal user (returns 403)', async () => {
 			const globalFood = await setupTestFood(adminContext.cookie || '', { name: 'Global Milk' })
 			globalFoodIdsToCleanup.push(globalFood.id)
 
@@ -237,7 +237,7 @@ describe('Food Catalog Integration Tests', () => {
 				.set('Cookie', user1Context.cookie || '')
 				.send(updateFoodMock)
 
-			expect(result.status).toBe(404) // Filtered out by userId in repository where clause
+			expect(result.status).toBe(403)
 		})
 
 		test('Should allow updating a global food item when performed by an Admin user', async () => {
@@ -282,7 +282,7 @@ describe('Food Catalog Integration Tests', () => {
 			expect(result.status).toBe(403)
 		})
 
-		test('Should forbid deleting a global food item when performed by a normal user (returns 404)', async () => {
+		test('Should forbid deleting a global food item when performed by a normal user (returns 403)', async () => {
 			const globalFood = await setupTestFood(adminContext.cookie || '', { name: 'Global Bread' })
 			globalFoodIdsToCleanup.push(globalFood.id)
 
@@ -291,7 +291,7 @@ describe('Food Catalog Integration Tests', () => {
 				.set('Cookie', user1Context.cookie || '')
 				.send()
 
-			expect(result.status).toBe(404) // Filtered out by userId in repository where clause
+			expect(result.status).toBe(403)
 		})
 
 		test('Should allow Admin to delete a global food item', async () => {

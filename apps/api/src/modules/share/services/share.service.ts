@@ -1,7 +1,9 @@
-import { prisma, safeCall } from '@ate-a-falha/database'
 import { ShareLogic, type ShareLookupResponseDTO, type Result, success, failure } from '@ate-a-falha/shared'
+import type { IShareRepository } from '../interfaces/share.interface.js'
 
 export class ShareService {
+	constructor(private readonly shareRepository: IShareRepository) {}
+
 	async lookupByCode(rawCode: string): Promise<Result<ShareLookupResponseDTO>> {
 		const parsed = ShareLogic.parseShareInput(rawCode)
 
@@ -14,23 +16,13 @@ export class ShareService {
 
 		// 1. Search in Workout Plans if resourceType is 'workout' or unspecified
 		if (!parsed.resourceType || parsed.resourceType === 'workout') {
-			const planResult = await safeCall(
-				prisma.plan.findFirst({
-					where: {
-						id: {
-							startsWith: parsed.codeOrId,
-							mode: 'insensitive',
-						},
-						isExported: true,
-					},
-					select: {
-						id: true,
-						name: true,
-					},
-				})
-			)
+			const planResult = await this.shareRepository.findExportedPlanByCodePrefix(parsed.codeOrId)
 
-			if (planResult.isSuccess() && planResult.value) {
+			if (planResult.isFailure()) {
+				return failure(planResult.error)
+			}
+
+			if (planResult.value) {
 				const plan = planResult.value
 				return success({
 					resourceType: 'workout',
@@ -43,23 +35,13 @@ export class ShareService {
 
 		// 2. Search in Diets if resourceType is 'diet' or unspecified
 		if (!parsed.resourceType || parsed.resourceType === 'diet') {
-			const dietResult = await safeCall(
-				prisma.diet.findFirst({
-					where: {
-						id: {
-							startsWith: parsed.codeOrId,
-							mode: 'insensitive',
-						},
-						isExported: true,
-					},
-					select: {
-						id: true,
-						name: true,
-					},
-				})
-			)
+			const dietResult = await this.shareRepository.findExportedDietByCodePrefix(parsed.codeOrId)
 
-			if (dietResult.isSuccess() && dietResult.value) {
+			if (dietResult.isFailure()) {
+				return failure(dietResult.error)
+			}
+
+			if (dietResult.value) {
 				const diet = dietResult.value
 				return success({
 					resourceType: 'diet',

@@ -72,24 +72,30 @@ export class UserService {
 		const result = await this.userRepository.findById(id)
 		if (result.isFailure()) return failure(result.error)
 
-		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(id)
-		return this.toResponse(result.value, hasBodyMetrics)
+		const hasBodyMetricsResult = await this.bodyMetricService.hasBodyMetrics(id)
+		if (hasBodyMetricsResult.isFailure()) return failure(hasBodyMetricsResult.error)
+
+		return this.toResponse(result.value, hasBodyMetricsResult.value)
 	}
 
 	async updateMe(id: string, data: UpdateUserDTO): Promise<Result<UserResponseDTO>> {
-		const { auth, role: _ignoredRole, ...userData } = data
+		const { auth: _ignoredAuth, role: _ignoredRole, ...userData } = data as UpdateUserDTO & {
+			auth?: unknown
+			role?: unknown
+		}
 
 		const userResult = await this.userRepository.update(id, userData)
 		if (userResult.isFailure()) return failure(userResult.error)
 
-		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(id)
+		if (userData.birthDate !== undefined || userData.gender !== undefined) {
+			const recalcResult = await this.bodyMetricService.recalculateLatestForUser(userResult.value)
+			if (recalcResult.isFailure()) return failure(recalcResult.error)
+		}
 
-		if (!auth) return this.toResponse(userResult.value, hasBodyMetrics)
+		const hasBodyMetricsResult = await this.bodyMetricService.hasBodyMetrics(id)
+		if (hasBodyMetricsResult.isFailure()) return failure(hasBodyMetricsResult.error)
 
-		const authResult = await this.authRepository.updateEmail(id, auth.email!)
-		if (authResult.isFailure()) return failure(authResult.error)
-
-		return this.toResponse({ ...userResult.value, auth: authResult.value }, hasBodyMetrics)
+		return this.toResponse(userResult.value, hasBodyMetricsResult.value)
 	}
 
 	async deleteMe(id: string): Promise<Result<void>> {
@@ -106,14 +112,14 @@ export class UserService {
 		const authResult = await this.authRepository.findByEmail(data.email)
 		if (authResult.isFailure()) {
 			logger.warn({ email: data.email }, 'Login failed: user not found')
-			return failure({ type: 'NOT_FOUND', message: 'Invalid credentials.' })
+			return failure({ type: 'UNAUTHORIZED', message: 'Invalid credentials.' })
 		}
 
 		const auth = authResult.value
 		const isValidPassword = await this.verifyPassword(data.password, auth.password)
 		if (!isValidPassword) {
 			logger.warn({ userId: auth.userId }, 'Login failed: invalid password')
-			return failure({ type: 'NOT_FOUND', message: 'Invalid credentials.' })
+			return failure({ type: 'UNAUTHORIZED', message: 'Invalid credentials.' })
 		}
 
 		const userResult = await this.userRepository.findById(auth.userId)
@@ -122,9 +128,10 @@ export class UserService {
 		const token = this.generateToken(auth.userId, auth.email)
 		logger.info({ userId: auth.userId }, 'Login successful')
 
-		const hasBodyMetrics = await this.bodyMetricService.hasBodyMetrics(userResult.value.id)
+		const hasBodyMetricsResult = await this.bodyMetricService.hasBodyMetrics(userResult.value.id)
+		if (hasBodyMetricsResult.isFailure()) return failure(hasBodyMetricsResult.error)
 
-		const userResponse = this.toResponse(userResult.value, hasBodyMetrics)
+		const userResponse = this.toResponse(userResult.value, hasBodyMetricsResult.value)
 		if (userResponse.isFailure()) return failure(userResponse.error)
 
 		return success({ user: userResponse.value, token })
@@ -135,7 +142,6 @@ export class UserService {
 
 		const userWithHashedAuth: CreateUserWithAuthDTO = {
 			...data,
-			role: 'USER',
 			auth: {
 				...data.auth,
 				password: passwordHash,

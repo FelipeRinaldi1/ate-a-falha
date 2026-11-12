@@ -1,31 +1,28 @@
 export class BodyMetricLogic {
 	static calculateBMI(weight: number, height: number): number {
-		if (height <= 0) {
+		if (height <= 0 || weight <= 0) {
 			return 0
 		}
-		if (weight <= 0) {
-			return 0
-		}
-		const result = weight / (height * height)
+		const heightInMeters = height > 3 ? height / 100 : height
+		const result = weight / (heightInMeters * heightInMeters)
 		return Math.round(result * 10) / 10
 	}
 
-	static calculateBMR(gender: 'MALE' | 'FEMALE', weight: number, height: number, age: number): number {
-		if (age <= 0) {
+	static calculateBMR(gender: 'MALE' | 'FEMALE' | 'OTHER', weight: number, height: number, age: number): number {
+		if (age <= 0 || height <= 0 || weight <= 0) {
 			return 0
 		}
-		if (height <= 0) {
-			return 0
-		}
-		if (weight <= 0) {
-			return 0
-		}
+		const heightInCm = height <= 3 ? height * 100 : height
 		if (gender === 'MALE') {
-			const result = 10 * weight + 6.25 * height - 5 * age + 5
+			const result = 10 * weight + 6.25 * heightInCm - 5 * age + 5
 			return Math.round(result)
 		}
 		if (gender === 'FEMALE') {
-			const result = 10 * weight + 6.25 * height - 5 * age - 161
+			const result = 10 * weight + 6.25 * heightInCm - 5 * age - 161
+			return Math.round(result)
+		}
+		if (gender === 'OTHER') {
+			const result = 10 * weight + 6.25 * heightInCm - 5 * age - 78
 			return Math.round(result)
 		}
 		return 0

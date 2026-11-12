@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, memo } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedValue } from '@mantine/hooks'
 import {
 	Container,
@@ -24,10 +24,9 @@ import {
 } from '@mantine/core'
 import { Plus, Trash2, Search, Star } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
+import { workoutApi } from '../api/workoutApi'
+import { WORKOUT_QUERY_KEYS, usePlanDetail, useExerciseCatalogAll } from '../hooks/useWorkout'
 import {
-	type ExerciseDTO,
-	type PlanDTO,
 	type WorkoutDTO,
 	type WorkoutExerciseDTO,
 	type SetDTO,
@@ -127,28 +126,15 @@ export function EditPlanPage() {
 	>([])
 
 	// Fetch Plan details (includes workouts, exercises, sets)
-	const { data: plan, isLoading } = useQuery<PlanDTO>({
-		queryKey: ['workout-plans-detail', id],
-		queryFn: async () => {
-			const res = await api.get(`/workout/plans/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-		refetchOnWindowFocus: false,
-		staleTime: 300000, // 5 minutes
-	})
+	const { data: plan, isLoading } = usePlanDetail(id)
 
 	// Fetch Exercise Catalog for adding exercises
-	const { data: catalog = [] } = useQuery<ExerciseDTO[]>({
-		queryKey: ['exercise-catalog-all-options'],
-		queryFn: async () => {
-			const res = await api.get('/workout/exercise-catalog', { params: { take: 800 } })
-			return res.data
-		},
-	})
+	const { data: catalog = [] } = useExerciseCatalogAll()
 
 	// Initialize states when plan is loaded
-	if (plan && initializedPlanId !== plan.id) {
+	useEffect(() => {
+		if (!plan || initializedPlanId === plan.id) return
+
 		setInitializedPlanId(plan.id)
 		setPlanName(plan.name)
 		setCoverImageUrl(plan.coverImageUrl || null)
@@ -173,39 +159,51 @@ export function EditPlanPage() {
 		})
 		setWorkoutNames(names)
 		setWorkoutWeekDays(weekDays)
-	}
+	}, [plan, initializedPlanId])
 
 	const savePlanMutation = useMutation({
 		mutationFn: async () => {
+			const trimmedPlanName = planName.trim()
+			if (trimmedPlanName.length < 3) {
+				throw new Error('O nome do plano deve ter no mínimo 3 caracteres.')
+			}
+
+			const activeDays = DIVISION_DAYS[selectedDivision]
+			for (const day of activeDays) {
+				const wName = (workoutNames[day] || `Treino ${day}`).trim()
+				if (wName.length < 3) {
+					throw new Error(`O nome do treino ${day} deve ter no mínimo 3 caracteres.`)
+				}
+			}
+
 			// 1. Update plan name & cover images
-			const patchPlanPromise = api.patch(`/workout/plans/${id}`, {
-				name: planName,
+			const patchPlanPromise = workoutApi.updatePlan(id!, {
+				name: trimmedPlanName,
 				coverImageUrl,
 				coverExerciseId,
 			})
 
 			// 2. Update all active workouts names and weekDays in parallel
-			const activeDays = DIVISION_DAYS[selectedDivision]
 			const workoutPromises = activeDays.map((day) => {
 				const existingWorkout = plan?.workouts?.find((w: WorkoutDTO) => w.day === day)
-				const wName = workoutNames[day] || `Treino ${day}`
+				const wName = (workoutNames[day] || `Treino ${day}`).trim()
 				const wWeekDay = workoutWeekDays[day] || null
 				if (existingWorkout) {
-					return api.patch(`/workout/workouts/${existingWorkout.id}`, { name: wName, weekDay: wWeekDay })
+					return workoutApi.updateWorkout(existingWorkout.id, { name: wName, weekDay: wWeekDay })
 				} else {
-					return api.post(`/workout/plans/${id}/workouts`, { name: wName, day, weekDay: wWeekDay })
+					return workoutApi.createWorkout(id!, { name: wName, day, weekDay: wWeekDay })
 				}
 			})
 
 			// 3. Delete any existing workouts that are outside the selected division
 			const removedWorkouts = (plan?.workouts || []).filter((w: WorkoutDTO) => !activeDays.includes(w.day))
-			const deletePromises = removedWorkouts.map((w: WorkoutDTO) => api.delete(`/workout/workouts/${w.id}`))
+			const deletePromises = removedWorkouts.map((w: WorkoutDTO) => workoutApi.deleteWorkout(w.id))
 
 			await Promise.all([patchPlanPromise, ...workoutPromises, ...deletePromises])
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans'] })
-			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })
+			queryClient.invalidateQueries({ queryKey: WORKOUT_QUERY_KEYS.plans })
+			queryClient.invalidateQueries({ queryKey: WORKOUT_QUERY_KEYS.planDetail(id) })
 			goBack('/workout/plans')
 		},
 	})
@@ -217,26 +215,24 @@ export function EditPlanPage() {
 
 			// If workout doesn't exist yet, create it first
 			if (!workout) {
-				const res = await api.post(`/workout/plans/${id}/workouts`, {
+				workout = await workoutApi.createWorkout(id!, {
 					name: workoutNames[day] || `Treino ${day}`,
 					day,
 				})
-				workout = res.data
 			}
 
 			if (!workout) return
 
 			// Add the exercise
 			const orderIndex = workout.workoutExercises?.length || 0
-			const exerciseRes = await api.post(`/workout/workouts/${workout.id}/exercises`, {
+			const newExercise = await workoutApi.addExerciseToWorkout(workout.id, {
 				exerciseId,
 				orderIndex,
 			})
-			const newExercise = exerciseRes.data
 
 			// Create 3 default sets
 			for (let i = 1; i <= 3; i++) {
-				await api.post(`/workout/workout-exercises/${newExercise.id}/sets`, {
+				await workoutApi.addSet(newExercise.id, {
 					setNumber: i,
 					repetitions: 10,
 					weight: 0,
@@ -245,46 +241,35 @@ export function EditPlanPage() {
 			}
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })
+			queryClient.invalidateQueries({ queryKey: WORKOUT_QUERY_KEYS.planDetail(id) })
 			setExerciseModalOpen(false)
 		},
 	})
 
 	// Mutation: Delete Exercise
 	const deleteExerciseMutation = useMutation({
-		mutationFn: async (workoutExerciseId: string) => {
-			return api.delete(`/workout/workout-exercises/${workoutExerciseId}`)
-		},
+		mutationFn: (workoutExerciseId: string) => workoutApi.deleteWorkoutExercise(workoutExerciseId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })
+			queryClient.invalidateQueries({ queryKey: WORKOUT_QUERY_KEYS.planDetail(id) })
 		},
 	})
 
-	// Mutation: Update Sets
+	// Mutation: Update Sets atomically via PUT replace-all endpoint
 	const updateSetsMutation = useMutation({
 		mutationFn: async () => {
 			if (!editingWorkoutExerciseId) return
 
-			// 1. Fetch current sets to delete or update
-			const res = await api.get(`/workout/workout-exercises/${editingWorkoutExerciseId}/sets`)
-			const currentSets = res.data
-
-			// 2. Delete all current sets in parallel (backend simplicity)
-			await Promise.all(currentSets.map((set: SetDTO) => api.delete(`/workout/sets/${set.id}`)))
-
-			// 3. Insert updated sets in parallel
-			const postPromises = editingSets.map((set, i) =>
-				api.post(`/workout/workout-exercises/${editingWorkoutExerciseId}/sets`, {
-					setNumber: i + 1,
+			await workoutApi.replaceSets(
+				editingWorkoutExerciseId,
+				editingSets.map((set) => ({
 					repetitions: set.repetitions,
-					weight: set.weight,
+					weight: set.weight ?? 0,
 					restTimeSeconds: set.restTimeSeconds,
-				})
+				}))
 			)
-			await Promise.all(postPromises)
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['workout-plans-detail', id] })
+			queryClient.invalidateQueries({ queryKey: WORKOUT_QUERY_KEYS.planDetail(id) })
 			setSetsModalOpen(false)
 			setEditingWorkoutExerciseId(null)
 		},

@@ -10,14 +10,14 @@ import {
 } from '@ate-a-falha/shared'
 import { type DietFull, type DietLogFull } from '@ate-a-falha/database'
 import { NutritionAccessControlService } from './nutritionAccessControl.service.js'
-import type { INotificationRepository } from '../../notification/interfaces/notification.interface.js'
-import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import type { INotificationService } from '../../notification/interfaces/notification.interface.js'
+import { logger } from '../../../config/logger.js'
 
 export class DietService {
 	constructor(
 		private readonly dietRepo: IDietRepository & IDietLogRepository,
 		private readonly accessControl: NutritionAccessControlService,
-		private readonly notificationRepo: INotificationRepository = new NotificationRepository()
+		private readonly notificationService: INotificationService
 	) {}
 
 	// Diet Plan CRUD
@@ -75,15 +75,18 @@ export class DietService {
 					: 4000
 
 			if (previousLog.value.waterIntake < waterGoal && data.waterIntake >= waterGoal) {
-				await this.notificationRepo.create(
+				const notifResult = await this.notificationService.create(
 					{
 						title: 'Meta de Hidratação Atingida',
 						message: `Parabéns! Você alcançou sua meta diária de ${waterGoal}ml de água hoje.`,
 						type: 'DIET',
 						link: '/nutrition',
 					},
-					authUser.id
+					authUser
 				)
+				if (notifResult.isFailure()) {
+					logger.warn({ err: notifResult.error, userId: authUser.id }, 'Failed to create water goal notification')
+				}
 			}
 		}
 
@@ -117,15 +120,18 @@ export class DietService {
 	async import(id: string, authUser: authenticatedUser): Promise<Result<DietFull>> {
 		const result = await this.dietRepo.importDiet(id, authUser.id)
 		if (result.isSuccess()) {
-			await this.notificationRepo.create(
+			const notifResult = await this.notificationService.create(
 				{
 					title: 'Dieta Importada com Sucesso',
 					message: `A dieta "${result.value.name}" foi adicionada ao seu planejamento.`,
 					type: 'SYSTEM',
 					link: '/nutrition',
 				},
-				authUser.id
+				authUser
 			)
+			if (notifResult.isFailure()) {
+				logger.warn({ err: notifResult.error, userId: authUser.id }, 'Failed to create diet import notification')
+			}
 		}
 		return result
 	}

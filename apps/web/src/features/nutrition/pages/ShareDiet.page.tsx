@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	Container,
 	Paper,
@@ -18,41 +17,30 @@ import {
 	SimpleGrid,
 } from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
-import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
+import { useExportDiet, useImportDiet } from '../hooks/useNutrition'
 import { type MealDTO, type FoodInMealDTO } from '@ate-a-falha/shared'
 import { useGoBack } from '../../../utils/navigation'
 
 export function ShareDietPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
-	const queryClient = useQueryClient()
 	const goBack = useGoBack('/nutrition')
 	const { isAuthenticated } = useAuth()
 
-	const {
-		data: diet,
-		isLoading,
-		isError,
-	} = useQuery({
-		queryKey: ['share-diet', id],
-		queryFn: async () => {
-			const res = await api.get(`/nutrition/diets/${id}/export`)
-			return res.data
+	const { data: diet, isLoading, isError } = useExportDiet(id)
+	const importDietMutation = useImportDiet()
+	const importMutation = {
+		isPending: importDietMutation.isPending,
+		mutate: () => {
+			if (!id) return
+			importDietMutation.mutate(id, {
+				onSuccess: () => {
+					navigate('/nutrition/goals')
+				},
+			})
 		},
-		retry: false,
-	})
-
-	const importMutation = useMutation({
-		mutationFn: async () => {
-			const res = await api.post(`/nutrition/diets/${id}/import`)
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['notifications'] })
-			navigate('/nutrition/goals')
-		},
-	})
+	}
 
 	if (isLoading) {
 		return (

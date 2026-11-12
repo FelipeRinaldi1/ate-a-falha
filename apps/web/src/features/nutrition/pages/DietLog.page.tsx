@@ -13,16 +13,27 @@ import {
 	ActionIcon,
 } from '@mantine/core'
 import { PlusCircle, Search } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDisclosure } from '@mantine/hooks'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { NutritionLogic, type DietDTO, type DietLogDTO, type MealLogDTO, type MealDTO } from '@ate-a-falha/shared'
+import { NutritionLogic, type MealDTO, type MealLogDTO } from '@ate-a-falha/shared'
 import { CalendarSelector } from '../../../components/CalendarSelector'
 import { WaterCard } from '../components/WaterCard'
 import { MacrosSummaryCard } from '../components/MacrosSummaryCard'
 import { MealCard } from '../components/MealCard'
 import { useNavigate } from 'react-router-dom'
+import { nutritionApi } from '../api/nutritionApi'
+import {
+	NUTRITION_QUERY_KEYS,
+	useDiets,
+	useDietLogs,
+	useTargetMeals,
+	useCreateDiet,
+	useUpdateDiet,
+	useCreateDietLog,
+	useUpdateDietLog,
+	useCreateMealLog,
+} from '../hooks/useNutrition'
 
 export function DietLogPage() {
 	const queryClient = useQueryClient()
@@ -45,34 +56,15 @@ export function DietLogPage() {
 	const selectedDateStr = formatDateString(selectedDate)
 
 	// Fetch active diet plans
-	const { data: diets = [], isLoading: isLoadingDiets } = useQuery<DietDTO[]>({
-		queryKey: ['diets'],
-		queryFn: async () => {
-			const res = await api.get('/nutrition/diets')
-			return res.data
-		},
-	})
+	const { data: diets = [], isLoading: isLoadingDiets } = useDiets()
 
 	// Fetch all daily diet logs
-	const { data: dietLogs = [], isLoading: isLoadingLogs } = useQuery<DietLogDTO[]>({
-		queryKey: ['diet-logs'],
-		queryFn: async () => {
-			const res = await api.get('/nutrition/diet-logs')
-			return res.data
-		},
-	})
+	const { data: dietLogs = [], isLoading: isLoadingLogs } = useDietLogs()
 
 	const activeDiet = diets[0]
 
 	// Fetch reference meals
-	const { data: targetMeals = [], isLoading: isLoadingMeals } = useQuery<MealDTO[]>({
-		queryKey: ['target-meals', activeDiet?.id],
-		queryFn: async () => {
-			const res = await api.get(`/nutrition/diets/${activeDiet.id}/meals`)
-			return res.data
-		},
-		enabled: !!activeDiet?.id,
-	})
+	const { data: targetMeals = [], isLoading: isLoadingMeals } = useTargetMeals(activeDiet?.id)
 
 	// Find diet log for the selected date
 	const activeLog = dietLogs.find((log) => {
@@ -83,64 +75,35 @@ export function DietLogPage() {
 
 	// Calculate current daily macro totals from logged meals
 	const loggedMeals = [...(activeLog?.meals || [])].sort((a, b) => a.time.localeCompare(b.time))
-	const dietTotals = NutritionLogic.calculateDietMacros(
-		loggedMeals.map((meal: MealLogDTO) => ({
-			...meal,
-			foodsInMeal: meal.foods || [],
-		})) as unknown as MealDTO[]
-	)
+	const dietTotals = NutritionLogic.calculateDietMacros(loggedMeals)
 
-	// Mutation: Create a Diet Log entry
-	const createDietLogMutation = useMutation({
-		mutationFn: async (dateStr: string) => {
-			const res = await api.post('/nutrition/diet-logs', { date: dateStr })
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-		},
-	})
+	// Mutations via feature hooks
+	const createDietMutation = useCreateDiet()
+	const createDietLogMutation = useCreateDietLog()
+	const updateDietMutation = useUpdateDiet()
+	const updateDietLogMutation = useUpdateDietLog()
+	const createMealLogMutation = useCreateMealLog()
 
-	// Mutation: Update active diet (general patch)
-	const updateDietMutation = useMutation({
-		mutationFn: async ({ id, data }: { id: string; data: Partial<DietDTO> }) => {
-			const res = await api.patch(`/nutrition/diets/${id}`, data)
-			return res.data
+	const addMealLogMutation = {
+		isPending: createMealLogMutation.isPending,
+		mutate: ({ dietLogId, name, time }: { dietLogId: string; name: string; time: string }) => {
+			createMealLogMutation.mutate(
+				{
+					dietLogId,
+					name,
+					time,
+					orderIndex: activeLog?.meals?.length || 0,
+				},
+				{
+					onSuccess: () => {
+						close()
+						setMealName('')
+						setMealTime('12:00')
+					},
+				}
+			)
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diets'] })
-		},
-	})
-
-	// Mutation: Update active diet log (e.g. waterIntake)
-	const updateDietLogMutation = useMutation({
-		mutationFn: async ({ id, data }: { id: string; data: { waterIntake: number } }) => {
-			const res = await api.patch(`/nutrition/diet-logs/${id}`, data)
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-			queryClient.invalidateQueries({ queryKey: ['notifications'] })
-		},
-	})
-
-	// Mutation: Add a Meal Log to a Diet Log
-	const addMealLogMutation = useMutation({
-		mutationFn: async ({ dietLogId, name, time }: { dietLogId: string; name: string; time: string }) => {
-			const res = await api.post(`/nutrition/diet-logs/${dietLogId}/meals`, {
-				name,
-				time,
-				orderIndex: activeLog?.meals?.length || 0,
-			})
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-			close()
-			setMealName('')
-			setMealTime('12:00')
-		},
-	})
+	}
 
 	const isCurrentOrFuture = (() => {
 		const today = new Date()
@@ -163,36 +126,31 @@ export function DietLogPage() {
 		}) => {
 			setTogglingMealId(targetMeal.id)
 			if (isLogged && loggedMealId) {
-				await api.delete(`/nutrition/meal-logs/${loggedMealId}`)
+				await nutritionApi.deleteMealLog(loggedMealId)
 			} else {
 				let dietLogId = activeLog?.id
 				if (!dietLogId) {
-					const newLog = await api.post('/nutrition/diet-logs', { date: selectedDateStr })
-					dietLogId = newLog.data.id
+					const newLog = await nutritionApi.createDietLog(selectedDateStr)
+					dietLogId = newLog.id
 				}
 
-				const newMealRes = await api.post(`/nutrition/diet-logs/${dietLogId}/meals`, {
+				const foodsToLog = (targetMeal.foods || []).map((f) => ({
+					foodId: f.foodId,
+					quantity: f.quantity,
+				}))
+
+				await nutritionApi.createMealLog(dietLogId, {
 					name: targetMeal.name,
 					time: targetMeal.time,
 					orderIndex: activeLog?.meals?.length || 0,
+					foods: foodsToLog,
 				})
-				const newMealLogId = newMealRes.data.id
-
-				const foodsToLog = targetMeal.foods || []
-				const foodPromises = foodsToLog.map((f) =>
-					api.post(`/nutrition/meal-logs/${newMealLogId}/foods`, {
-						foodId: f.foodId,
-						quantity: f.quantity,
-					})
-				)
-				await Promise.all(foodPromises)
 			}
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['diet-logs'] })
-			setTogglingMealId(null)
+			queryClient.invalidateQueries({ queryKey: NUTRITION_QUERY_KEYS.dietLogs })
 		},
-		onError: () => {
+		onSettled: () => {
 			setTogglingMealId(null)
 		},
 	})
@@ -331,8 +289,7 @@ export function DietLogPage() {
 				data: { dailyWaterGoal: newWaterGoal },
 			})
 		} else {
-			await api.post('/nutrition/diets', payload)
-			queryClient.invalidateQueries({ queryKey: ['diets'] })
+			await createDietMutation.mutateAsync(payload)
 		}
 		closeWaterGoal()
 	}

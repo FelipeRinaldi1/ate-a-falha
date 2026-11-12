@@ -88,11 +88,22 @@ export class MealRepository implements IMealRepository, IMealLogRepository {
 
 	// MealLog Real Consumption CRUD
 	async createLog(dietLogId: string, data: CreateMealLogDTO): Promise<Result<MealLogFull>> {
+		const { foods, ...mealData } = data
 		const result = await safeCall(
 			prisma.mealLog.create({
 				data: {
-					...data,
+					...mealData,
 					dietLog: { connect: { id: dietLogId } },
+					...(foods?.length
+						? {
+								foods: {
+									create: foods.map((item) => ({
+										foodId: item.foodId,
+										quantity: item.quantity,
+									})),
+								},
+							}
+						: {}),
 				},
 				include: { foods: { include: { food: true } } },
 			})

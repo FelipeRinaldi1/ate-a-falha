@@ -1,17 +1,15 @@
-import { api } from '../../../../api/axiosInstance'
 import { Button, NumberInput, Paper, Select, Stack, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useCreateBodyMetric } from '../../hooks/useUser'
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../../utils/errorTranslator'
 import type { AxiosError } from 'axios'
 
 export function BodyMetricRegisterForm() {
-	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	const { refreshUser } = useAuth()
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -21,21 +19,14 @@ export function BodyMetricRegisterForm() {
 			weight: 0,
 			height: 0,
 			activityLevel: 0,
-			bodyFat: 0,
-			muscleRate: 0,
+			bodyFat: null,
+			muscleRate: null,
 		},
 		validate: schemaResolver(createBodyMetricSchema, { sync: true }),
 	})
-	const mutation = useMutation({
-		mutationFn: (data: CreateBodyMetricDTO) => {
-			return api.post('/users/body-metrics', data)
-		},
-		onMutate: () => {
-			setErrorMsg(null)
-		},
+	const mutation = useCreateBodyMetric({
 		onSuccess: async () => {
 			await refreshUser()
-			await queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			navigate('/workout', { replace: true })
 		},
 		onError: (error: AxiosError) => {
@@ -44,7 +35,16 @@ export function BodyMetricRegisterForm() {
 	})
 	return (
 		<Paper withBorder shadow="md" p={30} radius="md">
-			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
+			<form
+				onSubmit={form.onSubmit((values) => {
+					setErrorMsg(null)
+					mutation.mutate({
+						...values,
+						bodyFat: (values.bodyFat as unknown) === '' ? null : (values.bodyFat ?? null),
+						muscleRate: (values.muscleRate as unknown) === '' ? null : (values.muscleRate ?? null),
+					})
+				})}
+			>
 				<Stack>
 					{errorMsg && (
 						<Alert

@@ -101,6 +101,74 @@ describe('Exercise Catalog Integration Tests', () => {
 			expect(result.body.length).toBe(1)
 			expect(result.body[0].name).toBe('Unique Pullup Exercise')
 		})
+
+		test('Should filter exercises by secondaryMuscles with and without name query', async () => {
+			const secOnly = await prisma.exercise.create({
+				data: getCreateExerciseMock({
+					name: 'Weighted Dip Delta',
+					primaryMuscles: ['peito'],
+					secondaryMuscles: ['antebraco_custom'],
+				}),
+			})
+			globalExerciseIdsToCleanup.push(secOnly.id)
+
+			const withoutName = await request(app)
+				.get(`${BASE_API_URL}/workout/exercise-catalog`)
+				.set('Cookie', userContext.cookie || '')
+				.query({ secondaryMuscles: 'antebraco_custom' })
+				.send()
+
+			expect(withoutName.status).toBe(200)
+			expect(withoutName.body.map((e: any) => e.id)).toContain(secOnly.id)
+
+			const withName = await request(app)
+				.get(`${BASE_API_URL}/workout/exercise-catalog`)
+				.set('Cookie', userContext.cookie || '')
+				.query({ name: 'Weighted Dip', secondaryMuscles: 'antebraco_custom' })
+				.send()
+
+			expect(withName.status).toBe(200)
+			expect(withName.body).toHaveLength(1)
+			expect(withName.body[0].id).toBe(secOnly.id)
+		})
+
+		test('Should support cursorId keyset pagination while filtering by name', async () => {
+			const e1 = await prisma.exercise.create({
+				data: getCreateExerciseMock({ name: 'Curl Alpha Keyset' }),
+			})
+			const e2 = await prisma.exercise.create({
+				data: getCreateExerciseMock({ name: 'Curl Beta Keyset' }),
+			})
+			const e3 = await prisma.exercise.create({
+				data: getCreateExerciseMock({ name: 'Curl Gamma Keyset' }),
+			})
+			globalExerciseIdsToCleanup.push(e1.id, e2.id, e3.id)
+
+			const page1 = await request(app)
+				.get(`${BASE_API_URL}/workout/exercise-catalog`)
+				.set('Cookie', userContext.cookie || '')
+				.query({ name: 'Keyset', take: 2 })
+				.send()
+
+			expect(page1.status).toBe(200)
+			expect(page1.body).toHaveLength(2)
+
+			const lastId = page1.body[1].id
+			const page2 = await request(app)
+				.get(`${BASE_API_URL}/workout/exercise-catalog`)
+				.set('Cookie', userContext.cookie || '')
+				.query({ name: 'Keyset', take: 2, cursorId: lastId })
+				.send()
+
+			expect(page2.status).toBe(200)
+			expect(page2.body).toHaveLength(1)
+
+			const allIds = [...page1.body.map((e: any) => e.id), ...page2.body.map((e: any) => e.id)]
+			expect(new Set(allIds).size).toBe(3)
+			expect(allIds).toContain(e1.id)
+			expect(allIds).toContain(e2.id)
+			expect(allIds).toContain(e3.id)
+		})
 	})
 
 	describe('GET /workout/exercise-catalog/:id', () => {

@@ -41,7 +41,11 @@ export class FoodInMealService {
 	}
 
 	async update(id: string, data: UpdateFoodInMealDTO, authUser: authenticatedUser): Promise<Result<FoodInMealFull>> {
-		const access = await this.accessControl.canAccessFoodInMeal(id, authUser)
+		const checks: Promise<Result<boolean>>[] = [this.accessControl.canAccessFoodInMeal(id, authUser)]
+		if (data.foodId) {
+			checks.push(this.accessControl.canAccessFood(data.foodId, authUser))
+		}
+		const access = Result.combine(await Promise.all(checks))
 		if (access.isFailure()) return failure(access.error)
 
 		return await this.foodInMealRepo.update(id, data, authUser.id)
@@ -92,7 +96,11 @@ export class FoodInMealService {
 	}
 
 	async updateLog(id: string, data: UpdateFoodLogDTO, authUser: authenticatedUser): Promise<Result<FoodLogFull>> {
-		const access = await this.accessControl.canAccessFoodLog(id, authUser)
+		const checks: Promise<Result<boolean>>[] = [this.accessControl.canAccessFoodLog(id, authUser)]
+		if (data.foodId) {
+			checks.push(this.accessControl.canAccessFood(data.foodId, authUser))
+		}
+		const access = Result.combine(await Promise.all(checks))
 		if (access.isFailure()) return failure(access.error)
 
 		return await this.foodInMealRepo.updateLog(id, data, authUser.id)

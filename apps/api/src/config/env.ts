@@ -1,9 +1,15 @@
 import dotenv from 'dotenv'
 import { expand } from 'dotenv-expand'
+import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 
-const myEnv = dotenv.config({ path: path.resolve(process.cwd(), './.env') })
+const apiRootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
+const testEnvPath = path.resolve(apiRootDir, '.env.test')
+const defaultEnvPath = path.resolve(apiRootDir, '.env')
+const envPath = process.env.NODE_ENV === 'test' && fs.existsSync(testEnvPath) ? testEnvPath : defaultEnvPath
+const myEnv = dotenv.config({ path: envPath })
 expand(myEnv)
 
 import { NODE_ENV, DEFAULT_JWT_EXPIRES, DEFAULT_PORT } from '../constants/env/env.constants.js'

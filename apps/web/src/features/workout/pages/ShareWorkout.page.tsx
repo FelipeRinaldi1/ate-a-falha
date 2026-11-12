@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
 	Container,
 	Paper,
@@ -17,8 +16,8 @@ import {
 	Divider,
 } from '@mantine/core'
 import { ArrowLeft, Download, Info } from 'lucide-react'
-import { api } from '../../../api/axiosInstance.js'
 import { useAuth } from '../../user/hooks/useAuth.js'
+import { useExportPlan, useImportPlan } from '../hooks/useWorkout.js'
 import { type WorkoutDTO, type WorkoutExerciseDTO } from '@ate-a-falha/shared'
 import { useGoBack } from '../../../utils/navigation.js'
 
@@ -31,33 +30,22 @@ const GOAL_LABELS: Record<string, string> = {
 export function ShareWorkoutPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
-	const queryClient = useQueryClient()
 	const goBack = useGoBack('/workout')
 	const { isAuthenticated } = useAuth()
 
-	const {
-		data: plan,
-		isLoading,
-		isError,
-	} = useQuery({
-		queryKey: ['share-workout', id],
-		queryFn: async () => {
-			const res = await api.get(`/workout/plans/${id}/export`)
-			return res.data
+	const { data: plan, isLoading, isError } = useExportPlan(id)
+	const importPlanMutation = useImportPlan()
+	const importMutation = {
+		isPending: importPlanMutation.isPending,
+		mutate: () => {
+			if (!id) return
+			importPlanMutation.mutate(id, {
+				onSuccess: () => {
+					navigate('/workout/plans')
+				},
+			})
 		},
-		retry: false,
-	})
-
-	const importMutation = useMutation({
-		mutationFn: async () => {
-			const res = await api.post(`/workout/plans/${id}/import`)
-			return res.data
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['notifications'] })
-			navigate('/workout/plans')
-		},
-	})
+	}
 
 	if (isLoading) {
 		return (

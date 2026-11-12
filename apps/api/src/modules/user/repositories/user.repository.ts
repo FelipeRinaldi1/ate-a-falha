@@ -1,6 +1,13 @@
 import { prisma, safeCall, type UserFull } from '@ate-a-falha/database'
 import type { IUserRepository } from '../interfaces/user.interfaces.js'
-import { type Result, success, failure, type CreateUserWithAuthDTO, type UpdateUserDTO } from '@ate-a-falha/shared'
+import {
+	type Result,
+	success,
+	failure,
+	type CreateUserWithAuthDTO,
+	type UpdateUserDTO,
+	type authenticatedUser,
+} from '@ate-a-falha/shared'
 
 export class UserRepository implements IUserRepository {
 	async create(data: CreateUserWithAuthDTO): Promise<Result<UserFull>> {
@@ -31,7 +38,6 @@ export class UserRepository implements IUserRepository {
 					name: data.name,
 					birthDate: data.birthDate,
 					gender: data.gender,
-					role: data.role,
 				},
 				include: { auth: true },
 			})
@@ -50,6 +56,20 @@ export class UserRepository implements IUserRepository {
 		const result = await safeCall(prisma.user.findUniqueOrThrow({ where: { id }, include: { auth: true } }))
 		if (result.isFailure()) return failure(result.error)
 		return success(result.value)
+	}
+
+	async findAuthContextById(id: string): Promise<Result<authenticatedUser>> {
+		const result = await safeCall(
+			prisma.user.findUniqueOrThrow({
+				where: { id },
+				select: { id: true, role: true },
+			})
+		)
+		if (result.isFailure()) return failure(result.error)
+		return success({
+			id: result.value.id,
+			role: result.value.role as 'USER' | 'ADMIN',
+		})
 	}
 
 	async findAll(): Promise<Result<UserFull[]>> {

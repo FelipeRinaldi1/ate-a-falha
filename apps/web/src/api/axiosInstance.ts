@@ -14,3 +14,27 @@ export const api = axios.create({
 	},
 	withCredentials: true,
 })
+
+let unauthorizedHandler: (() => void) | null = null
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+	unauthorizedHandler = handler
+}
+
+api.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		const status = error?.response?.status
+		const requestUrl = String(error?.config?.url || '')
+		const isAuthEndpoint =
+			requestUrl.includes('/users/login') ||
+			requestUrl.includes('/users/register') ||
+			requestUrl.includes('/users/logout')
+
+		if (status === 401 && !isAuthEndpoint) {
+			unauthorizedHandler?.()
+		}
+
+		return Promise.reject(error)
+	}
+)

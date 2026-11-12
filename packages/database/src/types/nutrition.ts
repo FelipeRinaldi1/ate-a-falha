@@ -4,9 +4,7 @@ export type DietFull = Prisma.DietGetPayload<{
 	include: { meals: { include: { foods: { include: { food: true } } } } }
 }>
 
-export type FoodFull = Prisma.FoodGetPayload<{
-	include: { foodInMeals: true }
-}>
+export type FoodFull = Prisma.FoodGetPayload<{}>
 
 export type FoodInMealFull = Prisma.FoodInMealGetPayload<{
 	include: { food: true }

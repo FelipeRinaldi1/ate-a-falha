@@ -8,13 +8,21 @@ import { BodyMetricService } from '../services/bodyMetric.service.js'
 import { BodyMetricRepository } from '../repositories/bodyMetric.repository.js'
 import { UserAccessControlRepository } from '../repositories/accessControl.repository.js'
 import { UserAccessControlService } from '../services/userAccessControl.service.js'
+import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import { NotificationService } from '../../notification/services/notification.service.js'
 
 const userRouter = Router()
 const userRepo = new UserRepository()
 const authRepo = new AuthRepository()
 const accessRepo = new UserAccessControlRepository()
 const accessService = new UserAccessControlService(accessRepo)
-const bodyMetricService = new BodyMetricService(new BodyMetricRepository(), userRepo, accessService)
+const notificationService = new NotificationService(new NotificationRepository())
+const bodyMetricService = new BodyMetricService(
+	new BodyMetricRepository(),
+	userRepo,
+	accessService,
+	notificationService
+)
 const userService = new UserService(userRepo, authRepo, bodyMetricService)
 const userController = new UserController(userService)
 

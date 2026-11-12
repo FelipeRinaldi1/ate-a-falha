@@ -176,11 +176,14 @@ export class PlanRepository implements IPlanRepository {
 		if (targetResult.isFailure()) return failure(targetResult.error)
 		const targetPlan = targetResult.value
 
+		const importSuffix = ' (Importado)'
+		const importedName = `${targetPlan.name.slice(0, 50 - importSuffix.length)}${importSuffix}`
+
 		const importResult = await safeCall(
 			prisma.$transaction(async (tx) => {
 				const newPlan = await tx.plan.create({
 					data: {
-						name: `${targetPlan.name} (Importado)`,
+						name: importedName,
 						goal: targetPlan.goal,
 						coverImageUrl: targetPlan.coverImageUrl,
 						coverExerciseId: targetPlan.coverExerciseId,

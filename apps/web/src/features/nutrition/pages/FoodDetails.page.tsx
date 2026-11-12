@@ -1,40 +1,33 @@
 import { useParams } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Container, Stack, Paper, Group, Text, Title, Center, Loader, ActionIcon } from '@mantine/core'
 import { Trash2 } from 'lucide-react'
 import { modals } from '@mantine/modals'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
 import { useAuth } from '../../user/hooks/useAuth'
-import { type FoodDTO } from '@ate-a-falha/shared'
+import { useFoodById, useDeleteFood } from '../hooks/useNutrition'
 import { useGoBack } from '../../../utils/navigation'
 
 export function FoodDetailsPage() {
 	const { id } = useParams<{ id: string }>()
 	const goBack = useGoBack('/nutrition/search')
-	const queryClient = useQueryClient()
 	const { user } = useAuth()
 
 	// Fetch food details from catalog
-	const { data: food, isLoading } = useQuery<FoodDTO>({
-		queryKey: ['food-catalog-detail', id],
-		queryFn: async () => {
-			const res = await api.get(`/nutrition/food-catalog/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-	})
+	const { data: food, isLoading } = useFoodById(id)
 
 	// Mutation: Exclude food from catalog
-	const deleteCatalogFoodMutation = useMutation({
-		mutationFn: async () => {
-			return api.delete(`/nutrition/food-catalog/${id}`)
+	const deleteFoodMutation = useDeleteFood()
+	const deleteCatalogFoodMutation = {
+		isPending: deleteFoodMutation.isPending,
+		mutate: () => {
+			if (!id) return
+			deleteFoodMutation.mutate(id, {
+				onSuccess: () => {
+					goBack('/nutrition/search')
+				},
+			})
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
-			goBack('/nutrition/search')
-		},
-	})
+	}
 
 	const handleDeleteCatalogFood = () => {
 		if (!food) return

@@ -19,9 +19,19 @@ export async function safeCall<T>(promise: Promise<T>): Promise<Result<T>> {
 			}
 		}
 
+		console.error('[DatabaseError] Unexpected error in safeCall:', error)
+
+		const details =
+			error instanceof Prisma.PrismaClientKnownRequestError
+				? { code: error.code, meta: error.meta }
+				: error instanceof Error
+					? { name: error.name }
+					: undefined
+
 		return failure({
 			type: 'DATABASE_ERROR',
 			message: 'Internal database error',
+			details,
 		})
 	}
 }

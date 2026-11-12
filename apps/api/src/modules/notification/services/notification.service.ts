@@ -8,9 +8,9 @@ import {
 	type authenticatedUser,
 } from '@ate-a-falha/shared'
 import { type NotificationFull } from '@ate-a-falha/database'
-import type { INotificationRepository } from '../interfaces/notification.interface.js'
+import type { INotificationRepository, INotificationService } from '../interfaces/notification.interface.js'
 
-export class NotificationService {
+export class NotificationService implements INotificationService {
 	constructor(private readonly notificationRepository: INotificationRepository) {}
 
 	async create(data: CreateNotificationDTO, authUser: authenticatedUser): Promise<Result<NotificationFull>> {

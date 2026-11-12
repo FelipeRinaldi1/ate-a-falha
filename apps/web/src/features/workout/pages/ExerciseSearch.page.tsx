@@ -14,15 +14,14 @@ import {
 	SimpleGrid,
 } from '@mantine/core'
 import { Search } from 'lucide-react'
-import { useQuery, useInfiniteQuery, keepPreviousData } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useDebouncedValue } from '@mantine/hooks'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
 import { type ExerciseDTO } from '@ate-a-falha/shared'
 
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
+import { useExerciseCatalogAll, useInfiniteExercises } from '../hooks/useWorkout'
 
 const LOCALIZED_LABELS: Record<string, string> = {
 	pescoco: 'Pescoço',
@@ -115,21 +114,12 @@ export function ExerciseSearchPage() {
 	const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null)
 
 	// Fetch ALL exercises once just to extract unique muscles and categories dynamically from the API/DB
-	const { data: allCatalogExercises = [] } = useQuery<ExerciseDTO[]>({
-		queryKey: ['exercise-catalog-all-options'],
-		queryFn: async () => {
-			const res = await api.get('/workout/exercise-catalog', {
-				params: { take: 800 },
-			})
-			return res.data
-		},
-		staleTime: 1000 * 60 * 10, // Cache for 10 minutes - very efficient
-	})
+	const { data: allCatalogExercises = [] } = useExerciseCatalogAll()
 
 	const allMuscles = useMemo(
 		() =>
 			Array.from(new Set(allCatalogExercises.flatMap((e) => e.primaryMuscles)))
-				.filter((m) => m && m !== 'admin-to-delete' && m !== 'chest')
+				.filter(Boolean)
 				.map((m) => ({
 					label: LOCALIZED_LABELS[m.toLowerCase()] || m.charAt(0).toUpperCase() + m.slice(1),
 					value: m,
@@ -141,7 +131,7 @@ export function ExerciseSearchPage() {
 	const allCategories = useMemo(
 		() =>
 			Array.from(new Set(allCatalogExercises.map((e) => e.category)))
-				.filter((c) => c && c !== 'admin-to-delete' && c !== 'streghnt')
+				.filter(Boolean)
 				.map((c) => ({
 					label: LOCALIZED_LABELS[c.toLowerCase()] || c.charAt(0).toUpperCase() + c.slice(1),
 					value: c,
@@ -151,31 +141,11 @@ export function ExerciseSearchPage() {
 	)
 
 	// Infinite Query: Fetches exercises per page from the backend database with active filters
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isFetching } = useInfiniteQuery<
-		ExerciseDTO[]
-	>({
-		queryKey: ['exercise-catalog-infinite', debouncedSearch, selectedCategory, selectedMuscle],
-		queryFn: async ({ pageParam }) => {
-			const res = await api.get('/workout/exercise-catalog', {
-				params: {
-					name: debouncedSearch || undefined,
-					category: selectedCategory || undefined,
-					primaryMuscles: selectedMuscle || undefined,
-					take: debouncedSearch ? 30 : 10,
-					cursorId: pageParam || undefined,
-				},
-			})
-			return res.data
-		},
-		initialPageParam: undefined,
-		placeholderData: keepPreviousData,
-		staleTime: 1000 * 60 * 5,
-		getNextPageParam: (lastPage: ExerciseDTO[]) => {
-			if (debouncedSearch) return undefined
-			if (lastPage.length < 10) return undefined
-			return lastPage[lastPage.length - 1].id
-		},
-	})
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isFetching } = useInfiniteExercises(
+		debouncedSearch,
+		selectedCategory,
+		selectedMuscle
+	)
 
 	// Flatten all pages of exercises into a single list
 	const exercisesList = useMemo(() => data?.pages.flatMap((page) => page) || [], [data])

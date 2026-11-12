@@ -1,13 +1,12 @@
-import { api } from '../../../api/axiosInstance'
 import { MainLayout } from '../../../components/layout/MainLayout'
 import { useForm } from '@mantine/form'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Paper, Stack, Group, Text, Title, TextInput, NumberInput, Button, Container, Alert } from '@mantine/core'
 import { NutritionLogic, type CreateFoodDTO } from '@ate-a-falha/shared'
 import { useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../utils/errorTranslator'
 import { useGoBack } from '../../../utils/navigation'
+import { useCreateFood } from '../hooks/useNutrition'
 import type { AxiosError } from 'axios'
 
 interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
@@ -16,7 +15,6 @@ interface FoodFormValues extends Omit<CreateFoodDTO, 'calories'> {
 
 export function CreateFoodPage() {
 	const goBack = useGoBack('/nutrition/search')
-	const queryClient = useQueryClient()
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
 	const form = useForm<FoodFormValues>({
@@ -44,8 +42,11 @@ export function CreateFoodPage() {
 	const fiber = form.values.fiber || 0
 	const calculatedCalories = NutritionLogic.calculateCalories(protein, carbohydrate, lipids, fiber)
 
-	const mutation = useMutation({
-		mutationFn: async (values: FoodFormValues) => {
+	const createFoodMutation = useCreateFood()
+	const mutation = {
+		isPending: createFoodMutation.isPending,
+		mutate: (values: FoodFormValues) => {
+			setErrorMsg(null)
 			const foodData: CreateFoodDTO = {
 				name: values.name,
 				protein: values.protein || 0,
@@ -54,19 +55,16 @@ export function CreateFoodPage() {
 				fiber: values.fiber || 0,
 				calories: calculatedCalories,
 			}
-			return api.post('/nutrition/food-catalog', foodData)
+			createFoodMutation.mutate(foodData, {
+				onSuccess: () => {
+					goBack('/nutrition/search')
+				},
+				onError: (error) => {
+					setErrorMsg(translateError(error as AxiosError, 'Erro ao criar alimento.'))
+				},
+			})
 		},
-		onMutate: () => {
-			setErrorMsg(null)
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ['food-catalog'] })
-			goBack('/nutrition/search')
-		},
-		onError: (error: AxiosError) => {
-			setErrorMsg(translateError(error, 'Erro ao criar alimento.'))
-		},
-	})
+	}
 
 	return (
 		<MainLayout title="Criar Alimento" onBack={() => goBack('/nutrition/search')}>

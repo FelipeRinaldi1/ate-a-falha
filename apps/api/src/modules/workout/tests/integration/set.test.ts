@@ -170,10 +170,78 @@ describe('Exercise Set Integration Tests', () => {
 			expect(dbSet).toBeNull()
 		})
 
+		test('Should renumber remaining sets contiguously when deleting a middle set', async () => {
+			const s2 = await prisma.set.create({
+				data: {
+					workoutExerciseId: workout1Context.workoutExercise.id,
+					setNumber: 2,
+					repetitions: 12,
+					weight: 45,
+					restTimeSeconds: 60,
+				},
+			})
+			const s3 = await prisma.set.create({
+				data: {
+					workoutExerciseId: workout1Context.workoutExercise.id,
+					setNumber: 3,
+					repetitions: 8,
+					weight: 55,
+					restTimeSeconds: 90,
+				},
+			})
+
+			const res = await request(app)
+				.delete(`${BASE_API_URL}/workout/sets/${s2.id}`)
+				.set('Cookie', user1Context.cookie || '')
+				.send()
+
+			expect(res.status).toBe(200)
+
+			const remaining = await prisma.set.findMany({
+				where: { workoutExerciseId: workout1Context.workoutExercise.id },
+				orderBy: { setNumber: 'asc' },
+			})
+
+			expect(remaining.map((s) => s.setNumber)).toEqual([1, 2])
+			expect(remaining[1].id).toBe(s3.id)
+			expect(remaining[1].weight).toBe(55)
+		})
+
 		test("Should forbid deleting another user's set", async () => {
 			const result = await request(app)
 				.delete(`${BASE_API_URL}/workout/sets/${workout2Context.set.id}`)
 				.set('Cookie', user1Context.cookie || '')
+
+			expect(result.status).toBe(403)
+		})
+	})
+
+	describe('PUT /workout/workout-exercises/:workoutExerciseId/sets', () => {
+		test('Should atomically replace all sets with contiguous numbering', async () => {
+			const result = await request(app)
+				.put(`${BASE_API_URL}/workout/workout-exercises/${workout1Context.workoutExercise.id}/sets`)
+				.set('Cookie', user1Context.cookie || '')
+				.send({
+					sets: [
+						{ repetitions: 12, weight: 30, restTimeSeconds: 60 },
+						{ repetitions: 10, weight: 40, restTimeSeconds: 75 },
+						{ repetitions: 8, weight: 50, restTimeSeconds: 90 },
+					],
+				})
+
+			expect(result.status).toBe(200)
+			expect(result.body).toHaveLength(3)
+			expect(result.body.map((s: any) => s.setNumber)).toEqual([1, 2, 3])
+			expect(result.body[2].weight).toBe(50)
+		})
+
+		test("Should forbid replacing sets on another user's workout exercise", async () => {
+			const result = await request(app)
+				.put(`${BASE_API_URL}/workout/workout-exercises/${workout2Context.workoutExercise.id}/sets`)
+				.set('Cookie', user1Context.cookie || '')
+				.send({
+					sets: [{ repetitions: 10, weight: 20, restTimeSeconds: 60 }],
+				})
 
 			expect(result.status).toBe(403)
 		})

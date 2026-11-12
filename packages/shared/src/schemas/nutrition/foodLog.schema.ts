@@ -5,7 +5,7 @@ export const foodLogSchema = z.object({
 	id: z.uuid(),
 	foodId: z.uuid(),
 	food: foodSchema,
-	quantity: z.number().positive(),
+	quantity: z.number().int().positive(),
 	mealLogId: z.uuid(),
 	createdAt: z.date(),
 	updatedAt: z.date(),

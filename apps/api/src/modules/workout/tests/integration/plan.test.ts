@@ -120,6 +120,40 @@ describe('Workout Plan Integration Tests', () => {
 			expect(result.body.name).toBe('Updated Workout Plan Name')
 		})
 
+		test('Should deactivate previous active plan of same user without affecting other users when setting isActive=true', async () => {
+			await prisma.plan.update({
+				where: { id: workout1Context.plan.id },
+				data: { isActive: true },
+			})
+			await prisma.plan.update({
+				where: { id: workout2Context.plan.id },
+				data: { isActive: true },
+			})
+
+			const secondPlan = await prisma.plan.create({
+				data: {
+					userId: user1Context.user.id,
+					name: 'Second Plan',
+					isActive: false,
+				},
+			})
+
+			const res = await request(app)
+				.patch(`${BASE_API_URL}/workout/plans/${secondPlan.id}`)
+				.set('Cookie', user1Context.cookie || '')
+				.send({ isActive: true })
+
+			expect(res.status).toBe(200)
+			expect(res.body.isActive).toBe(true)
+
+			const oldOwnPlan = await prisma.plan.findUnique({ where: { id: workout1Context.plan.id } })
+			const otherUserPlan = await prisma.plan.findUnique({ where: { id: workout2Context.plan.id } })
+			expect(oldOwnPlan?.isActive).toBe(false)
+			expect(otherUserPlan?.isActive).toBe(true)
+
+			await prisma.plan.delete({ where: { id: secondPlan.id } })
+		})
+
 		test('Should forbid updating a plan belonging to another user', async () => {
 			const result = await request(app)
 				.patch(`${BASE_API_URL}/workout/plans/${workout2Context.plan.id}`)
@@ -204,6 +238,27 @@ describe('Workout Plan Integration Tests', () => {
 			expect(result.body.name).toBe(`${workout1Context.plan.name} (Importado)`)
 			expect(result.body.userId).toBe(user2Context.user.id)
 			expect(result.body.isActive).toBe(false)
+
+			await prisma.plan.delete({ where: { id: result.body.id } })
+		})
+
+		test('Should truncate imported plan name to at most 50 characters', async () => {
+			await prisma.plan.update({
+				where: { id: workout1Context.plan.id },
+				data: {
+					name: 'P'.repeat(45),
+					isExported: true,
+				},
+			})
+
+			const result = await request(app)
+				.post(`${BASE_API_URL}/workout/plans/${workout1Context.plan.id}/import`)
+				.set('Cookie', user2Context.cookie || '')
+				.send()
+
+			expect(result.status).toBe(201)
+			expect(result.body.name.length).toBeLessThanOrEqual(50)
+			expect(result.body.name.endsWith(' (Importado)')).toBe(true)
 
 			await prisma.plan.delete({ where: { id: result.body.id } })
 		})

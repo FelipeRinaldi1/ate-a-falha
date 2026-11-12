@@ -6,6 +6,7 @@ import request from 'supertest'
 import { BASE_API_URL } from '@/constants/global/baseURL.js'
 import app from '../../../../app.js'
 import { BodyMetricDTO } from '@ate-a-falha/shared'
+import { prisma } from '@ate-a-falha/database'
 
 describe('Body Metric Tests', () => {
 	let userContext: Awaited<ReturnType<typeof setupTestUser>>
@@ -194,6 +195,62 @@ describe('Body Metric Tests', () => {
 				.send()
 
 			expect(result.status).toBe(200)
+		})
+	})
+
+	describe('Access control (cross-user 403 & ADMIN access)', () => {
+		test('Should forbid another standard user from viewing, updating, or deleting a body metric', async () => {
+			const otherUser = await setupTestUser()
+
+			const getRes = await request(app)
+				.get(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', otherUser.cookie || '')
+				.send()
+			expect(getRes.status).toBe(403)
+
+			const patchRes = await request(app)
+				.patch(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', otherUser.cookie || '')
+				.send({ weight: 99 })
+			expect(patchRes.status).toBe(403)
+
+			const delRes = await request(app)
+				.delete(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', otherUser.cookie || '')
+				.send()
+			expect(delRes.status).toBe(403)
+
+			await cleanupTestUser(otherUser.user.id, otherUser.cookie)
+		})
+
+		test("Should allow ADMIN user to read, update, and delete another user's body metric", async () => {
+			const adminUser = await setupTestUser()
+			await prisma.user.update({
+				where: { id: adminUser.user.id },
+				data: { role: 'ADMIN' },
+			})
+
+			const getRes = await request(app)
+				.get(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', adminUser.cookie || '')
+				.send()
+			expect(getRes.status).toBe(200)
+			expect(getRes.body.id).toBe(bodyMetricContext.id)
+
+			const patchRes = await request(app)
+				.patch(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', adminUser.cookie || '')
+				.send({ weight: 82 })
+			expect(patchRes.status).toBe(200)
+			expect(patchRes.body.weight).toBe(82)
+
+			const delRes = await request(app)
+				.delete(`${BASE_API_URL}/users/body-metrics/${bodyMetricContext.id}`)
+				.set('Cookie', adminUser.cookie || '')
+				.send()
+			expect(delRes.status).toBe(200)
+
+			await cleanupTestUser(adminUser.user.id, adminUser.cookie)
 		})
 	})
 })

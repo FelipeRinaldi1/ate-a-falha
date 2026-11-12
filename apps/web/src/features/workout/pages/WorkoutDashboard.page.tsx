@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
 	Container,
 	Stack,
@@ -15,14 +15,13 @@ import {
 	Paper,
 } from '@mantine/core'
 import { Dumbbell, ArrowRight, Play, CheckCircle2, Circle } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { type PlanDTO, type ExerciseDTO, type WorkoutDTO } from '@ate-a-falha/shared'
+import { type WorkoutDTO } from '@ate-a-falha/shared'
 import { CalendarSelector } from '../../../components/CalendarSelector'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useAuth } from '../../user/hooks/useAuth'
+import { usePlans, useRandomExercises } from '../hooks/useWorkout'
 
 export function WorkoutDashboardPage() {
 	const navigate = useNavigate()
@@ -40,6 +39,15 @@ export function WorkoutDashboardPage() {
 		}
 	})
 
+	useEffect(() => {
+		try {
+			const saved = localStorage.getItem(storageKey)
+			setCompletedWorkouts(saved ? JSON.parse(saved) : {})
+		} catch {
+			setCompletedWorkouts({})
+		}
+	}, [storageKey])
+
 	const toggleDayCompleted = (dateStr: string) => {
 		setCompletedWorkouts((prev) => {
 			const updated = { ...prev, [dateStr]: !prev[dateStr] }
@@ -48,21 +56,9 @@ export function WorkoutDashboardPage() {
 		})
 	}
 
-	const { data: plans = [], isLoading: isLoadingPlans } = useQuery<PlanDTO[]>({
-		queryKey: ['workout-plans'],
-		queryFn: async () => {
-			const res = await api.get('/workout/plans')
-			return res.data
-		},
-	})
+	const { data: plans = [], isLoading: isLoadingPlans } = usePlans()
 
-	const { data: exercises = [], isLoading: isLoadingExercises } = useQuery<ExerciseDTO[]>({
-		queryKey: ['exercise-catalog'],
-		queryFn: async () => {
-			const res = await api.get('/workout/exercise-catalog', { params: { random: true } })
-			return res.data
-		},
-	})
+	const { data: exercises = [], isLoading: isLoadingExercises } = useRandomExercises()
 
 	const activePlan = plans.find((p) => p.isActive) || plans[0]
 

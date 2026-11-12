@@ -3,7 +3,7 @@ import { HTTP_STATUS } from '@/constants/global/httpCodesConstants.js'
 import { ShareService } from '../services/share.service.js'
 
 export class ShareController {
-	constructor(private readonly shareService: ShareService = new ShareService()) {}
+	constructor(private readonly shareService: ShareService) {}
 
 	lookup = async (req: Request, res: Response, next: NextFunction) => {
 		const rawCode = String(req.params.code || '')

@@ -39,7 +39,6 @@ describe('user Tests', () => {
 				name: 'TesteUserFail',
 				birthDate: new Date('2003-01-01'),
 				gender: 'FEMALE',
-				role: 'USER',
 				auth: {
 					email: userContext.originalData.auth.email,
 					password: 'Password123!',
@@ -84,24 +83,24 @@ describe('user Tests', () => {
 			expect(result.status).toBe(HTTP_STATUS.OK)
 		})
 
-		test('Should failf if user doesnt exists | 404 Not Found', async () => {
+		test('Should fail if user doesnt exists | 401 Unauthorized', async () => {
 			const fakeAuth = {
 				email: 'fakeemail@gmail.com',
 				password: 'fakepassword',
 			}
 			const result = await request(app).post(`${BASE_API_URL}/users/login`).send(fakeAuth)
 
-			expect(result.status).toBe(HTTP_STATUS.NOT_FOUND)
+			expect(result.status).toBe(HTTP_STATUS.UNAUTHORIZED)
 		})
 
-		test('Should fail if password is incorrect | 404 Not Found', async () => {
+		test('Should fail if password is incorrect | 401 Unauthorized', async () => {
 			const fakeAuth = {
 				email: userContext.originalData.auth.email,
 				password: 'fakepassword',
 			}
 			const result = await request(app).post(`${BASE_API_URL}/users/login`).send(fakeAuth)
 
-			expect(result.status).toBe(HTTP_STATUS.NOT_FOUND)
+			expect(result.status).toBe(HTTP_STATUS.UNAUTHORIZED)
 		})
 	})
 

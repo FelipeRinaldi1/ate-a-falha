@@ -5,13 +5,16 @@ import { DietService } from '../services/diet.service.js'
 import { NutritionAccessControlRepository } from '../repositories/accessControl.repository.js'
 import { NutritionAccessControlService } from '../services/nutritionAccessControl.service.js'
 import { ensureAuthenticated } from '@/middlewares/ensureAuthenticated.js'
+import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import { NotificationService } from '../../notification/services/notification.service.js'
 
 const dietRouter = Router()
 
 const accessRepo = new NutritionAccessControlRepository()
 const accessServ = new NutritionAccessControlService(accessRepo)
 const dietRepo = new DietRepository()
-const dietService = new DietService(dietRepo, accessServ)
+const notificationService = new NotificationService(new NotificationRepository())
+const dietService = new DietService(dietRepo, accessServ, notificationService)
 const dietController = new DietController(dietService)
 
 dietRouter.get('/diets/:id/export', dietController.export)

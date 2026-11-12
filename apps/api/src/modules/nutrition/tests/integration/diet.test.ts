@@ -315,5 +315,26 @@ describe('Diet Plan Integration Tests', () => {
 
 			await prisma.diet.delete({ where: { id: result.body.id } })
 		})
+
+		test('Should truncate imported diet name to at most 64 characters', async () => {
+			const longName = 'D'.repeat(60)
+			const diet = await setupTestDiet(user1Context.cookie || '', longName)
+
+			await prisma.diet.update({
+				where: { id: diet.id },
+				data: { isExported: true },
+			})
+
+			const result = await request(app)
+				.post(`${BASE_API_URL}/nutrition/diets/${diet.id}/import`)
+				.set('Cookie', user2Context.cookie || '')
+				.send()
+
+			expect(result.status).toBe(201)
+			expect(result.body.name.length).toBeLessThanOrEqual(64)
+			expect(result.body.name.endsWith(' (Importada)')).toBe(true)
+
+			await prisma.diet.delete({ where: { id: result.body.id } })
+		})
 	})
 })

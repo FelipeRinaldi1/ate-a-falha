@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '@ate-a-falha/shared'
-import { prisma, safeCall } from '@ate-a-falha/database'
 import { validateToken } from '../utils/validateToken.js'
 import { ENV } from '../config/env.js'
+import { UserRepository } from '../modules/user/repositories/user.repository.js'
+
+const userRepository = new UserRepository()
 
 export const ensureAuthenticated = async (req: Request, _res: Response, next: NextFunction) => {
 	try {
@@ -20,21 +22,16 @@ export const ensureAuthenticated = async (req: Request, _res: Response, next: Ne
 
 		const userId = result.value.sub
 
-		const userResult = await safeCall(
-			prisma.user.findUniqueOrThrow({
-				where: { id: userId },
-				select: { id: true, role: true },
-			})
-		)
+		const userResult = await userRepository.findAuthContextById(userId)
 
 		if (userResult.isFailure()) {
+			if (userResult.error.type === 'NOT_FOUND') {
+				return next({ type: 'UNAUTHORIZED', message: 'Invalid or expired session' } as AppError)
+			}
 			return next(userResult.error)
 		}
 
-		req.user = {
-			id: userResult.value.id,
-			role: userResult.value.role as 'USER' | 'ADMIN',
-		}
+		req.user = userResult.value
 
 		return next()
 	} catch (error: any) {

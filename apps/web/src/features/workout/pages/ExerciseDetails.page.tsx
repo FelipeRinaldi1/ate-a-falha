@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { Container, Stack, Paper, Group, Text, Title, Center, Loader, Image, Badge, List } from '@mantine/core'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { type ExerciseDTO } from '@ate-a-falha/shared'
+import { useExerciseById } from '../hooks/useWorkout'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
 
@@ -13,14 +11,7 @@ export function ExerciseDetailsPage() {
 	const goBack = useGoBack('/workout/exercises')
 
 	// Fetch exercise details from catalog
-	const { data: exercise, isLoading } = useQuery<ExerciseDTO>({
-		queryKey: ['exercise-catalog-detail', id],
-		queryFn: async () => {
-			const res = await api.get(`/workout/exercise-catalog/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-	})
+	const { data: exercise, isLoading } = useExerciseById(id)
 
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 

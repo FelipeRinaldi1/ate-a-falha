@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { Container, Stack, Text, Button, Center, Loader, Paper, Group, Image, Checkbox, Divider } from '@mantine/core'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { MainLayout } from '../../../components/layout/MainLayout'
-import { api } from '../../../api/axiosInstance'
-import { type PlanDTO, type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
+import { usePlanDetail } from '../hooks/useWorkout'
+import { type WorkoutDTO, type WorkoutExerciseDTO, type SetDTO } from '@ate-a-falha/shared'
 import { getExerciseImageUrl } from '../../../utils/exerciseImage'
 import { useGoBack } from '../../../utils/navigation'
 import { useAuth } from '../../user/hooks/useAuth'
@@ -30,11 +29,19 @@ export function ActiveWorkoutPage() {
 	const createNotificationMutation = useCreateNotification()
 	const [activeTimers, setActiveTimers] = useState<Record<string, number>>({})
 
+	const todayKey = new Date().toISOString().slice(0, 10)
+	const expandedStorageKey = workoutId
+		? `ate-a-falha:active-workout:${user?.id || 'anon'}:${workoutId}:expanded`
+		: null
+	const checkedStorageKey = workoutId
+		? `ate-a-falha:active-workout:${user?.id || 'anon'}:${workoutId}:${todayKey}:checked`
+		: null
+
 	// State for which exercise cards are expanded (key: workoutExerciseId, value: boolean)
 	const [expandedExercises, setExpandedExercises] = useState<Record<string, boolean>>(() => {
-		if (!workoutId) return {}
+		if (!expandedStorageKey) return {}
 		try {
-			const saved = localStorage.getItem(`ate-a-falha:active-workout:${workoutId}:expanded`)
+			const saved = localStorage.getItem(expandedStorageKey)
 			return saved ? JSON.parse(saved) : {}
 		} catch {
 			return {}
@@ -42,27 +49,47 @@ export function ActiveWorkoutPage() {
 	})
 	// State for checked sets/timers (key: set.id or exerciseId-timer, value: boolean)
 	const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
-		if (!workoutId) return {}
+		if (!checkedStorageKey) return {}
 		try {
-			const saved = localStorage.getItem(`ate-a-falha:active-workout:${workoutId}:checked`)
+			const saved = localStorage.getItem(checkedStorageKey)
 			return saved ? JSON.parse(saved) : {}
 		} catch {
 			return {}
 		}
 	})
 
-	// Persist states to localStorage
 	useEffect(() => {
-		if (workoutId) {
-			localStorage.setItem(`ate-a-falha:active-workout:${workoutId}:expanded`, JSON.stringify(expandedExercises))
+		if (!expandedStorageKey) return
+		try {
+			const saved = localStorage.getItem(expandedStorageKey)
+			setExpandedExercises(saved ? JSON.parse(saved) : {})
+		} catch {
+			setExpandedExercises({})
 		}
-	}, [expandedExercises, workoutId])
+	}, [expandedStorageKey])
 
 	useEffect(() => {
-		if (workoutId) {
-			localStorage.setItem(`ate-a-falha:active-workout:${workoutId}:checked`, JSON.stringify(checkedItems))
+		if (!checkedStorageKey) return
+		try {
+			const saved = localStorage.getItem(checkedStorageKey)
+			setCheckedItems(saved ? JSON.parse(saved) : {})
+		} catch {
+			setCheckedItems({})
 		}
-	}, [checkedItems, workoutId])
+	}, [checkedStorageKey])
+
+	// Persist states to localStorage
+	useEffect(() => {
+		if (expandedStorageKey) {
+			localStorage.setItem(expandedStorageKey, JSON.stringify(expandedExercises))
+		}
+	}, [expandedExercises, expandedStorageKey])
+
+	useEffect(() => {
+		if (checkedStorageKey) {
+			localStorage.setItem(checkedStorageKey, JSON.stringify(checkedItems))
+		}
+	}, [checkedItems, checkedStorageKey])
 
 	useEffect(() => {
 		const hasRunning = Object.values(activeTimers).some((v) => v > 0)
@@ -82,15 +109,7 @@ export function ActiveWorkoutPage() {
 	}, [activeTimers])
 
 	// Fetch Plan details
-	const { data: plan, isLoading } = useQuery<PlanDTO>({
-		queryKey: ['workout-plans-detail', id],
-		queryFn: async () => {
-			const res = await api.get(`/workout/plans/${id}`)
-			return res.data
-		},
-		enabled: !!id,
-		refetchOnWindowFocus: false,
-	})
+	const { data: plan, isLoading } = usePlanDetail(id)
 
 	const workouts = plan?.workouts || []
 	const activeWorkout = workouts.find((w: WorkoutDTO) => w.id === workoutId) || workouts[0]

@@ -475,5 +475,19 @@ describe('Nutrition Logic tests', () => {
 				calories: 156,
 			})
 		})
+
+		test('Should return zeroed macros in normalizeMacrosTo100g when weight <= 0', () => {
+			const result = NutritionLogic.normalizeMacrosTo100g(
+				{ name: 'Test', protein: 10, carbohydrate: 20, lipids: 5, fiber: 2, calories: 165 },
+				0
+			)
+			expect(result).toEqual({
+				name: 'Test',
+				protein: 0,
+				carbohydrate: 0,
+				lipids: 0,
+				fiber: 0,
+			})
+		})
 	})
 })

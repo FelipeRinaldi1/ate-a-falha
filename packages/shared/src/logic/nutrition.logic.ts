@@ -1,6 +1,5 @@
 import { CreateFoodDTO } from '../schemas/nutrition/food.schema.js'
 import { FoodInMealDTO } from '../schemas/nutrition/foodInMeal.schema.js'
-import { MealDTO } from '../schemas/nutrition/meal.schema.js'
 
 export class NutritionLogic {
 	static calculateCalories(protein: number, carbohydrate: number, lipids: number, _fiber?: number): number {
@@ -14,6 +13,16 @@ export class NutritionLogic {
 	}
 
 	static normalizeMacrosTo100g(food: CreateFoodDTO, weight: number) {
+		if (weight <= 0) {
+			return {
+				name: food.name,
+				protein: 0,
+				carbohydrate: 0,
+				lipids: 0,
+				fiber: 0,
+			}
+		}
+
 		const factor = 100 / weight
 
 		return {
@@ -40,7 +49,7 @@ export class NutritionLogic {
 		}
 	}
 
-	static calculateFoodInMealMacros(foodInMeal: FoodInMealDTO) {
+	static calculateFoodInMealMacros(foodInMeal: Pick<FoodInMealDTO, 'food' | 'quantity'>) {
 		const { food, quantity } = foodInMeal
 
 		if (!quantity || quantity <= 0) {
@@ -58,7 +67,7 @@ export class NutritionLogic {
 		}
 	}
 
-	static calculateMealMacros(foodsInMeal: FoodInMealDTO[]) {
+	static calculateMealMacros(foodsInMeal: Array<Pick<FoodInMealDTO, 'food' | 'quantity'>>) {
 		const initialValues = { calories: 0, carbohydrates: 0, proteins: 0, fats: 0, fiber: 0 }
 		const totals = (foodsInMeal || []).reduce((accumulator, item) => {
 			const foodMacros = this.calculateFoodInMealMacros(item)
@@ -81,11 +90,11 @@ export class NutritionLogic {
 		}
 	}
 
-	static calculateDietMacros(meals: MealDTO[]) {
+	static calculateDietMacros(meals: Array<{ foods?: Array<Pick<FoodInMealDTO, 'food' | 'quantity'>> }>) {
 		const initialValues = { calories: 0, carbohydrates: 0, proteins: 0, fats: 0, fiber: 0 }
 
 		const totals = (meals || []).reduce((accumulator, meal) => {
-			const mealMacros = this.calculateMealMacros(meal.foods)
+			const mealMacros = this.calculateMealMacros(meal.foods || [])
 			return {
 				calories: accumulator.calories + mealMacros.calories,
 				carbohydrates: accumulator.carbohydrates + mealMacros.carbohydrates,

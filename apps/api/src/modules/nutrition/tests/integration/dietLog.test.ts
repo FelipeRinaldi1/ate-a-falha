@@ -126,6 +126,48 @@ describe('DietLog Integration Tests', () => {
 			expect(new Date(result.body.date).toISOString()).toBe(testDate.toISOString())
 		})
 
+		test('Should trigger water goal notification once and avoid duplicate spam on subsequent updates', async () => {
+			const diet = await prisma.diet.create({
+				data: {
+					userId: user1Context.user.id,
+					name: 'Meta Hidratação',
+					dailyKcalGoal: 2000,
+					dailyProteinGoal: 150,
+					dailyCarbGoal: 200,
+					dailyFatGoal: 60,
+					dailyWaterGoal: 2500,
+					dailyWater: 0,
+				},
+			})
+
+			// Cross threshold from 0 -> 2500: should emit 1 notification
+			const firstHit = await request(app)
+				.patch(`${BASE_API_URL}/nutrition/diet-logs/${nutrition1Context.dietLog.id}`)
+				.set('Cookie', user1Context.cookie || '')
+				.send({ waterIntake: 2500 })
+
+			expect(firstHit.status).toBe(200)
+
+			// Update again while already >= goal (2500 -> 3000): should NOT emit duplicate
+			const secondHit = await request(app)
+				.patch(`${BASE_API_URL}/nutrition/diet-logs/${nutrition1Context.dietLog.id}`)
+				.set('Cookie', user1Context.cookie || '')
+				.send({ waterIntake: 3000 })
+
+			expect(secondHit.status).toBe(200)
+
+			const waterNotifications = await prisma.notification.findMany({
+				where: {
+					userId: user1Context.user.id,
+					title: 'Meta de Hidratação Atingida',
+				},
+			})
+
+			expect(waterNotifications).toHaveLength(1)
+
+			await prisma.diet.delete({ where: { id: diet.id } })
+		})
+
 		test('Should forbid updating a diet log entry belonging to another user', async () => {
 			const result = await request(app)
 				.patch(`${BASE_API_URL}/nutrition/diet-logs/${nutrition2Context.dietLog.id}`)

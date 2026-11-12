@@ -10,14 +10,14 @@ import { type PlanFull } from '@ate-a-falha/database'
 import type { IPlanRepository } from '../interfaces/plan.interface.js'
 
 import { WorkoutAccessControlService } from './accessControl.service.js'
-import type { INotificationRepository } from '../../notification/interfaces/notification.interface.js'
-import { NotificationRepository } from '../../notification/repositories/notification.repository.js'
+import type { INotificationService } from '../../notification/interfaces/notification.interface.js'
+import { logger } from '../../../config/logger.js'
 
 export class PlanService {
 	constructor(
 		private readonly planRepo: IPlanRepository,
 		private readonly accessServ: WorkoutAccessControlService,
-		private readonly notificationRepo: INotificationRepository = new NotificationRepository()
+		private readonly notificationService: INotificationService
 	) {}
 
 	async create(data: CreatePlanDTO, authUser: authenticatedUser): Promise<Result<PlanFull>> {
@@ -58,15 +58,18 @@ export class PlanService {
 	async import(id: string, authUser: authenticatedUser): Promise<Result<PlanFull>> {
 		const result = await this.planRepo.importPlan(id, authUser.id)
 		if (result.isSuccess()) {
-			await this.notificationRepo.create(
+			const notifResult = await this.notificationService.create(
 				{
 					title: 'Plano de Treino Importado',
 					message: `O treino "${result.value.name}" foi clonado para o seu perfil.`,
 					type: 'SYSTEM',
 					link: '/workout',
 				},
-				authUser.id
+				authUser
 			)
+			if (notifResult.isFailure()) {
+				logger.warn({ err: notifResult.error, userId: authUser.id }, 'Failed to create plan import notification')
+			}
 		}
 		return result
 	}

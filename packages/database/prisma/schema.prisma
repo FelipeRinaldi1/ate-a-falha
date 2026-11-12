@@ -215,7 +215,7 @@ model FoodLog {
 
 model Plan {
   id       String  @id @default(uuid())
-  name     String
+  name     String  @db.VarChar(50)
   isActive Boolean @default(false)
   goal     String  @default("hipertrofia")
   coverImageUrl String?

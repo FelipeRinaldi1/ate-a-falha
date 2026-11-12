@@ -1,13 +1,6 @@
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from './generated/prisma/index.js'
-import dotenv from 'dotenv'
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const envPath = path.resolve(__dirname, '../../../apps/api/.env')
-dotenv.config({ path: envPath })
 
 const globalForPrisma = globalThis as unknown as {
 	prisma: PrismaClient | undefined
@@ -21,7 +14,9 @@ const pool = new Pool({
 	idleTimeoutMillis: 30000,
 	connectionTimeoutMillis: 15000,
 	allowExitOnIdle: true,
-	ssl: isProduction ? { rejectUnauthorized: false } : false,
+	ssl: isProduction
+		? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' }
+		: false,
 })
 const adapter = new PrismaPg(pool)
 

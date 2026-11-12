@@ -14,7 +14,9 @@ import {
 	Badge,
 	ThemeIcon,
 	Tooltip,
+	Drawer,
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { Bell, CheckCheck, Trash2, Dumbbell, Utensils, Info, AlertTriangle, CheckCircle2, Sparkles } from 'lucide-react'
 import {
 	useNotifications,
@@ -81,6 +83,7 @@ function getNotificationIcon(type: NotificationType) {
 
 export function NotificationBell() {
 	const [opened, setOpened] = useState(false)
+	const isMobile = useMediaQuery('(max-width: 48em)')
 	const navigate = useNavigate()
 
 	const { data: unreadCount = 0 } = useUnreadNotificationCount()
@@ -117,169 +120,220 @@ export function NotificationBell() {
 		deleteNotificationMutation.mutate(id)
 	}
 
+	const renderContent = () => (
+		<Stack gap={0}>
+			{/* Header */}
+			<Group justify="space-between" align="center" px="md" py="xs">
+				<Group gap="xs">
+					<Text fw={700} size="sm">
+						Notificações
+					</Text>
+					{unreadCount > 0 && (
+						<Badge size="xs" color="red" variant="filled" radius="sm">
+							{unreadCount} novas
+						</Badge>
+					)}
+				</Group>
+
+				{unreadCount > 0 && (
+					<Tooltip label="Marcar todas como lidas" position="left">
+						<ActionIcon
+							variant="subtle"
+							size="sm"
+							color="gray"
+							onClick={handleMarkAllAsRead}
+							loading={markAllAsReadMutation.isPending}
+						>
+							<CheckCheck size={16} />
+						</ActionIcon>
+					</Tooltip>
+				)}
+			</Group>
+
+			<Divider />
+
+			{/* Notifications List */}
+			<ScrollArea.Autosize mah={isMobile ? 'calc(75vh - 110px)' : 380} type="auto">
+				{isLoading ? (
+					<Box p="xl" style={{ textAlign: 'center' }}>
+						<Text size="sm" c="dimmed">
+							Carregando notificações...
+						</Text>
+					</Box>
+				) : notifications.length === 0 ? (
+					<Stack align="center" justify="center" py="xl" gap="xs">
+						<ThemeIcon size={44} radius="xl" variant="light" color="gray">
+							<Bell size={22} />
+						</ThemeIcon>
+						<Text fw={500} size="sm" c="dimmed">
+							Nenhuma notificação por aqui
+						</Text>
+						<Text size="xs" c="dimmed" style={{ textAlign: 'center', maxWidth: 220 }}>
+							Você receberá avisos sobre seus treinos, dietas e metas.
+						</Text>
+					</Stack>
+				) : (
+					<Stack gap={0}>
+						{notifications.map((notif) => {
+							const iconConfig = getNotificationIcon(notif.type as NotificationType)
+
+							return (
+								<UnstyledButton
+									key={notif.id}
+									onClick={() => handleNotificationClick(notif)}
+									px="md"
+									py="sm"
+									style={(theme) => ({
+										borderBottom: `1px solid ${theme.colors.gray?.[2] || '#2C2E33'}`,
+										backgroundColor: notif.read
+											? 'transparent'
+											: 'var(--mantine-color-blue-light)',
+										transition: 'background-color 150ms ease',
+										'&:hover': {
+											backgroundColor: 'var(--mantine-color-default-hover)',
+										},
+										position: 'relative',
+									})}
+								>
+									<Group align="flex-start" gap="sm" wrap="nowrap">
+										<ThemeIcon
+											size={32}
+											radius="md"
+											variant="light"
+											color={iconConfig.color}
+											style={{ flexShrink: 0, marginTop: 2 }}
+										>
+											{iconConfig.icon}
+										</ThemeIcon>
+
+										<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+											<Group justify="space-between" align="baseline" gap="xs">
+												<Text
+													fw={notif.read ? 600 : 700}
+													size="xs"
+													truncate
+													style={{ flex: 1 }}
+												>
+													{notif.title}
+												</Text>
+												<Text size="10px" c="dimmed" style={{ flexShrink: 0 }}>
+													{formatRelativeTime(notif.createdAt)}
+												</Text>
+											</Group>
+
+											<Text size="xs" c="dimmed" lineClamp={2}>
+												{notif.message}
+											</Text>
+										</Stack>
+
+										<ActionIcon
+											variant="subtle"
+											size="xs"
+											color="gray"
+											onClick={(e) => handleDeleteOne(e, notif.id)}
+											style={{ opacity: 0.6, flexShrink: 0 }}
+										>
+											<Trash2 size={13} />
+										</ActionIcon>
+									</Group>
+								</UnstyledButton>
+							)
+						})}
+					</Stack>
+				)}
+			</ScrollArea.Autosize>
+
+			{/* Footer */}
+			{notifications.length > 0 && (
+				<Box p="md" style={{ borderTop: '1px solid var(--mantine-color-default-border)' }}>
+					<Button
+						variant="light"
+						color="red"
+						size="md"
+						radius="md"
+						fullWidth
+						leftSection={<Trash2 size={18} />}
+						onClick={handleClearAll}
+						loading={clearAllMutation.isPending}
+					>
+						Limpar todas as notificações
+					</Button>
+				</Box>
+			)}
+		</Stack>
+	)
+
 	return (
-		<Popover opened={opened} onChange={setOpened} position="bottom-end" withArrow shadow="md" width={360}>
-			<Popover.Target>
-				<Indicator
-					disabled={unreadCount === 0}
-					label={unreadCount > 99 ? '99+' : unreadCount}
-					size={18}
-					color="red"
-					offset={4}
-				>
+		<>
+			<Indicator
+				disabled={unreadCount === 0}
+				label={unreadCount > 99 ? '99+' : unreadCount}
+				size={18}
+				color="red"
+				offset={4}
+				display="inline-flex"
+			>
+				{isMobile ? (
 					<ActionIcon
 						variant="subtle"
 						size="lg"
 						radius="md"
-						onClick={() => setOpened((o) => !o)}
+						onClick={() => setOpened(true)}
 						aria-label="Abrir notificações"
 					>
 						<Bell size={20} />
 					</ActionIcon>
-				</Indicator>
-			</Popover.Target>
-
-			<Popover.Dropdown p={0}>
-				{/* Popover Header */}
-				<Group justify="space-between" align="center" px="md" py="xs">
-					<Group gap="xs">
-						<Text fw={700} size="sm">
-							Notificações
-						</Text>
-						{unreadCount > 0 && (
-							<Badge size="xs" color="red" variant="filled" radius="sm">
-								{unreadCount} novas
-							</Badge>
-						)}
-					</Group>
-
-					{unreadCount > 0 && (
-						<Tooltip label="Marcar todas como lidas" position="left">
+				) : (
+					<Popover
+						opened={opened}
+						onChange={setOpened}
+						position="bottom-end"
+						withArrow
+						arrowSize={12}
+						offset={12}
+						shadow="md"
+						width={360}
+						withinPortal
+					>
+						<Popover.Target>
 							<ActionIcon
 								variant="subtle"
-								size="sm"
-								color="gray"
-								onClick={handleMarkAllAsRead}
-								loading={markAllAsReadMutation.isPending}
+								size="lg"
+								radius="md"
+								onClick={() => setOpened((o) => !o)}
+								aria-label="Abrir notificações"
 							>
-								<CheckCheck size={16} />
+								<Bell size={20} />
 							</ActionIcon>
-						</Tooltip>
-					)}
-				</Group>
+						</Popover.Target>
 
-				<Divider />
-
-				{/* Notifications List */}
-				<ScrollArea.Autosize mah={380} type="auto">
-					{isLoading ? (
-						<Box p="xl" style={{ textAlign: 'center' }}>
-							<Text size="sm" c="dimmed">
-								Carregando notificações...
-							</Text>
-						</Box>
-					) : notifications.length === 0 ? (
-						<Stack align="center" justify="center" py="xl" gap="xs">
-							<ThemeIcon size={44} radius="xl" variant="light" color="gray">
-								<Bell size={22} />
-							</ThemeIcon>
-							<Text fw={500} size="sm" c="dimmed">
-								Nenhuma notificação por aqui
-							</Text>
-							<Text size="xs" c="dimmed" style={{ textAlign: 'center', maxWidth: 220 }}>
-								Você receberá avisos sobre seus treinos, dietas e metas.
-							</Text>
-						</Stack>
-					) : (
-						<Stack gap={0}>
-							{notifications.map((notif) => {
-								const iconConfig = getNotificationIcon(notif.type as NotificationType)
-
-								return (
-									<UnstyledButton
-										key={notif.id}
-										onClick={() => handleNotificationClick(notif)}
-										px="md"
-										py="sm"
-										style={(theme) => ({
-											borderBottom: `1px solid ${theme.colors.gray?.[2] || '#2C2E33'}`,
-											backgroundColor: notif.read
-												? 'transparent'
-												: 'var(--mantine-color-blue-light)',
-											transition: 'background-color 150ms ease',
-											'&:hover': {
-												backgroundColor: 'var(--mantine-color-default-hover)',
-											},
-											position: 'relative',
-										})}
-									>
-										<Group align="flex-start" gap="sm" wrap="nowrap">
-											<ThemeIcon
-												size={32}
-												radius="md"
-												variant="light"
-												color={iconConfig.color}
-												style={{ flexShrink: 0, marginTop: 2 }}
-											>
-												{iconConfig.icon}
-											</ThemeIcon>
-
-											<Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
-												<Group justify="space-between" align="baseline" gap="xs">
-													<Text
-														fw={notif.read ? 600 : 700}
-														size="xs"
-														truncate
-														style={{ flex: 1 }}
-													>
-														{notif.title}
-													</Text>
-													<Text size="10px" c="dimmed" style={{ flexShrink: 0 }}>
-														{formatRelativeTime(notif.createdAt)}
-													</Text>
-												</Group>
-
-												<Text size="xs" c="dimmed" lineClamp={2}>
-													{notif.message}
-												</Text>
-											</Stack>
-
-											<ActionIcon
-												variant="subtle"
-												size="xs"
-												color="gray"
-												onClick={(e) => handleDeleteOne(e, notif.id)}
-												style={{ opacity: 0.6, flexShrink: 0 }}
-											>
-												<Trash2 size={13} />
-											</ActionIcon>
-										</Group>
-									</UnstyledButton>
-								)
-							})}
-						</Stack>
-					)}
-				</ScrollArea.Autosize>
-
-				{/* Popover Footer */}
-				{notifications.length > 0 && (
-					<>
-						<Divider />
-						<Group justify="flex-end" px="md" py="xs">
-							<Button
-								variant="subtle"
-								color="gray"
-								size="compact-xs"
-								leftSection={<Trash2 size={12} />}
-								onClick={handleClearAll}
-								loading={clearAllMutation.isPending}
-							>
-								Limpar todas
-							</Button>
-						</Group>
-					</>
+						<Popover.Dropdown p={0}>{renderContent()}</Popover.Dropdown>
+					</Popover>
 				)}
-			</Popover.Dropdown>
-		</Popover>
+			</Indicator>
+
+			{isMobile && (
+				<Drawer
+					opened={opened}
+					onClose={() => setOpened(false)}
+					position="bottom"
+					size="80%"
+					radius="lg"
+					withCloseButton={false}
+					styles={{
+						body: { padding: 0 },
+						content: { maxHeight: '85vh' },
+					}}
+				>
+					<Box
+						w={40}
+						h={4}
+						bg="gray.5"
+						style={{ borderRadius: 2, margin: '8px auto 4px auto' }}
+					/>
+					{renderContent()}
+				</Drawer>
+			)}
+		</>
 	)
 }

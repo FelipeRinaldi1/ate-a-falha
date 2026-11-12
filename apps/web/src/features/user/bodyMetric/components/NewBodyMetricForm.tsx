@@ -1,27 +1,15 @@
-import { api } from '../../../../api/axiosInstance'
 import { Button, NumberInput, Paper, Select, Stack, Loader, Center, Alert } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { type CreateBodyMetricDTO, createBodyMetricSchema } from '@ate-a-falha/shared'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../hooks/useAuth'
-import { useState } from 'react'
+import { useBodyMetrics, useCreateBodyMetric } from '../../hooks/useUser'
+import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { translateError } from '../../../../utils/errorTranslator'
 import { useGoBack } from '../../../../utils/navigation'
 import type { AxiosError } from 'axios'
 
-interface BodyMetric {
-	id: string
-	weight: number
-	height: number
-	activityLevel: number
-	bodyFat: number | null
-	muscleRate: number | null
-	createdAt: string
-}
-
 export function NewBodyMetricForm() {
-	const queryClient = useQueryClient()
 	const goBack = useGoBack('/profile')
 	const { refreshUser } = useAuth()
 	const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -31,47 +19,45 @@ export function NewBodyMetricForm() {
 			weight: 0,
 			height: 0,
 			activityLevel: 0,
-			bodyFat: 0,
-			muscleRate: 0,
+			bodyFat: null,
+			muscleRate: null,
 		},
 		validate: schemaResolver(createBodyMetricSchema, { sync: true }),
 	})
 
-	const { isLoading } = useQuery<BodyMetric[]>({
-		queryKey: ['body-metrics'],
-		queryFn: async () => {
-			const response = await api.get('/users/body-metrics')
-			const latest = response.data[0]
-			if (latest) {
-				form.setValues({
-					weight: 0,
-					height: latest.height,
-					activityLevel: latest.activityLevel,
-					bodyFat: latest.bodyFat ?? 0,
-					muscleRate: latest.muscleRate ?? 0,
-				})
-			}
-			return response.data
-		},
-	})
+	const { data: metrics, isLoading } = useBodyMetrics()
 
-	const mutation = useMutation({
-		mutationFn: (data: CreateBodyMetricDTO) => {
-			return api.post('/users/body-metrics', data)
-		},
-		onMutate: () => {
-			setErrorMsg(null)
-		},
+	useEffect(() => {
+		const latest = metrics?.[0]
+		if (latest) {
+			form.setValues({
+				weight: 0,
+				height: latest.height,
+				activityLevel: latest.activityLevel,
+				bodyFat: latest.bodyFat ?? null,
+				muscleRate: latest.muscleRate ?? null,
+			})
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [metrics])
+
+	const baseMutation = useCreateBodyMetric({
 		onSuccess: async () => {
 			await refreshUser()
-			await queryClient.invalidateQueries({ queryKey: ['body-metrics'] })
-			await queryClient.invalidateQueries({ queryKey: ['notifications'] })
 			goBack('/profile')
 		},
 		onError: (error: AxiosError) => {
 			setErrorMsg(translateError(error, 'Erro ao registrar nova pesagem.'))
 		},
 	})
+
+	const mutation = {
+		...baseMutation,
+		mutate: (data: CreateBodyMetricDTO) => {
+			setErrorMsg(null)
+			baseMutation.mutate(data)
+		},
+	}
 
 	if (isLoading) {
 		return (
@@ -83,7 +69,15 @@ export function NewBodyMetricForm() {
 
 	return (
 		<Paper withBorder p="xl" radius="md" shadow="sm">
-			<form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
+			<form
+				onSubmit={form.onSubmit((values) =>
+					mutation.mutate({
+						...values,
+						bodyFat: (values.bodyFat as unknown) === '' ? null : (values.bodyFat ?? null),
+						muscleRate: (values.muscleRate as unknown) === '' ? null : (values.muscleRate ?? null),
+					})
+				)}
+			>
 				<Stack gap="md">
 					{errorMsg && (
 						<Alert
