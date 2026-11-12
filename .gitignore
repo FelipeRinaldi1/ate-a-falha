@@ -169,3 +169,6 @@ playwright/.cache/
 
 # Skills backup
 .skills_backup/
+
+# Local notes
+anotacao.md
